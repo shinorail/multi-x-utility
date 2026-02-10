@@ -1,80 +1,85 @@
 <!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QRツール & ゲート | Multi-X Utility</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<style>
+:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh}
+.credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center}
+.cont{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;gap:15px}
+.tabs{display:flex;width:100%;max-width:400px;background:var(--card);border-radius:12px;padding:5px}
+.tab{flex:1;padding:12px;text-align:center;cursor:pointer;border-radius:8px;font-size:0.85rem;font-weight:bold;color:#94a3b8}
+.tab.active{background:var(--p);color:#000}
+.panel{display:none;width:100%;max-width:400px;flex-direction:column;align-items:center;gap:15px}
+.panel.active{display:flex}
+input{width:100%;padding:15px;border-radius:10px;border:1px solid #334155;background:var(--card);color:white;font-size:1rem;box-sizing:border-box}
+#qrcode{background:white;padding:15px;border-radius:10px;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
+#qrcode img{width:100%;height:100%}
+#v-area{width:100%;aspect-ratio:1;background:#000;border-radius:15px;overflow:hidden;border:2px solid var(--p);position:relative;display:none}
+video{width:100%;height:100%;object-fit:cover}
+.scan-line{position:absolute;top:0;left:0;width:100%;height:2px;background:var(--p);box-shadow:0 0 10px var(--p);animation:scan 2s infinite linear}
+@keyframes scan{0%{top:0%}100%{top:100%}}
+#scan-res{width:100%;padding:15px;background:var(--card);border-radius:10px;font-size:0.9rem;word-break:break-all;border:1px solid #334155;text-align:center;display:none;min-height:50px}
+.btn{background:var(--p);color:#000;padding:15px;width:100%;border-radius:10px;font-weight:bold;border:none;cursor:pointer;font-size:1rem}
+.nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155}
+.nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center}
+#overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,0.9);z-index:1000;flex-direction:column;justify-content:center;align-items:center}
+</style>
+</head>
+<body>
 
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>Multi-X QR & Gate</title> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script> <style> :root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc} body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh} .credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center} .cont{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;gap:15px} .tabs{display:flex;width:100%;max-width:400px;background:var(--card);border-radius:12px;padding:5px} .tab{flex:1;padding:12px;text-align:center;cursor:pointer;border-radius:8px;font-size:0.85rem;font-weight:bold;color:#94a3b8} .tab.active{background:var(--p);color:#000} .panel{display:none;width:100%;max-width:400px;flex-direction:column;align-items:center;gap:15px} .panel.active{display:flex} input{width:100%;padding:15px;border-radius:10px;border:1px solid #334155;background:var(--card);color:white;font-size:1rem;box-sizing:border-box} #qrcode{background:white;padding:15px;border-radius:10px;width:200px;height:200px;display:flex;align-items:center;justify-content:center} #v-area{width:100%;aspect-ratio:1;background:#000;border-radius:15px;overflow:hidden;border:2px solid var(--p);position:relative;display:none} video{width:100%;height:100%;object-fit:cover} .scan-line{position:absolute;top:0;left:0;width:100%;height:2px;background:var(--p);box-shadow:0 0 10px var(--p);animation:scan 2s infinite linear} @keyframes scan{0%{top:0%}100%{top:100%}} #res{width:100%;padding:15px;background:var(--card);border-radius:10px;font-size:0.9rem;word-break:break-all;border:1px solid #334155;text-align:center;display:none} .btn{background:var(--p);color:#000;padding:15px;width:100%;border-radius:10px;font-weight:bold;border:none;cursor:pointer} .nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155} .nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center} #overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,0.9);z-index:1000;flex-direction:column;justify-content:center;align-items:center} </style> </head> <body> <div id="overlay"> <div style="font-size:4rem;">🔓</div> <h2 style="color:var(--p);" id="u-name">認証成功</h2> <p>先行アクセスを開始します...</p> </div>
-
-<div class="credit">制作：篠ノ井乗務区 二周年記念</div> <div class="cont"> <div class="tabs"> <div id="t-gate" class="tab active" onclick="sw('gate')">先行ゲート</div> <div id="t-gen" class="tab" onclick="sw('gen')">QR作成</div> <div id="t-scan" class="tab" onclick="sw('scan')">QR読取</div> </div>
-
-<div id="p-gate" class="panel active">
-    <h3 style="color:var(--p);margin:0;">GATE</h3>
-    <p style="font-size:0.8rem;color:#94a3b8;text-align:center;">招待QRコードをスキャンして<br>先行体験を開始してください</p>
-    <div id="v-area-gate" class="v-box"></div> <button id="btn-gate" class="btn" onclick="start('gate')">ゲートを起動</button>
+<div id="overlay">
+    <div style="font-size:4rem;">🔓</div>
+    <h2 style="color:var(--p);" id="u-name">認証成功</h2>
+    <p>先行アクセスを開始します...</p>
 </div>
 
-<div id="p-gen" class="panel">
-    <input type="text" id="text" placeholder="文字を入力してください" oninput="make()">
-    <div id="qrcode"></div>
-</div>
+<div class="credit">制作：篠ノ井乗務区 二周年記念</div>
 
-<div id="p-scan" class="panel">
-    <div id="v-area-scan" class="v-box"></div>
-    <button id="btn-scan" class="btn" onclick="start('scan')">スキャナーを起動</button>
-</div>
+<div class="cont">
+    <div class="tabs">
+        <div id="t-gate" class="tab active" onclick="swTab('gate')">先行ゲート</div>
+        <div id="t-gen" class="tab" onclick="swTab('gen')">QR作成</div>
+        <div id="t-scan" class="tab" onclick="swTab('scan')">QR読取</div>
+    </div>
 
-<div id="v-frame" style="display:none;width:100%;max-width:400px;">
-    <div id="v-area">
+    <div id="p-gate" class="panel active">
+        <h3 style="color:var(--p);margin:0;">GATE</h3>
+        <p style="font-size:0.8rem;color:#94a3b8;text-align:center;">招待QRコードをスキャンして<br>先行体験を開始してください</p>
+        <button id="btn-gate" class="btn" onclick="startScan('gate')">ゲートを起動</button>
+    </div>
+
+    <div id="panel-gen" class="panel">
+        <input type="text" id="text" placeholder="文字を入力してください" oninput="genQR()">
+        <div id="qrcode"></div>
+        <p style="font-size:0.8rem;color:#94a3b8">入力すると即座に更新されます</p>
+    </div>
+
+    <div id="panel-scan" class="panel">
+        <button id="start-btn" class="btn" onclick="startScan('scan')">スキャナーを起動</button>
+    </div>
+
+    <div id="v-area" style="width:100%; max-width:400px;">
         <video id="video" playsinline></video>
         <div class="scan-line"></div>
     </div>
-    <div id="res"></div>
-</div>
+    <div id="scan-res"></div>
 </div>
 
-<nav class="nav"> <a href="menu.html"><span>🏠</span>ホーム</a> <a href="calc.html"><span>🔢</span>計算機</a> <a href="timer.html"><span>⌛</span>タイマー</a> <a href="qr-tool.html" style="color:var(--p)"><span>🔳</span>QR/GATE</a> </nav>
+<nav class="nav">
+    <a href="menu.html"><span>🏠</span>ホーム</a>
+    <a href="calc.html"><span>🔢</span>計算機</a>
+    <a href="timer.html"><span>⌛</span>タイマー</a>
+    <a href="qr.html" style="color:var(--p)"><span>🔳</span>QR/GATE</a>
+</nav>
 
 <canvas id="canvas" style="display:none;"></canvas>
 
-<script> let qrMaker = null; let stream = null; let mode = 'gate'; const SECRET = "MULTI-X-2026-PRE";
+<script src="qr.js"></script>
 
-function sw(type){ mode = type; stop(); document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); document.getElementById('t-'+type).classList.add('active'); document.getElementById('p-'+type).classList.add('active'); if(type === 'gen') make(); }
-
-function make(){ const t = document.getElementById("text").value || "https://shinorail.github.io/multi-x-utility/"; if(!qrMaker) qrMaker = new QRCode(document.getElementById("qrcode"), { width: 200, height: 200 }); qrMaker.makeCode(t); }
-
-async function start(m) { mode = m; const res = document.getElementById('res'); res.style.display = 'block'; res.innerText = "カメラ起動中..."; try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); const video = document.getElementById('video'); video.srcObject = stream; video.play();
-
-    // ビデオ枠を現在のパネルに移動
-    const vFrame = document.getElementById(&#39;v-frame&#39;);
-    document.getElementById(m === &#39;gate&#39; ? &#39;v-area-gate&#39; : &#39;v-area-scan&#39;).appendChild(vFrame);
-    vFrame.style.display = &#39;block&#39;;
-    document.getElementById(&#39;v-area&#39;).style.display = &#39;block&#39;;
-    document.getElementById(&#39;btn-&#39;+m).style.display = &#39;none&#39;;
-    res.innerText = &quot;QRを映してください&quot;;
-    requestAnimationFrame(tick);
-} catch (err) {
-    res.innerText = &quot;エラー: カメラを起動できません&quot;;
-}
-}
-
-function stop() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } document.getElementById('v-frame').style.display = 'none'; document.getElementById('btn-gate').style.display = 'block'; document.getElementById('btn-scan').style.display = 'block'; document.getElementById('res').style.display = 'none'; }
-
-function tick() { if (!stream) return; const video = document.getElementById('video'); const canvas = document.getElementById('canvas'); if (video.readyState === video.HAVE_ENOUGH_DATA) { canvas.height = video.videoHeight; canvas.width = video.videoWidth; const ctx = canvas.getContext('2d'); ctx.drawImage(video, 0, 0, canvas.width, canvas.height); const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
-
-    if (code) {
-        if (mode === &#39;gate&#39; &amp;&amp; code.data.includes(SECRET)) {
-            const name = code.data.split(&quot;:&quot;).pop() || &quot;公式&quot;;
-            document.getElementById(&#39;overlay&#39;).style.display = &#39;flex&#39;;
-            document.getElementById(&#39;u-name&#39;).innerText = name + &quot; 様&quot;;
-            stop();
-            setTimeout(() =&gt; { location.href = &quot;pre-speed-secure.html?ref=&quot; + encodeURIComponent(name); }, 1500);
-            return;
-        } else if (mode === &#39;scan&#39;) {
-            document.getElementById(&#39;res&#39;).innerHTML = `読取成功！<br>&lt;a href=&quot;${code.data}&quot; target=&quot;_blank&quot; style=&quot;color:var(--p)&quot;&gt;${code.data}&lt;/a&gt;`;
-            if(navigator.vibrate) navigator.vibrate(200);
-            stop();
-            return;
-        }
-    }
-}
-requestAnimationFrame(tick);
-} </script>
-
-</body> </html>
+</body>
+</html>
