@@ -1,215 +1,101 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Multi-X Utility | Official Site</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="image/icon.png">
-<link rel="icon" type="image/png" href="image/icon.png">
-<style>
-:root{
-    --p:#d4af37;
-    --bg:#0f172a;
-    --card:#1e293b;
-    --txt:#f8fafc;
-    --accent:#3b82f6;
-    --ud-font: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Meiryo", "Verdana", sans-serif;
-}
 
-body{
-    font-family: var(--ud-font);
-    background-color: var(--bg);
-    color: var(--txt);
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
-    padding: 0;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
-    line-height: 1.7;
-}
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <script> /* アプリ（PWA）として起動した場合は即メニューへ転送 */ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) { location.href = "menu.html"; } </script> <title>Multi-X Utility | Official Site</title> <link rel="manifest" href="manifest.json"> <link rel="apple-touch-icon" href="image/icon.png"> <link rel="icon" type="image/png" href="image/icon.png"> <style> :root{ --p:#d4af37; --bg:#0f172a; --card:#1e293b; --txt:#f8fafc; --accent:#3b82f6; --ud-font: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Meiryo", "Verdana", sans-serif; }
 
-/* ナビゲーション */
-nav {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background: rgba(15, 23, 42, 0.98);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    padding: 18px 0;
-    z-index: 1000;
-    border-bottom: 2px solid rgba(212,175,55,0.3);
-}
-nav a { color: var(--txt); text-decoration: none; font-size: 0.95rem; font-weight: bold; padding: 10px; transition: 0.2s; }
-nav a:hover { color: var(--p); text-decoration: underline; }
+body{ font-family: var(--ud-font); background-color: var(--bg); color: var(--txt); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; text-align: center; padding: 0; box-sizing: border-box; scroll-behavior: smooth; line-height: 1.7; }
 
-/* PWAバナー */
-#pwa-banner{display:none;position:fixed;top:65px;left:0;width:100%;background:var(--p);color:#000;padding:15px;font-weight:bold;font-size:1rem;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,0.5);cursor:pointer;text-align:center;}
+/* ナビゲーション */ nav { position: sticky; top: 0; width: 100%; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(10px); display: flex; justify-content: center; gap: 15px; padding: 18px 0; z-index: 1000; border-bottom: 2px solid rgba(212,175,55,0.3); } nav a { color: var(--txt); text-decoration: none; font-size: 0.95rem; font-weight: bold; padding: 10px; transition: 0.2s; } nav a:hover { color: var(--p); text-decoration: underline; }
 
-/* ヒーロー */
-.hero{padding:80px 20px 60px; width:100%; box-sizing:border-box; background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%)}
-.badge{background:var(--p);color:#000;font-size:0.8rem;font-weight:bold;padding:6px 18px;border-radius:30px;margin-bottom:20px;display:inline-block}
-.logo-circle{width:110px;height:110px;border:3px solid var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 25px;box-shadow:0 0 20px rgba(212,175,55,0.3)}
-.logo-circle span{font-size:3rem;font-weight:bold;color:var(--p)}
-h1{font-size:clamp(2.2rem, 8vw, 3.2rem);margin:0;letter-spacing:1px; line-height:1.2}
-.credit-gold{font-size:1.4rem;color:var(--p);margin:15px 0 30px;font-weight:bold}
+/* 誘惑のPWAポップアップ（画面下から出現） */ #pwa-popup { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: var(--card); border: 2px solid var(--p); border-radius: 24px; padding: 22px; z-index: 10000; box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1); } @keyframes slideUp { from { bottom: -120px; opacity: 0; } to { bottom: 20px; opacity: 1; } } .popup-content { display: flex; align-items: center; gap: 18px; text-align: left; } .popup-icon { width: 64px; height: 64px; border-radius: 14px; border: 1px solid var(--p); box-shadow: 0 4px 10px rgba(0,0,0,0.3); } .popup-text h4 { margin: 0; color: var(--p); font-size: 1.2rem; letter-spacing: 0.5px; } .popup-text p { margin: 6px 0 0; font-size: 0.8rem; color: #94a3b8; line-height: 1.4; } .popup-btns { display: flex; gap: 12px; margin-top: 20px; } .install-now { flex: 2; background: var(--p); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; } .install-now:hover { filter: brightness(1.1); transform: translateY(-1px); } .close-popup { flex: 1; background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 14px; border-radius: 12px; font-size: 0.85rem; cursor: pointer; }
 
-/* 宣伝セクション */
-.promo-section{background:#ffffff;color:#1a1a1a;width:100%;padding:100px 20px;box-sizing:border-box}
-.section-title{font-size:2.4rem;margin-bottom:25px;font-weight:bold}
-.section-sub{color:#444;max-width:700px;margin:0 auto 60px;font-size:1.1rem}
-.feature-grid{max-width:1150px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:30px}
-.feature-item{padding:40px;background:#f0f2f5;border-radius:24px;text-align:left;display:flex;flex-direction:column;border:2px solid transparent;transition:0.2s}
-.feature-item:hover{border-color:var(--p);background:#fff;box-shadow:0 10px 30px rgba(0,0,0,0.1)}
-.feature-item h3{font-size:1.6rem;margin:0 0 20px;color:#000;border-left:6px solid var(--p);padding-left:15px}
-.feature-item p{font-size:1rem;color:#333;margin-bottom:30px;line-height:1.8}
-.detail-link{color:var(--accent);text-decoration:underline;font-weight:bold;font-size:1rem;margin-top:auto}
+/* PWAバナー（旧コード互換用） */ #pwa-banner{display:none;position:fixed;top:65px;left:0;width:100%;background:var(--p);color:#000;padding:15px;font-weight:bold;font-size:1rem;z-index:9999;box-shadow:0 4px 15px rgba(0,0,0,0.5);cursor:pointer;text-align:center;}
 
-/* アクションエリア */
-.action-area{padding:100px 20px; width:100%; background:var(--bg); box-sizing:border-box}
-.start-btn{width:100%;max-width:400px;padding:26px;background:var(--p);color:#000;text-decoration:none;border-radius:100px;font-weight:bold;font-size:1.5rem;transition:0.3s;border:none;display:inline-block;cursor:pointer;box-shadow:0 8px 25px rgba(212,175,55,0.4)}
-.start-btn:hover{transform:scale(1.02); filter: brightness(1.1);}
+/* ヒーロー */ .hero{padding:90px 20px 70px; width:100%; box-sizing:border-box; background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%)} .badge{background:var(--p);color:#000;font-size:0.85rem;font-weight:bold;padding:7px 20px;border-radius:30px;margin-bottom:25px;display:inline-block; letter-spacing: 1px;} .logo-circle{width:115px;height:115px;border:3px solid var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 30px;box-shadow:0 0 25px rgba(212,175,55,0.3)} .logo-circle span{font-size:3.2rem;font-weight:bold;color:var(--p)} h1{font-size:clamp(2.4rem, 9vw, 3.5rem);margin:0;letter-spacing:1.5px; line-height:1.2} .credit-gold{font-size:1.5rem;color:var(--p);margin:18px 0 35px;font-weight:bold; letter-spacing: 2px;} .hero p {font-size:1.15rem; opacity:0.8; max-width: 600px; margin: 0 auto;}
 
-/* フッター・UD表記 */
-.footer-nav{margin-top:60px;display:flex;gap:25px;justify-content:center;flex-wrap:wrap;padding:0 20px 20px}
-.footer-nav a{color:#cbd5e1;font-size:0.95rem;text-decoration:underline;padding:5px}
+/* 宣伝セクション */ .promo-section{background:#ffffff;color:#1a1a1a;width:100%;padding:110px 20px;box-sizing:border-box} .section-title{font-size:2.6rem;margin-bottom:30px;font-weight:bold; letter-spacing: -0.5px;} .section-sub{color:#444;max-width:720px;margin:0 auto 70px;font-size:1.15rem; line-height: 1.8;} .feature-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));gap:35px} .feature-item{padding:45px;background:#f0f2f5;border-radius:28px;text-align:left;display:flex;flex-direction:column;border:2px solid transparent;transition:0.3s ease; height: 100%; box-sizing: border-box;} .feature-item:hover{border-color:var(--p);background:#fff;box-shadow:0 15px 40px rgba(0,0,0,0.12); transform: translateY(-5px);} .feature-item h3{font-size:1.7rem;margin:0 0 22px;color:#000;border-left:7px solid var(--p);padding-left:18px} .feature-item p{font-size:1.05rem;color:#333;margin-bottom:35px;line-height:1.9} .detail-link{color:var(--accent);text-decoration:underline;font-weight:bold;font-size:1.05rem;margin-top:auto; display: inline-block;}
 
-.ud-badge-footer {
-    display: inline-block;
-    border: 1px solid #64748b;
-    color: #94a3b8;
-    padding: 8px 20px;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    margin-top: 30px;
-    letter-spacing: 1px;
-}
+/* アクションエリア */ .action-area{padding:110px 20px; width:100%; background:var(--bg); box-sizing:border-box} .start-btn{width:100%;max-width:420px;padding:28px;background:var(--p);color:#000;text-decoration:none;border-radius:100px;font-weight:bold;font-size:1.6rem;transition:0.3s;border:none;display:inline-block;cursor:pointer;box-shadow:0 10px 30px rgba(212,175,55,0.4); letter-spacing: 1px;} .start-btn:hover{transform:scale(1.03); filter: brightness(1.1); box-shadow:0 12px 35px rgba(212,175,55,0.5);}
 
-.offline-notice{color:#d61c1c;background:#fff5f5;padding:15px;border-radius:10px;font-weight:bold;font-size:1rem;margin-bottom:40px;display:inline-block;border:2px solid #d61c1c}
+/* フッター・UD表記 */ .footer-nav{margin-top:70px;display:flex;gap:30px;justify-content:center;flex-wrap:wrap;padding:0 20px 25px} .footer-nav a{color:#cbd5e1;font-size:1rem;text-decoration:underline;padding:6px; transition: 0.2s;} .footer-nav a:hover{color:var(--p);}
 
-@media (max-width: 600px) {
-    nav { gap: 8px; }
-    nav a { font-size: 0.8rem; padding: 8px 5px; }
-    .feature-item { padding: 30px 20px; }
-}
-</style>
-</head>
-<body>
+.ud-badge-footer { display: inline-block; border: 1px solid #64748b; color: #94a3b8; padding: 10px 24px; border-radius: 6px; font-size: 0.9rem; margin-top: 35px; letter-spacing: 2px; }
 
-<nav>
-    <a href="#about">概要</a>
-    <a href="#features">機能</a>
-    <a href="#story">制作</a>
-    <a href="https://shinorail.github.io/main/contact.html">連絡窓口</a>
-</nav>
+.offline-notice{color:#d61c1c;background:#fff5f5;padding:18px 30px;border-radius:12px;font-weight:bold;font-size:1.1rem;margin-bottom:45px;display:inline-block;border:2px solid #d61c1c}
 
-<div id="pwa-banner" onclick="installPWA()">
-    ✨ ホーム画面に追加してアプリとして使用する (Install App)
+@media (max-width: 600px) { nav { gap: 10px; padding: 15px 0; } nav a { font-size: 0.85rem; padding: 8px 6px; } .feature-item { padding: 35px 25px; } .section-title { font-size: 2.1rem; } .hero { padding: 60px 20px 50px; } .start-btn { font-size: 1.4rem; padding: 24px; } } </style>
+
+</head> <body>
+
+<nav> <a href="#about">概要</a> <a href="#features">機能</a> <a href="#story">制作</a> <a href="https://shinorail.github.io/main/contact.html">連絡窓口</a> </nav>
+
+<div id="pwa-banner" onclick="installPWA()"> ✨ ホーム画面に追加してアプリとして使用する (Install App) </div>
+
+<div id="pwa-popup"> <div class="popup-content"> <img src="image/icon.png" class="popup-icon" alt="App Icon"> <div class="popup-text"> <h4>Multi-X Utility</h4> <p>ホーム画面に追加して、もっと快適に。専用アプリとして全機能がフル画面で使えます。</p> </div> </div> <div class="popup-btns"> <button class="install-now" onclick="installPWA()">今すぐ追加する</button> <button class="close-popup" onclick="document.getElementById('pwa-popup').style.display='none'">あとで</button> </div> </div>
+
+<section class="hero" id="top"> <div class="badge">2周年記念モデル</div> <div class="logo-circle"><span>信</span></div> <h1>Multi-X Utility</h1> <div class="credit-gold">制作：篠ノ井乗務区</div> <p>見やすく、使いやすく。すべての人に最適なツールを。</p> </section>
+
+<section class="promo-section" id="about"> <h2 class="section-title">日常を、精密に。</h2> <p class="section-sub">「Multi-X Utility」は、ユニバーサルデザインの考え方を取り入れ、視認性と操作性を徹底的に追求しました。誰もが迷わず、正確に、そして心地よく使えるツールを目指しています。</p>
+
+<div class="offline-notice">
+    【ご注意】本アプリは現在オンライン専用です。通信環境でご利用ください。
 </div>
 
-<section class="hero" id="top">
-    <div class="badge">2周年記念モデル</div>
-    <div class="logo-circle"><span>信</span></div>
-    <h1>Multi-X Utility</h1>
-    <div class="credit-gold">制作：篠ノ井乗務区</div>
-    <p style="font-size:1.1rem; opacity:0.8">見やすく、使いやすく。すべての人に最適なツールを。</p>
+<div class="feature-grid" id="features">
+    <div class="feature-item">
+        <div>
+            <h3>Universal Design</h3>
+            <p>読み間違えにくいUDフォントの採用や、高いコントラスト比を確保。色覚特性や年齢を問わず、多くの人が直感的に使いやすいインターフェースを制作しました。</p>
+        </div>
+        <a href="about.html" class="detail-link">デザインの詳細を確認 →</a>
+    </div>
+    <div class="feature-item">
+        <div>
+            <h3>Responsive</h3>
+            <p>スマートフォン、タブレット、PC。どんなデバイスの画面でも文字が読みやすく、ボタンが押しやすい完全レスポンシブ設計。実機テストを重ねて調整を行いました。</p>
+        </div>
+        <a href="features.html" class="detail-link">対応環境を詳しく見る →</a>
+    </div>
+    <div class="feature-item">
+        <div>
+            <h3>PWA Download</h3>
+            <p>「ホーム画面に追加」を行うことで、ブラウザの操作バーを隠し、スタンドアロンアプリとして利用可能。より広い視野でツールを快適に操作できます。</p>
+        </div>
+        <a href="about.html" class="detail-link">アプリ追加の手順 →</a>
+    </div>
+</div>
 </section>
 
-<section class="promo-section" id="about">
-    <h2 class="section-title">日常を、精密に。</h2>
-    <p class="section-sub">「Multi-X Utility」は、ユニバーサルデザインの考え方を取り入れ、視認性と操作性を追求しました。誰もが迷わず、正確に使えるツールを目指しています。</p>
-    
-    <div class="offline-notice">
-        【ご注意】本アプリは現在オンライン専用です。通信環境でご利用ください。
-    </div>
+<section class="action-area" id="story"> <div style="max-width:750px; margin:0 auto 65px; text-align:left; border-left:6px solid var(--p); padding-left:35px"> <h2 style="font-size:2.2rem; color:var(--p); margin-bottom: 20px;">制作の想い</h2> <p style="font-size:1.15rem; line-height:1.9">「誰の手の中にも、最高の道具を」。
 
-    <div class="feature-grid" id="features">
-        <div class="feature-item">
-            <div>
-                <h3>Universal Design</h3>
-                <p>読み間違えにくいUDフォントの採用や、高いコントラスト比。色覚特性や年齢を問わず、多くの人が使いやすいインターフェースを制作しました。</p>
-            </div>
-            <a href="about.html" class="detail-link">デザインの詳細 →</a>
-        </div>
-        <div class="feature-item">
-            <div>
-                <h3>Responsive</h3>
-                <p>スマホ、PC、どんな画面でも文字が読みやすく、ボタンが押しやすいレスポンシブ設計。制作における最優先事項として調整を行いました。</p>
-            </div>
-            <a href="features.html" class="detail-link">対応環境を見る →</a>
-        </div>
-        <div class="feature-item">
-            <div>
-                <h3>PWA Download</h3>
-                <p>「ホーム画面に追加」することで、ブラウザの操作バーを隠し、全画面で利用可能。より広い視野でツールを操作できます。</p>
-            </div>
-            <a href="about.html" class="detail-link">追加方法について →</a>
-        </div>
-    </div>
+
+篠ノ井乗務区がこのアプリに込めたのは、徹底した使いやすさへの誠実さです。機能が優れているだけでなく、それが正しく伝わるデザインであることを最優先に制作しました。</p> <a href="reasons.html" class="detail-link" style="color:var(--txt); margin-top: 25px;">制作ストーリーの続きを読む →</a> </div>
+
+<button class="start-btn" onclick="location.href='menu.html'">アプリを開始する (LAUNCH)</button>
+
+<div id="google_translate_element" style="margin-top:60px"></div>
+
+<div class="footer-nav">
+    <a href="about.html">アプリについて</a>
+    <a href="features.html">機能紹介</a>
+    <a href="reasons.html">制作理由</a>
+    <a href="[https://shinorail.github.io/main/contact.html](https://shinorail.github.io/main/contact.html)">お問い合わせ窓口</a>
+</div>
+
+<div class="ud-badge-footer">
+    UNIVERSAL DESIGN ADOPTED
+</div>
+
+<p style="font-size:0.95rem; color:#94a3b8; margin-top:25px">&copy; 2026 SHINONOI DEPOT. All Rights Reserved.</p>
 </section>
 
-<section class="action-area" id="story">
-    <div style="max-width:700px; margin:0 auto 60px; text-align:left; border-left:5px solid var(--p); padding-left:30px">
-        <h2 style="font-size:2rem; color:var(--p)">制作の想い</h2>
-        <p style="font-size:1.1rem; line-height:1.8">「誰の手の中にも、最高の道具を」。<br>
-        篠ノ井乗務区がこのアプリに込めたのは、徹底した使いやすさへの誠実さです。機能が優れているだけでなく、それが正しく伝わるデザインであることを大切に制作しました。</p>
-        <a href="reasons.html" class="detail-link" style="color:var(--txt)">ストーリーの続きを読む →</a>
-    </div>
+<script type="text/javascript"> function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false }, 'google_translate_element'); }
 
-    <button class="start-btn" onclick="location.href='menu.html'">アプリを開始する (LAUNCH)</button>
-    
-    <div id="google_translate_element" style="margin-top:50px"></div>
+let deferredPrompt; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; // 誘惑のポップアップを表示 setTimeout(() => { document.getElementById('pwa-popup').style.display = 'block'; }, 1500); // 少し遅れて出すのが誘惑のコツ });
 
-    <div class="footer-nav">
-        <a href="about.html">アプリについて</a>
-        <a href="features.html">機能紹介</a>
-        <a href="reasons.html">制作理由</a>
-        <a href="https://shinorail.github.io/main/contact.html">お問い合わせ窓口</a>
-    </div>
-    
-    <div class="ud-badge-footer">
-        UNIVERSAL DESIGN ADOPTED
-    </div>
-    
-    <p style="font-size:0.9rem; color:#94a3b8; margin-top:20px">&copy; 2026 SHINONOI DEPOT. All Rights Reserved.</p>
-</section>
+function installPWA() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') { document.getElementById('pwa-popup').style.display = 'none'; document.getElementById('pwa-banner').style.display = 'none'; } deferredPrompt = null; }); } else { // iPhoneなどの自動表示が効かないデバイス用 alert("ブラウザのメニューから「ホーム画面に追加」を選択してください。\nより快適にアプリをご利用いただけます。"); } }
 
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'ja',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay: false
-  }, 'google_translate_element');
-}
+// 翻訳スクリプトの読み込み </script>
 
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('pwa-banner').style.display = 'block';
-});
-
-function installPWA() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                document.getElementById('pwa-banner').style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
-    }
-}
-</script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-</body>
-</html>
+</body> </html>
