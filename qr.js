@@ -55,17 +55,25 @@ async function startScan() {
     }
 }
 
+// カメラを完全に停止して解放する
 function stopCamera() {
     if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach(track => {
+            track.stop(); // トラックを停止
+        });
         stream = null;
+    }
+    const video = document.getElementById('video');
+    if (video) {
+        video.srcObject = null; // 映像ソースを空にする
     }
     document.getElementById('v-area').style.display = 'none';
     document.getElementById('start-btn').style.display = 'block';
-    document.getElementById('scan-res').style.display = 'none';
 }
 
 function tick() {
+    if (!stream) return; // ストリームが止まっていたら中止
+
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -75,15 +83,23 @@ function tick() {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const code = jsQR(img.data, img.width, img.height);
+        
         if (code) {
             const resDiv = document.getElementById('scan-res');
-            resDiv.innerHTML = `読取成功！<br><a href="${code.data}" target="_blank" style="color:var(--p)">${code.data}</a>`;
+            resDiv.innerHTML = `読取成功！<br><a href="${code.data}" target="_blank" style="color:var(--p);font-weight:bold;">${code.data}</a>`;
             if(navigator.vibrate) navigator.vibrate(200);
+            
+            // 重要：読み取りに成功したらカメラを止めて解放する
+            stopCamera(); 
             return;
         }
     }
-    if (stream) requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
 }
+
+// ページを離れる時にカメラを確実にオフにする
+window.addEventListener('pagehide', stopCamera);
+window.addEventListener('unload', stopCamera);
 
 // 初期実行
 window.onload = () => { genQR(); };
