@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Alarm | Multi-X Utility</title>
+<style>
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box;transition: background 0.3s}
+
+@keyframes alarm-flash {
+    0% { background: #0f172a; }
+    50% { background: #7f1d1d; }
+    100% { background: #0f172a; }
+}
+.flashing { animation: alarm-flash 0.5s infinite; }
+
+.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:40px;margin-bottom:10px}
+.clock{font-size:3.8rem;font-family:monospace;margin:20px 0;color:var(--p);text-shadow:0 0 20px rgba(212,175,55,0.3)}
+
+.setup-area{width:100%;max-width:350px;background:var(--card);padding:30px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);text-align:center;border:1px solid rgba(212,175,55,0.2)}
+input[type="time"]{width:100%;background:rgba(0,0,0,0.5);border:2px solid var(--p);color:white;padding:15px;font-size:1.8rem;border-radius:15px;margin-bottom:20px;box-sizing:border-box;outline:none;font-family:monospace}
+
+.btn{width:100%;padding:20px;border-radius:15px;border:none;background:var(--p);color:#000;font-weight:bold;font-size:1.2rem;cursor:pointer;transition:0.3s}
+.btn-stop{background:#ef4444;color:white;display:none;margin-top:15px}
+
+#status{margin-top:20px;font-size:0.9rem;color:#94a3b8}
+.back-btn{margin-top:30px;color:var(--p);text-decoration:none;font-weight:bold}
+
+/* 音源クレジット */
+.sound-credit{margin-top:50px;font-size:0.7rem;color:#64748b;letter-spacing:1px}
+.sound-credit a{color:#64748b;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="credit">制作：篠ノ井乗務区</div>
+<div id="clock" class="clock">00:00:00</div>
+
+<div class="setup-area">
+    <input type="time" id="alarmTime">
+    <button id="setBtn" class="btn" onclick="setAlarm()">SET ALARM</button>
+    <button id="stopBtn" class="btn btn-stop" onclick="stopAlarm()">STOP ALARM</button>
+    <div id="status">アラーム未設定</div>
+</div>
+
+<a href="menu.html" class="back-btn">← MENU / 戻る</a>
+
+<div class="sound-credit">
+    Sound by <a href="https://otologic.jp" target="_blank">OtoLogic</a>
+</div>
+
+<audio id="alarmSound" loop preload="auto">
+    <source src="https://otologic.jp/free/se/mp3/clock01/alarm05.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let alarmTarget = null;
+const sound = document.getElementById('alarmSound');
+const statusText = document.getElementById('status');
+const stopBtn = document.getElementById('stopBtn');
+const setBtn = document.getElementById('setBtn');
+
+function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').innerText = `${h}:${m}:${s}`;
+    if (alarmTarget === `${h}:${m}`) ring();
+}
+setInterval(updateClock, 1000);
+
+function setAlarm() {
+    const input = document.getElementById('alarmTime').value;
+    if (!input) return alert("時刻を選択してください");
+    sound.play().then(() => { sound.pause(); sound.currentTime = 0; });
+    alarmTarget = input;
+    statusText.innerText = "SET: " + alarmTarget;
+}
+
+function ring() {
+    if (sound.paused) {
+        sound.play();
+        document.body.classList.add('flashing');
+        stopBtn.style.display = 'block';
+        setBtn.style.display = 'none';
+    }
+}
+
+function stopAlarm() {
+    sound.pause();
+    sound.currentTime = 0;
+    document.body.classList.remove('flashing');
+    stopBtn.style.display = 'none';
+    setBtn.style.display = 'block';
+    alarmTarget = null;
+    statusText.innerText = "STOPPED";
+}
+</script>
+</body>
+</html>
