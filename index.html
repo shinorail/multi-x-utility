@@ -3,64 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ようこそ | Multi-X Utility</title>
+<title>Multi-X Utility</title>
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="image/icon.png">
+<link rel="icon" type="image/png" href="image/icon.png">
 <style>
-:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;overflow-x:hidden;display:flex;flex-direction:column;min-height:100vh}
-.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:radial-gradient(circle at center, #1e293b 0%, #020617 100%)}
-.anniv-badge{background:var(--p);color:#000;padding:4px 12px;border-radius:50px;font-weight:bold;font-size:0.8rem;margin-bottom:15px;letter-spacing:1px}
-.logo-circle{width:100px;height:100px;background:transparent;border:2px solid var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:bold;color:var(--p);margin-bottom:20px;box-shadow:0 0 20px rgba(212,175,55,0.2);animation:float 3s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
-h1{font-size:2.5rem;margin:0;letter-spacing:1px}
-.credit{font-size:1.1rem;color:var(--p);margin:10px 0 25px;letter-spacing:3px;font-weight:bold}
-p{color:#94a3b8;font-size:0.95rem;max-width:320px;line-height:1.7;margin-bottom:40px}
-.btn-main{width:260px;padding:20px;border-radius:50px;background:var(--p);color:#000;font-size:1.1rem;font-weight:bold;text-decoration:none;transition:0.3s;box-shadow:0 10px 20px rgba(0,0,0,0.3);border:none;cursor:pointer;text-align:center}
-.btn-main:active{transform:scale(0.95)}
-#install-banner{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:90%;max-width:400px;background:#fff;color:#000;padding:15px;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:1000;animation:slideUp 0.5s ease}
-@keyframes slideUp{from{transform:translate(-50%,100%)}to{transform:translate(-50%,0)}}
-.banner-content{display:flex;align-items:center;gap:15px}
-.banner-icon{width:45px;height:45px;background:var(--bg);color:var(--p);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:bold}
-.banner-btn{background:var(--p);border:none;color:#000;padding:8px 15px;border-radius:8px;font-weight:bold;cursor:pointer}
+:root{--p:#d4af37;--bg:#0f172a;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px;box-sizing:border-box}
+
+/* PWA勧誘バナー */
+#pwa-banner{display:none;position:fixed;top:0;left:0;width:100%;background:var(--p);color:#000;padding:12px;font-weight:bold;font-size:0.85rem;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.5);cursor:pointer}
+
+.badge{background:var(--p);color:#000;font-size:0.75rem;font-weight:bold;padding:4px 15px;border-radius:20px;letter-spacing:1px;margin-bottom:20px}
+.logo-circle{width:110px;height:110px;border:2px solid var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:30px;box-shadow:0 0 15px rgba(212,175,55,0.2)}
+.logo-circle span{font-size:3rem;font-weight:bold;color:var(--p)}
+
+h1{font-size:2.8rem;margin:0;letter-spacing:1px}
+.credit-gold{font-size:1.4rem;color:var(--p);margin:10px 0 30px;font-weight:bold}
+.desc{font-size:0.95rem;color:#94a3b8;line-height:1.8;margin-bottom:30px}
+
+/* ボタン */
+.start-btn{width:100%;max-width:320px;padding:22px;background:var(--p);color:#000;text-decoration:none;border-radius:50px;font-weight:bold;font-size:1.2rem;transition:0.3s;border:none;margin-bottom:20px}
+.start-btn:active{transform:scale(0.95)}
+
+/* Google翻訳 */
+#google_translate_element{margin-bottom:30px}
+.goog-te-gadget-simple{background:transparent !important;border:1px solid #334155 !important;padding:8px !important;border-radius:10px !important}
+.goog-te-gadget-simple span{color:#94a3b8 !important}
+
+/* フッター（規約・ポリシー） */
+.footer-nav{margin-top:20px;display:flex;gap:20px}
+.footer-nav a{color:#64748b;font-size:0.75rem;text-decoration:none;border-bottom:1px solid #334155}
+
+.goog-te-banner-frame.skiptranslate {display: none !important;}
+body {top: 0px !important;}
 </style>
 </head>
 <body>
-<div class="hero">
-    <div class="anniv-badge">2nd ANNIVERSARY</div>
-    <div class="logo-circle">信</div>
-    <h1>Multi-X Utility</h1>
-    <div class="credit">制作：篠ノ井乗務区</div>
-    <p>日常の計算から運行計測まで。<br>二周年を記念して贈る、<br>特別仕様のオールインワン・アプリ。</p>
-    <a href="menu.html" class="btn-main">アプリを開始する</a>
+
+<div id="pwa-banner" onclick="installPWA()">
+    ✨ ホーム画面に追加してアプリとして使用する (Install App)
 </div>
-<div id="install-banner">
-    <div class="banner-content">
-        <div class="banner-icon">信</div>
-        <div style="flex:1">
-            <div style="font-weight:bold;font-size:0.9rem">Multi-X Utility</div>
-            <div style="font-size:0.7rem;color:#666">ホーム画面に追加して便利に使う</div>
-        </div>
-        <button class="banner-btn" onclick="pInstall()">追加</button>
-    </div>
+
+<div class="badge">2nd ANNIVERSARY</div>
+
+<div class="logo-circle">
+    <span>信</span>
 </div>
-<script>
-if ('serviceWorker' in navigator) {navigator.serviceWorker.register('sw.js');}
-let defP;
-const bnr = document.getElementById('install-banner');
+
+<h1>Multi-X Utility</h1>
+<div class="credit-gold">制作：篠ノ井乗務区</div>
+
+<div class="desc">
+    日常の計算から運行計測まで。<br>
+    二周年を記念して贈る、<br>
+    特別仕様のオールインワン・アプリ。
+</div>
+
+<div id="google_translate_element"></div>
+
+<button class="start-btn" onclick="location.href='menu.html'">アプリを開始する</button>
+
+<div class="footer-nav">
+    <a href="terms.html">利用規約 (Terms)</a>
+    <a href="privacy.html">プライバシーポリシー (Privacy)</a>
+</div>
+
+<script type="text/javascript">
+// Google翻訳の初期化
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'ja',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+
+// PWAインストールの制御
+let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
-    defP = e;
-    bnr.style.display = 'block';
+    deferredPrompt = e;
+    document.getElementById('pwa-banner').style.display = 'block';
 });
-async function pInstall() {
-    if (defP) {
-        defP.prompt();
-        const { outcome } = await defP.userChoice;
-        if (outcome === 'accepted') { bnr.style.display = 'none'; }
-        defP = null;
+
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                document.getElementById('pwa-banner').style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
     }
 }
-window.addEventListener('appinstalled', () => { bnr.style.display = 'none'; });
 </script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
