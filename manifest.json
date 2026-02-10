@@ -2,7 +2,7 @@
   "name": "Multi-X Utility",
   "short_name": "Multi-X",
   "description": "制作：篠ノ井乗務区 二周年特別版",
-  "start_url": "index.html",
+  "start_url": "menu.html",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#d4af37",
