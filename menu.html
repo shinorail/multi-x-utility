@@ -23,6 +23,9 @@ header{padding:40px 20px;text-align:center}
 .item-desc{font-size:0.8rem;color:#94a3b8}
 .arrow{color:var(--p);font-weight:bold;font-size:1.2rem}
 
+/* 限定機能用特別スタイル */
+.item-special{border:2px solid var(--p);background:rgba(212,175,55,0.05);border-left:6px solid var(--p)}
+
 .news-section{width:92%;max-width:480px;background:rgba(255,255,255,0.05);border-radius:20px;padding:20px;margin-bottom:30px;box-sizing:border-box;border:1px solid #334155}
 .news-title{font-size:0.9rem;color:var(--p);font-weight:bold;margin-bottom:15px}
 .news-item{font-size:0.85rem;color:#cbd5e1;padding:10px 0;display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
@@ -58,6 +61,14 @@ body {top: 0px !important;}
     <a href="pass.html" class="item"><div class="item-text"><span class="item-title">パスワード作成（暗証番号を作る）</span><span class="item-desc">安全な文字列生成</span></div><div class="arrow">＞</div></a>
     <a href="qr.html" class="item"><div class="item-text"><span class="item-title">QRコード作成（画像作成）</span><span class="item-desc">URLや文字を画像に変換</span></div><div class="arrow">＞</div></a>
     <a href="level.html" class="item"><div class="item-text"><span class="item-title">水平器（傾きを調べる）</span><span class="item-desc">スマホで角度や水平を測定</span></div><div class="arrow">＞</div></a>
+    
+    <a href="gate-with-id.html" class="item item-special">
+        <div class="item-text">
+            <span class="item-title" style="color:var(--p)">先行体験ゲート 🔒</span>
+            <span class="item-desc">公式QRをスキャンして限定機能を解放</span>
+        </div>
+        <div class="arrow">＞</div>
+    </a>
 </div>
 
 <div class="news-section">
@@ -85,6 +96,7 @@ async function loadNews() {
         const response = await fetch('news.md');
         const text = await response.text();
         const list = document.getElementById('news-list');
+        list.innerHTML = ""; // 初期化
         text.trim().split('\n').forEach(line => {
             const parts = line.split('|');
             if(parts.length >= 2) {
@@ -100,7 +112,13 @@ async function loadNews() {
 // シェア機能
 async function shareApp() {
     const url = window.location.href.replace('menu.html', 'index.html');
-    if (navigator.share) { await navigator.share({title: 'Multi-X Utility', url: url}); }
+    if (navigator.share) { 
+        try {
+            await navigator.share({title: 'Multi-X Utility', url: url}); 
+        } catch (err) {
+            console.log("Share failed");
+        }
+    }
 }
 
 // PWA勧誘
