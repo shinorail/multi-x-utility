@@ -19,16 +19,27 @@ input[type="time"]{width:100%;background:rgba(0,0,0,0.5);border:2px solid var(--
 .back-btn{margin-top:30px;color:var(--p);text-decoration:none;font-weight:bold}
 .sound-credit{margin-top:50px;font-size:0.7rem;color:#64748b;letter-spacing:1px}
 .sound-credit a{color:#64748b;text-decoration:none}
+
+/* 許可ダイアログ */
+#permission-dialog{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--p);padding:25px;border-radius:20px;z-index:1000;text-align:center;width:80%;max-width:300px}
+#overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:999}
 </style>
 </head>
 <body>
+
+<div id="overlay"></div>
+<div id="permission-dialog">
+    <p style="font-weight:bold">アラームを有効にしますか？</p>
+    <p style="font-size:0.8rem">音を鳴らすためにブラウザの許可が必要です。</p>
+    <button class="btn" onclick="grantAudio()" style="padding:10px">許可する / ALLOW</button>
+</div>
 
 <div class="credit">制作：篠ノ井乗務区</div>
 <div id="clock" class="clock">00:00:00</div>
 
 <div class="setup-area">
     <input type="time" id="alarmTime">
-    <button id="setBtn" class="btn" onclick="setAlarm()">SET ALARM</button>
+    <button id="setBtn" class="btn" onclick="askPermission()">SET ALARM</button>
     <button id="stopBtn" class="btn btn-stop" onclick="stopAlarm()">STOP ALARM</button>
     <div id="status">アラーム未設定</div>
 </div>
