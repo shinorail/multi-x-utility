@@ -1,50 +1,53 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>QR作成 | Multi-X Utility</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="image/icon.png">
-<link rel="icon" type="image/png" href="image/icon.png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>
-:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh}
-.credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center}
-.cont{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;gap:20px}
-input{width:100%;max-width:400px;padding:15px;border-radius:10px;border:1px solid #334155;background:var(--card);color:white;font-size:1rem;box-sizing:border-box}
-#qrcode{background:white;padding:15px;border-radius:10px;margin-top:20px}
-.nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155}
-.nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center}
-</style>
-</head>
-<body>
-<div class="credit">制作：篠ノ井乗務区 二周年記念</div>
-<div class="cont">
-    <input type="text" id="text" placeholder="URLや文字を入力してください" oninput="gen()">
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>QRツール | Multi-X Utility</title> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script> <style> :root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc} body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh} .credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center} .cont{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;gap:15px}
+
+/* タブ切り替え */ .tabs{display:flex;width:100%;max-width:400px;background:var(--card);border-radius:12px;padding:5px;margin-bottom:10px} .tab{flex:1;padding:10px;text-align:center;cursor:pointer;border-radius:8px;font-size:0.9rem;font-weight:bold;color:#94a3b8} .tab.active{background:var(--p);color:#000}
+
+.panel{display:none;width:100%;max-width:400px;flex-direction:column;align-items:center;gap:15px} .panel.active{display:flex}
+
+/* 作成用 */ input{width:100%;padding:15px;border-radius:10px;border:1px solid #334155;background:var(--card);color:white;font-size:1rem;box-sizing:border-box} #qrcode{background:white;padding:15px;border-radius:10px;margin-top:10px}
+
+/* スキャン用 */ #v-area{width:100%;aspect-ratio:1;background:#000;border-radius:15px;overflow:hidden;border:2px solid var(--p);position:relative} video{width:100%;height:100%;object-fit:cover} .scan-line{position:absolute;top:0;left:0;width:100%;height:2px;background:var(--p);box-shadow:0 0 10px var(--p);animation:scan 2s infinite linear} @keyframes scan{0%{top:0%}100%{top:100%}} #scan-res{width:100%;padding:15px;background:var(--card);border-radius:10px;font-size:0.9rem;word-break:break-all;border:1px solid #334155;min-height:50px}
+
+.nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155} .nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center} </style>
+
+</head> <body> <div class="credit">制作：篠ノ井乗務区 二周年記念</div>
+
+<div class="cont"> <div class="tabs"> <div class="tab active" onclick="swTab('gen')">QR作成</div> <div class="tab" onclick="swTab('scan')">QR読取</div> </div>
+
+<div id="panel-gen" class="panel active">
+    <input type="text" id="text" placeholder="URLや文字を入力してください" oninput="genQR()">
     <div id="qrcode"></div>
-    <p style="font-size:0.8rem;color:#94a3b8">入力すると自動でQRコードが更新されます</p>
+    <p style="font-size:0.8rem;color:#94a3b8">入力すると自動で更新されます</p>
 </div>
-<nav class="nav">
-    <a href="menu.html"><span>🏠</span>ホーム</a>
-    <a href="calc.html"><span>🔢</span>計算機</a>
-    <a href="timer.html"><span>⌛</span>タイマー</a>
-    <a href="qr.html" style="color:var(--p)"><span>🔳</span>QR作成</a>
-</nav>
-<script>
-let qrcode = new QRCode(document.getElementById("qrcode"), { width: 200, height: 200 });
-function gen(){
-    let t = document.getElementById("text").value;
-    if(t) { qrcode.makeCode(t); }
-}
-if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
-    const b = document.createElement('div');
-    b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:sticky;top:0;z-index:9999;width:100%";
-    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう";
-    b.onclick = () => { window.location.href = 'index.html'; };
-    document.body.prepend(b);
-}
-</script>
-</body>
-</html>
+
+<div id="panel-scan" class="panel">
+    <div id="v-area">
+        <video id="video" playsinline></video>
+        <div class="scan-line"></div>
+    </div>
+    <div id="scan-res">結果がここに表示されます</div>
+    <button id="start-btn" class="btn" onclick="startScan()" style="background:var(--p);border:none;padding:15px;width:100%;border-radius:10px;font-weight:bold;cursor:pointer">カメラを起動</button>
+</div>
+</div>
+
+<nav class="nav"> <a href="menu.html"><span>🏠</span>ホーム</a> <a href="calc.html"><span>🔢</span>計算機</a> <a href="timer.html"><span>⌛</span>タイマー</a> <a href="qr.html" style="color:var(--p)"><span>🔳</span>QRツール</a> </nav>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script> // 作成機能 let qrcode = new QRCode(document.getElementById("qrcode"), { width: 200, height: 200 }); function genQR(){ let t = document.getElementById("text").value; if(t) { qrcode.makeCode(t); } }
+
+// タブ切り替え function swTab(type){ document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); if(type === 'gen'){ document.querySelectorAll('.tab')[0].classList.add('active'); document.getElementById('panel-gen').classList.add('active'); stopCamera(); } else { document.querySelectorAll('.tab')[1].classList.add('active'); document.getElementById('panel-scan').classList.add('active'); } }
+
+// スキャン機能 const video = document.getElementById('video'); const resDiv = document.getElementById('scan-res'); const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); let stream = null;
+
+async function startScan() { try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); video.srcObject = stream; video.play(); document.getElementById('start-btn').style.display = 'none'; requestAnimationFrame(tick); } catch (err) { resDiv.innerText = "カメラを起動できませんでした"; } }
+
+function stopCamera() { if (stream) { stream.getTracks().forEach(track => track.stop()); document.getElementById('start-btn').style.display = 'block'; } }
+
+function tick() { if (video.readyState === video.HAVE_ENOUGH_DATA) { canvas.height = video.videoHeight; canvas.width = video.videoWidth; ctx.drawImage(video, 0, 0, canvas.width, canvas.height); const img = ctx.getImageData(0, 0, canvas.width, canvas.height); const code = jsQR(img.data, img.width, img.height); if (code) { resDiv.innerHTML = 読み取り成功！<br>&lt;a href=&quot;${code.data}&quot; target=&quot;_blank&quot; style=&quot;color:var(--p)&quot;&gt;${code.data}&lt;/a&gt;; if(navigator.vibrate) navigator.vibrate(200); // 連続読み取りを防ぐ場合はここで止める } } if (document.getElementById('panel-scan').classList.contains('active')) { requestAnimationFrame(tick); } }
+
+// PWAバナー if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) { const b = document.createElement('div'); b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:sticky;top:0;z-index:9999;width:100%"; b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう"; b.onclick = () => { window.location.href = 'index.html'; }; document.body.prepend(b); } </script>
+
+</body> </html>
