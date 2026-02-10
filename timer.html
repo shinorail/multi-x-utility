@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="image/icon.png">
 <style>
 :root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;height:100vh;display:flex;flex-direction:column;align-items:center}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;overflow:hidden}
 .credit-header{font-size:0.75rem;color:var(--p);padding:15px;letter-spacing:1px;font-weight:bold}
 .cont{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:20px;box-sizing:border-box}
 .time-disp{font-size:5.5rem;font-family:monospace;color:var(--p);margin-bottom:30px;text-shadow:0 0 20px rgba(212,175,55,0.3)}
@@ -21,7 +21,7 @@ button{padding:20px;border-radius:15px;border:none;font-size:1.1rem;font-weight:
 .btn-start{background:var(--p);color:#000;grid-column:span 2}
 .btn-stop{background:#4b5563;color:white}
 .btn-reset{background:#941717;color:white}
-button:active{transform:scale(0.96)}
+button:disabled{opacity:0.5;cursor:not-allowed}
 .nav{width:100%;height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155}
 .nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center}
 </style>
@@ -31,13 +31,13 @@ button:active{transform:scale(0.96)}
 <div class="cont">
     <div id="disp" class="time-disp">00:00</div>
     <div class="input-group" id="in-area">
-        <input type="number" id="m" placeholder="分" min="0" max="99">
+        <input type="number" id="m" placeholder="分" min="0" max="99" inputmode="numeric">
         <span>分</span>
-        <input type="number" id="s" placeholder="秒" min="0" max="59">
+        <input type="number" id="s" placeholder="秒" min="0" max="59" inputmode="numeric">
         <span>秒</span>
     </div>
     <div class="btn-grid">
-        <button id="main-btn" class="btn-start" onclick="toggleT()">計測開始</button>
+        <button id="main-btn" class="btn-start" onclick="startT()">計測開始</button>
         <button class="btn-stop" onclick="stopT()">停止</button>
         <button class="btn-reset" onclick="resetT()">リセット</button>
     </div>
@@ -48,57 +48,83 @@ button:active{transform:scale(0.96)}
     <a href="timer.html" style="color:var(--p)"><span>⌛</span>タイマー</a>
     <a href="sw.html"><span>⏱️</span>計測</a>
 </nav>
+
 <script>
-let timer;
+let timerId = null;
+
 function update() {
-    let end = localStorage.getItem('t_end');
-    if (!end) return;
-    let remain = Math.ceil((end - Date.now()) / 1000);
+    const endTime = localStorage.getItem('t_end');
+    if (!endTime) {
+        clearInterval(timerId);
+        timerId = null;
+        return;
+    }
+
+    const remain = Math.ceil((parseInt(endTime) - Date.now()) / 1000);
+
     if (remain <= 0) {
         stopT();
         document.getElementById('disp').innerText = "00:00";
-        localStorage.removeItem('t_end');
-        alert("タイマーが終了しました");
+        // ブラウザ版でも確実に気づくように通知
+        alert("タイマー終了 / Timer Finished");
     } else {
-        let min = Math.floor(remain / 60).toString().padStart(2, '0');
-        let sec = (remain % 60).toString().padStart(2, '0');
-        document.getElementById('disp').innerText = `${min}:${sec}`;
+        const min = Math.floor(remain / 60).toString().padStart(2, '0');
+        const sec = (remain % 60).toString().padStart(2, '0');
+        document.getElementById('disp').innerText = min + ":" + sec;
+        document.getElementById('in-area').style.opacity = "0.2";
+        document.getElementById('main-btn').disabled = true;
     }
 }
-function toggleT() {
-    let min = parseInt(document.getElementById('m').value) || 0;
-    let sec = parseInt(document.getElementById('s').value) || 0;
-    let totalSec = (min * 60) + sec;
-    if (totalSec <= 0) return;
-    let endTime = Date.now() + (totalSec * 1000);
+
+function startT() {
+    const minInput = document.getElementById('m').value;
+    const secInput = document.getElementById('s').value;
+    
+    const min = parseInt(minInput) || 0;
+    const sec = parseInt(secInput) || 0;
+    const totalSec = (min * 60) + sec;
+
+    if (totalSec <= 0) {
+        alert("時間を入力してください");
+        return;
+    }
+
+    const endTime = Date.now() + (totalSec * 1000);
     localStorage.setItem('t_end', endTime);
-    clearInterval(timer);
-    timer = setInterval(update, 1000);
-    document.getElementById('in-area').style.opacity = "0.3";
+    
+    if (timerId) clearInterval(timerId);
+    timerId = setInterval(update, 1000);
+    update(); // 即時反映
 }
+
 function stopT() {
-    clearInterval(timer);
+    clearInterval(timerId);
+    timerId = null;
     localStorage.removeItem('t_end');
     document.getElementById('in-area').style.opacity = "1";
+    document.getElementById('main-btn').disabled = false;
 }
+
 function resetT() {
     stopT();
     document.getElementById('disp').innerText = "00:00";
     document.getElementById('m').value = "";
     document.getElementById('s').value = "";
 }
-if (localStorage.getItem('t_end')) {
-    timer = setInterval(update, 100);
-    document.getElementById('in-area').style.opacity = "0.3";
-}
-// 誘導バナー
-if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
-    const b = document.createElement('div');
-    b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:fixed;top:0;left:0;z-index:9999;width:100%";
-    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう";
-    b.onclick = () => { window.location.href = 'index.html'; };
-    document.body.prepend(b);
+
+// ページ読み込み時にストレージをチェックして自動再開
+window.onload = function() {
+    if (localStorage.getItem('t_end')) {
+        update(); 
+        timerId = setInterval(update, 1000);
+    }
+};
+
+// 翻訳用（Google翻訳の反映を待つための設定）
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'ja'}, 'google_translate_element');
 }
 </script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
