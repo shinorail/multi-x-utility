@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>パスワード作成 | Multi-X Utility</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="image/icon.png">
+<link rel="icon" type="image/png" href="image/icon.png">
+<style>
+:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh}
+.credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center}
+.cont{flex:1;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+#res{background:#000;padding:20px;width:90%;max-width:400px;border-radius:10px;font-family:monospace;font-size:1.5rem;text-align:center;color:var(--p);word-break:break-all;border:1px solid var(--p)}
+.controls{width:90%;max-width:400px;background:var(--card);padding:20px;border-radius:15px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+button{width:100%;padding:18px;border-radius:50px;border:none;background:var(--p);color:#000;font-weight:bold;font-size:1.1rem;cursor:pointer}
+button:active{transform:scale(0.98)}
+.nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155}
+.nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center}
+</style>
+</head>
+<body>
+<div class="credit">制作：篠ノ井乗務区 二周年記念</div>
+<div class="cont">
+    <div id="res">生成ボタンを押してください</div>
+    <div class="controls">
+        <div class="row"><label>長さ (8-32)</label><input type="number" id="len" value="12" min="8" max="32" style="width:60px;padding:5px"></div>
+        <button onclick="gen()">新しいパスワードを作成</button>
+    </div>
+</div>
+<nav class="nav">
+    <a href="menu.html"><span>🏠</span>ホーム</a>
+    <a href="calc.html"><span>🔢</span>計算機</a>
+    <a href="timer.html"><span>⌛</span>タイマー</a>
+    <a href="pass.html" style="color:var(--p)"><span>🔑</span>作成</a>
+</nav>
+<script>
+function gen(){
+    const l = document.getElementById('len').value;
+    const c = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let r = "";
+    for(let i=0; i<l; i++) r += c.charAt(Math.floor(Math.random()*c.length));
+    document.getElementById('res').innerText = r;
+}
+if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
+    const b = document.createElement('div');
+    b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:sticky;top:0;z-index:9999;width:100%";
+    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう";
+    b.onclick = () => { window.location.href = 'index.html'; };
+    document.body.prepend(b);
+}
+</script>
+</body>
+</html>
