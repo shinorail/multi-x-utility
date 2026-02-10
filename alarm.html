@@ -27,7 +27,6 @@ input[type="time"]{width:100%;background:rgba(0,0,0,0.5);border:2px solid var(--
 #status{margin-top:20px;font-size:0.9rem;color:#94a3b8}
 .back-btn{margin-top:30px;color:var(--p);text-decoration:none;font-weight:bold}
 
-/* 音源クレジット */
 .sound-credit{margin-top:50px;font-size:0.7rem;color:#64748b;letter-spacing:1px}
 .sound-credit a{color:#64748b;text-decoration:none}
 </style>
@@ -56,6 +55,7 @@ input[type="time"]{width:100%;background:rgba(0,0,0,0.5);border:2px solid var(--
 
 <script>
 let alarmTarget = null;
+let isRinging = false;
 const sound = document.getElementById('alarmSound');
 const statusText = document.getElementById('status');
 const stopBtn = document.getElementById('stopBtn');
@@ -67,25 +67,40 @@ function updateClock() {
     const m = String(now.getMinutes()).padStart(2, '0');
     const s = String(now.getSeconds()).padStart(2, '0');
     document.getElementById('clock').innerText = `${h}:${m}:${s}`;
-    if (alarmTarget === `${h}:${m}`) ring();
+    
+    // 秒が00の時だけ判定を行う（負荷軽減と重複防止）
+    if (alarmTarget === `${h}:${m}` && !isRinging) {
+        ring();
+    }
 }
 setInterval(updateClock, 1000);
 
 function setAlarm() {
     const input = document.getElementById('alarmTime').value;
     if (!input) return alert("時刻を選択してください");
-    sound.play().then(() => { sound.pause(); sound.currentTime = 0; });
-    alarmTarget = input;
-    statusText.innerText = "SET: " + alarmTarget;
+
+    // 【重要】ボタンを押した瞬間に「無音で一度再生」して、ブラウザの再生制限を解除する
+    sound.play().then(() => {
+        sound.pause();
+        sound.currentTime = 0;
+        alarmTarget = input;
+        statusText.innerText = "SET: " + alarmTarget;
+        statusText.style.color = "var(--p)";
+    }).catch(e => {
+        alert("音源の準備に失敗しました。ページを再読み込みしてください。");
+    });
 }
 
 function ring() {
-    if (sound.paused) {
-        sound.play();
-        document.body.classList.add('flashing');
-        stopBtn.style.display = 'block';
-        setBtn.style.display = 'none';
-    }
+    isRinging = true;
+    sound.play().catch(e => {
+        // 万が一自動再生が拒否された場合は画面クリックで鳴るように予備動作
+        console.log("Auto-play blocked. Waiting for interaction.");
+    });
+    document.body.classList.add('flashing');
+    stopBtn.style.display = 'block';
+    setBtn.style.display = 'none';
+    statusText.innerText = "⏰ TIME UP!!";
 }
 
 function stopAlarm() {
@@ -95,7 +110,9 @@ function stopAlarm() {
     stopBtn.style.display = 'none';
     setBtn.style.display = 'block';
     alarmTarget = null;
+    isRinging = false;
     statusText.innerText = "STOPPED";
+    statusText.style.color = "#94a3b8";
 }
 </script>
 </body>
