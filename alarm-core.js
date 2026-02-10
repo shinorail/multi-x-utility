@@ -1,64 +1,71 @@
 let alarmTarget = null;
 let isRinging = false;
+let isAudioUnlocked = false; // 音がアンロックされたか
 const sound = document.getElementById('alarmSound');
 const statusText = document.getElementById('status');
 const stopBtn = document.getElementById('stopBtn');
 const setBtn = document.getElementById('setBtn');
+const dialog = document.getElementById('permission-dialog');
+const overlay = document.getElementById('overlay');
 
-// 時計の更新とアラーム判定
 function updateClock() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
     const m = String(now.getMinutes()).padStart(2, '0');
     const s = String(now.getSeconds()).padStart(2, '0');
     
-    const clockElement = document.getElementById('clock');
-    if (clockElement) {
-        clockElement.innerText = `${h}:${m}:${s}`;
-    }
+    document.getElementById('clock').innerText = `${h}:${m}:${s}`;
 
-    // 秒が00のタイミングで判定
-    if (alarmTarget === `${h}:${m}` && !isRinging) {
+    if (alarmTarget === `${h}:${m}` && !isRinging && isAudioUnlocked) {
         ring();
     }
 }
-
-// 1秒ごとに実行
 setInterval(updateClock, 1000);
 
-// アラーム設定
-function setAlarm() {
-    const input = document.getElementById('alarmTime');
-    if (!input || !input.value) {
-        alert("時刻を正しく選択してください");
-        return;
+// 1. 設定ボタンを押した時に許可ダイアログを表示
+function askPermission() {
+    const input = document.getElementById('alarmTime').value;
+    if (!input) return alert("時刻を選択してください");
+    
+    if (!isAudioUnlocked) {
+        overlay.style.display = 'block';
+        dialog.style.display = 'block';
+    } else {
+        saveAlarm(input);
     }
+}
 
-    // ブラウザの再生制限を解除するためのダミー再生
+// 2. ダイアログで「許可」を押した瞬間に音をアンロック
+function grantAudio() {
     sound.play().then(() => {
         sound.pause();
         sound.currentTime = 0;
+        isAudioUnlocked = true;
+        overlay.style.display = 'none';
+        dialog.style.display = 'none';
         
-        alarmTarget = input.value;
-        statusText.innerText = "SET: " + alarmTarget;
-        statusText.style.color = "var(--p)";
-    }).catch(err => {
-        console.error("Audio access error:", err);
-        alert("音声の準備ができませんでした。画面を一度クリックしてから再度お試しください。");
+        const input = document.getElementById('alarmTime').value;
+        saveAlarm(input);
+    }).catch(e => {
+        alert("許可に失敗しました。もう一度お試しください。");
     });
 }
 
-// 鳴動処理
+function saveAlarm(time) {
+    alarmTarget = time;
+    statusText.innerText = "SET: " + alarmTarget;
+    statusText.style.color = "var(--p)";
+}
+
 function ring() {
     isRinging = true;
-    sound.play().catch(e => console.log("Play failed:", e));
+    sound.play();
     document.body.classList.add('flashing');
     stopBtn.style.display = 'block';
     setBtn.style.display = 'none';
     statusText.innerText = "⏰ TIME UP!!";
 }
 
-// 停止処理
 function stopAlarm() {
     sound.pause();
     sound.currentTime = 0;
@@ -68,5 +75,4 @@ function stopAlarm() {
     alarmTarget = null;
     isRinging = false;
     statusText.innerText = "STOPPED";
-    statusText.style.color = "#94a3b8";
 }
