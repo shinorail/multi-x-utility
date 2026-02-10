@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch | Multi-X Utility</title>
+<style>
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+.container{width:92%;max-width:480px;text-align:center;padding-top:50px}
+.display{font-size:4rem;font-family:monospace;margin:40px 0;color:var(--p);text-shadow:0 0 20px rgba(212,175,55,0.3)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:30px}
+button{padding:20px;border-radius:15px;border:none;font-weight:bold;font-size:1.1rem;cursor:pointer;transition:0.2s}
+.btn-start{background:var(--p);color:#000}
+.btn-stop{background:#ef4444;color:#fff}
+.btn-lap{background:#334155;color:#fff}
+.btn-reset{background:#64748b;color:#fff}
+.laps{background:var(--card);border-radius:20px;padding:10px;max-height:300px;overflow-y:auto;text-align:left}
+.lap-item{padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between}
+.back-btn{margin-top:30px;color:var(--p);text-decoration:none;display:block}
+</style>
+</head>
+<body>
+<div class="container">
+    <div style="color:var(--p);font-weight:bold;letter-spacing:2px">STOPWATCH</div>
+    <div class="display" id="display">00:00:00.00</div>
+    <div class="controls">
+        <button id="startStopBtn" class="btn-start" onclick="startStop()">START</button>
+        <button class="btn-lap" onclick="lap()">LAP</button>
+        <button class="btn-reset" onclick="reset()">RESET</button>
+        <a href="menu.html" style="grid-column: span 1; display:flex; align-items:center; justify-content:center;" class="btn-lap">戻る</a>
+    </div>
+    <div class="laps" id="laps"></div>
+</div>
+<script src="sw.js"></script>
+</body>
+</html>
