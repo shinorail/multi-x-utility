@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>単位変換 | Multi-X Utility</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="image/icon.png">
+<link rel="icon" type="image/png" href="image/icon.png">
+<style>
+:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh}
+.credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center;letter-spacing:2px}
+.cont{flex:1;padding:20px;display:flex;flex-direction:column;gap:20px;max-width:500px;margin:0 auto;width:100%;box-sizing:border-box}
+.card{background:var(--card);padding:20px;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.3)}
+h3{margin:0 0 15px 0;font-size:1rem;color:var(--p);border-bottom:1px solid #334155;padding-bottom:5px}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+input{flex:1;padding:12px;border-radius:8px;border:1px solid #334155;background:var(--bg);color:white;font-size:1.1rem}
+label{width:80px;font-size:0.9rem;font-weight:bold}
+.nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155}
+.nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center}
+</style>
+</head>
+<body>
+<div class="credit">制作：篠ノ井乗務区 二周年記念</div>
+<div class="cont">
+    <div class="card">
+        <h3>長さ（センチ ⇄ インチ）</h3>
+        <div class="row"><label>センチ</label><input type="number" id="cm" oninput="conv('cm')"></div>
+        <div class="row"><label>インチ</label><input type="number" id="inch" oninput="conv('inch')"></div>
+    </div>
+    <div class="card">
+        <h3>重さ（キロ ⇄ ポンド）</h3>
+        <div class="row"><label>キロ</label><input type="number" id="kg" oninput="conv('kg')"></div>
+        <div class="row"><label>ポンド</label><input type="number" id="lb" oninput="conv('lb')"></div>
+    </div>
+    <div class="card">
+        <h3>温度（摂氏 ⇄ 華氏）</h3>
+        <div class="row"><label>℃ (摂氏)</label><input type="number" id="c" oninput="conv('c')"></div>
+        <div class="row"><label>℉ (華氏)</label><input type="number" id="f" oninput="conv('f')"></div>
+    </div>
+</div>
+<nav class="nav">
+    <a href="menu.html"><span>🏠</span>ホーム</a>
+    <a href="calc.html"><span>🔢</span>計算機</a>
+    <a href="timer.html"><span>⌛</span>タイマー</a>
+    <a href="convert.html" style="color:var(--p)"><span>⚖️</span>変換</a>
+</nav>
+<script>
+function conv(type){
+    const v = (id) => parseFloat(document.getElementById(id).value);
+    const s = (id, val) => document.getElementById(id).value = val.toFixed(2);
+    if(type=='cm') s('inch', v('cm') / 2.54);
+    if(type=='inch') s('cm', v('inch') * 2.54);
+    if(type=='kg') s('lb', v('kg') * 2.2046);
+    if(type=='lb') s('kg', v('lb') / 2.2046);
+    if(type=='c') s('f', (v('c') * 9/5) + 32);
+    if(type=='f') s('c', (v('f') - 32) * 5/9);
+}
+if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
+    const b = document.createElement('div');
+    b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:sticky;top:0;z-index:9999;width:100%";
+    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう";
+    b.onclick = () => { window.location.href = 'index.html'; };
+    document.body.prepend(b);
+}
+</script>
+</body>
+</html>
