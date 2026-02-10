@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSS Feed | Multi-X Utility</title>
+<style>
+:root{
+    --p:#d4af37;
+    --bg:#0f172a;
+    --card:#1e293b;
+    --txt:#f8fafc;
+    --ud-font: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+}
+body{
+    font-family: var(--ud-font);
+    background-color: var(--bg);
+    color: var(--txt);
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.8;
+}
+.container{
+    max-width: 600px;
+    width: 100%;
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(212,175,55,0.3);
+}
+h1{ color: var(--p); border-bottom: 2px solid var(--p); padding-bottom: 10px; }
+.url-box{
+    background: #000;
+    padding: 15px;
+    border-radius: 10px;
+    word-break: break-all;
+    font-family: monospace;
+    color: #00ff00;
+    margin: 20px 0;
+    border: 1px solid #333;
+}
+.btn{
+    display: inline-block;
+    background: var(--p);
+    color: #000;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.back-link{
+    margin-top: 30px;
+    color: var(--txt);
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>RSS配信について</h1>
+    <p>Multi-X Utilityの最新アップデート情報をRSS 2.0形式で配信しています。お手持ちのRSSリーダーに以下のURLを登録してください。</p>
+    
+    <div class="url-box" id="rss-url">https://shinorail.github.io/multi-x-utility/rss.xml</div>
+    
+    <button class="btn" onclick="copyURL()">URLをコピーする</button>
+    
+    <div style="margin-top:30px;">
+        <h3>主な配信内容</h3>
+        <ul>
+            <li>新機能の追加・アップデート情報</li>
+            <li>メンテナンス・仕様変更のお知らせ</li>
+            <li>篠ノ井乗務区からの重要なお知らせ</li>
+        </ul>
+    </div>
+</div>
+
+<a href="index.html" class="back-link">トップページに戻る</a>
+
+<script>
+function copyURL() {
+    const url = document.getElementById('rss-url').innerText;
+    navigator.clipboard.writeText(url).then(() => {
+        alert("RSS URLをコピーしました！");
+    });
+}
+</script>
+
+</body>
+</html>
