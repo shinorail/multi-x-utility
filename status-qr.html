@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>QR Status | Multi-X</title> <style> :root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc;--ok:#22c55e;--warn:#eab308;--err:#ef4444} body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;padding:20px;display:flex;flex-direction:column;align-items:center;min-height:100vh} .container{width:100%;max-width:400px;display:flex;flex-direction:column;gap:15px} .header-label{font-size:0.7rem;color:var(--p);text-align:center;letter-spacing:4px;margin-bottom:5px;font-weight:bold}
+
+/* メインステータス */ .status-card{background:var(--card);padding:35px 20px;border-radius:24px;text-align:center;border:1px solid #334155;box-shadow:0 10px 40px rgba(0,0,0,0.6);position:relative} .status-indicator{width:12px;height:12px;background:var(--ok);border-radius:50%;margin:0 auto 15px;box-shadow:0 0 15px var(--ok);animation:pulse 2s infinite} @keyframes pulse{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}
+
+.main-msg{font-size:1.5rem;font-weight:bold;display:block;margin-bottom:8px;letter-spacing:-0.5px} .sub-msg{font-size:0.85rem;color:#94a3b8;line-height:1.5}
+
+/* 個別チェック項目 */ .check-list{background:rgba(255,255,255,0.03);border-radius:18px;padding:8px;margin-top:10px} .check-item{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid rgba(255,255,255,0.05)} .check-item:last-child{border-bottom:none} .check-name{font-size:0.85rem;font-weight:bold} .check-val{font-size:0.75rem;font-weight:bold;display:flex;align-items:center;gap:6px} .dot-s{width:6px;height:6px;background:var(--ok);border-radius:50%}
+
+/* 更新履歴 */ .history{font-size:0.75rem;color:#64748b;padding:15px;background:rgba(0,0,0,0.2);border-radius:12px;line-height:1.6} .history-t{color:var(--p);font-weight:bold;display:block;margin-bottom:5px;font-size:0.7rem;text-transform:uppercase}
+
+.btn-back{margin-top:20px;color:var(--p);text-decoration:none;font-size:0.85rem;font-weight:bold;border:1px solid var(--p);padding:12px;width:100%;border-radius:12px;text-align:center;box-sizing:border-box;transition:0.2s} .btn-back:active{background:var(--p);color:#000} </style>
+
+</head> <body>
+
+<div class="container"> <div class="header-label">SYSTEM MONITOR</div>
+
+<div class="status-card">
+    <div id="main-dot" class="status-indicator"></div>
+    <span id="main-text" class="main-msg">QR Operational</span>
+    <span id="sub-text" class="sub-msg">QRシステムのすべての機能は<br>現在正常に稼働しています。</span>
+</div>
+
+<div class="check-list">
+    <div class="check-item">
+        <span class="check-name">QR Generation</span>
+        <span class="check-val"><span class="dot-s"></span>ONLINE</span>
+    </div>
+    <div class="check-item">
+        <span class="check-name">QR Scanner API</span>
+        <span class="check-val"><span class="dot-s"></span>ONLINE</span>
+    </div>
+    <div class="check-item">
+        <span class="check-name">Gate Auth Engine</span>
+        <span class="check-val"><span class="dot-s"></span>ONLINE</span>
+    </div>
+</div>
+
+<div class="history">
+    <span class="history-t">Latest Logs</span>
+    ・2026/02/10 18:00 - QR/GATE統合テスト正常終了<br>
+    ・2026/02/10 17:45 - 外部キー認証プログラムをデプロイ<br>
+    ・現在、システムに異常は検出されていません。
+</div>
+
+<div style="text-align:center; font-size:0.65rem; color:#475569;">
+    Last Check: <span id="time"></span>
+</div>
+
+<a href="qr.html" class="btn-back">QRツールへ戻る</a>
+</div>
+
+<script> // メンテナンス状態を切り替えるスイッチ（テスト用） // trueにすると、表示がメンテナンスモードに変わります。 const IS_MAINTENANCE = false;
+
+function updateStatus() {
+    document.getElementById(&#39;time&#39;).innerText = new Date().toLocaleString(&#39;ja-JP&#39;);
+    
+    if (IS_MAINTENANCE) {
+        document.getElementById(&#39;main-dot&#39;).style.background = &#39;var(--warn)&#39;;
+        document.getElementById(&#39;main-dot&#39;).style.boxShadow = &#39;0 0 15px var(--warn)&#39;;
+        document.getElementById(&#39;main-text&#39;).innerText = &#39;QR Maintenance&#39;;
+        document.getElementById(&#39;main-text&#39;).style.color = &#39;var(--warn)&#39;;
+        document.getElementById(&#39;sub-text&#39;).innerHTML = &#39;現在、QRエンジンの調整を行っています。<br>しばらくお待ちください。&#39;;
+        
+        // 各項目のONLINEをMAINTに変更
+        document.querySelectorAll(&#39;.check-val&#39;).forEach(el =&gt; {
+            el.innerHTML = &#39;&lt;span class=&quot;dot-s&quot; style=&quot;background:var(--warn)&quot;&gt;&lt;/span&gt;MAINT&#39;;
+            el.style.color = &#39;var(--warn)&#39;;
+        });
+    }
+}
+
+updateStatus();
+</script>
+
+</body> </html>
