@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>メニュー | Multi-X Utility</title>
+<style>
+:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+header{padding:30px;text-align:center}
+.credit-small{font-size:0.75rem;color:var(--p);letter-spacing:2px;margin-bottom:5px;font-weight:bold}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:12px;width:90%;max-width:450px;margin-bottom:50px}
+.item{background:var(--card);padding:20px;border-radius:15px;text-decoration:none;color:white;display:flex;justify-content:space-between;align-items:center;border-left:5px solid var(--p);transition:0.2s}
+.item:active{background:var(--p);color:#000}
+.item-text{display:flex;flex-direction:column}
+.item-title{font-weight:bold;font-size:1.1rem;margin-bottom:2px}
+.item-desc{font-size:0.75rem;color:#94a3b8}
+.arrow{color:var(--p);font-weight:bold}
+</style>
+</head>
+<body>
+<header>
+    <div class="credit-small">制作：篠ノ井乗務区 二周年記念</div>
+    <h1 style="margin:0;font-size:1.8rem;letter-spacing:1px">機能一覧</h1>
+</header>
+<div class="menu-grid">
+    <a href="calc.html" class="item">
+        <div class="item-text"><span class="item-title">関数電卓（計算機）</span><span class="item-desc">普通 ⇄ 関数 切り替え</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="timer.html" class="item">
+        <div class="item-text"><span class="item-title">タイマー（残り時間の計測）</span><span class="item-desc">裏側でも止まらない持続機能</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="sw.html" class="item">
+        <div class="item-text"><span class="item-title">ストップウォッチ（経過時間の計測）</span><span class="item-desc">正確な運行計測・タイム計測</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="alarm.html" class="item">
+        <div class="item-text"><span class="item-title">アラーム（目覚まし・通知）</span><span class="item-desc">指定時刻に通知でお知らせ</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="convert.html" class="item">
+        <div class="item-text"><span class="item-title">単位変換（長さや重さの計算）</span><span class="item-desc">センチ/インチ/℃/℉の変換</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="pass.html" class="item">
+        <div class="item-text"><span class="item-title">パスワード作成（暗証番号を作る）</span><span class="item-desc">推測されにくい安全な文字列生成</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="qr.html" class="item">
+        <div class="item-text"><span class="item-title">QRコード作成（画像作成）</span><span class="item-desc">URLや文字をQR画像に変換</span></div>
+        <div class="arrow">＞</div>
+    </a>
+    <a href="level.html" class="item">
+        <div class="item-text"><span class="item-title">水平器（傾きを調べる）</span><span class="item-desc">スマホで角度や水平を測定</span></div>
+        <div class="arrow">＞</div>
+    </a>
+</div>
+</body>
+</html>
