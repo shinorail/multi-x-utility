@@ -4,25 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>メニュー | Multi-X Utility</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="image/icon.png">
+<link rel="icon" type="image/png" href="image/icon.png">
 <style>
 :root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
 body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh}
 header{padding:30px;text-align:center}
 .credit-small{font-size:0.75rem;color:var(--p);letter-spacing:2px;margin-bottom:5px;font-weight:bold}
-.menu-grid{display:grid;grid-template-columns:1fr;gap:12px;width:90%;max-width:450px;margin-bottom:50px}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:12px;width:90%;max-width:450px;margin-bottom:30px}
 .item{background:var(--card);padding:20px;border-radius:15px;text-decoration:none;color:white;display:flex;justify-content:space-between;align-items:center;border-left:5px solid var(--p);transition:0.2s}
 .item:active{background:var(--p);color:#000}
 .item-text{display:flex;flex-direction:column}
 .item-title{font-weight:bold;font-size:1.1rem;margin-bottom:2px}
 .item-desc{font-size:0.75rem;color:#94a3b8}
 .arrow{color:var(--p);font-weight:bold}
+
+/* 紹介セクションのスタイル */
+.share-section{width:90%;max-width:450px;margin:20px 0 60px;text-align:center;padding-top:20px;border-top:1px solid #334155}
+.share-p{font-size:0.8rem;color:#94a3b8;margin-bottom:12px}
+.share-btn{width:100%;padding:18px;border-radius:15px;border:1px solid var(--p);background:transparent;color:var(--p);font-weight:bold;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:0.3s}
+.share-btn:active{background:rgba(212,175,55,0.1);transform:scale(0.98)}
 </style>
 </head>
 <body>
+
 <header>
     <div class="credit-small">制作：篠ノ井乗務区 二周年記念</div>
     <h1 style="margin:0;font-size:1.8rem;letter-spacing:1px">機能一覧</h1>
 </header>
+
 <div class="menu-grid">
     <a href="calc.html" class="item">
         <div class="item-text"><span class="item-title">関数電卓（計算機）</span><span class="item-desc">普通 ⇄ 関数 切り替え</span></div>
@@ -57,5 +68,50 @@ header{padding:30px;text-align:center}
         <div class="arrow">＞</div>
     </a>
 </div>
+
+<div class="share-section">
+    <p class="share-p">このアプリを仲間に教える</p>
+    <button class="share-btn" onclick="shareApp()">
+        <span>🔗</span> アプリを紹介する
+    </button>
+</div>
+
+<script>
+async function shareApp() {
+    // 友達には最初のwelcome画面(index.html)から見てもらうようにURLを調整
+    const shareUrl = window.location.href.replace('menu.html', 'index.html');
+    const shareData = {
+        title: 'Multi-X Utility',
+        text: '篠ノ井乗務区 二周年記念。運行計測や計算に便利なオールインワンアプリです！',
+        url: shareUrl
+    };
+
+    try {
+        if (navigator.share) {
+            // Android/iPhoneの標準共有メニューを呼び出し
+            await navigator.share(shareData);
+        } else {
+            // 共有機能がない場合はURLをコピー
+            await navigator.clipboard.writeText(shareUrl);
+            alert("アプリのリンクをコピーしました！\nメールやLINEで友達に送ってください。");
+        }
+    } catch (err) {
+        // ユーザーがキャンセルした場合は何もしない
+        if (err.name !== 'AbortError') {
+            console.error("シェア失敗:", err);
+        }
+    }
+}
+
+// アプリ誘導バナー（ブラウザ閲覧時のみ）
+if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
+    const b = document.createElement('div');
+    b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:fixed;top:0;left:0;z-index:9999;width:100%;box-shadow:0 2px 10px rgba(0,0,0,0.5)";
+    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加してフル機能を使おう";
+    b.onclick = () => { window.location.href = 'index.html'; };
+    document.body.prepend(b);
+}
+</script>
+
 </body>
 </html>
