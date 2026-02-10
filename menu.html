@@ -1,146 +1,61 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>メニュー | Multi-X Utility</title>
-<style>
-:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-bottom:50px}
+!DOCTYPE html>
 
-/* PWA勧誘バナー（メニューでも表示） */
-#pwa-banner{display:none;width:100%;background:var(--p);color:#000;padding:12px;font-weight:bold;font-size:0.85rem;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.5);cursor:pointer;position:sticky;top:0;z-index:9999}
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>メニュー | Multi-X Utility</title> <style> :root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc} body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-bottom:50px}
 
-header{padding:40px 20px;text-align:center}
-.credit-main{font-size:0.9rem;color:var(--p);letter-spacing:2px;margin-bottom:8px;font-weight:bold}
-.menu-title{margin:0;font-size:2rem;letter-spacing:2px}
+/* PWA勧誘バナー */ #pwa-banner{display:none;width:100%;background:var(--p);color:#000;padding:12px;font-weight:bold;font-size:0.85rem;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.5);cursor:pointer;position:sticky;top:0;z-index:9999}
 
-.menu-grid{display:grid;grid-template-columns:1fr;gap:15px;width:92%;max-width:480px;margin-bottom:30px}
-.item{background:var(--card);padding:22px;border-radius:18px;text-decoration:none;color:white;display:flex;justify-content:space-between;align-items:center;border-left:6px solid var(--p);box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:0.2s}
-.item:active{background:var(--p);color:#000}
-.item-text{display:flex;flex-direction:column}
-.item-title{font-weight:bold;font-size:1.15rem;margin-bottom:4px}
-.item-desc{font-size:0.8rem;color:#94a3b8}
-.arrow{color:var(--p);font-weight:bold;font-size:1.2rem}
+header{padding:40px 20px;text-align:center} .credit-main{font-size:0.9rem;color:var(--p);letter-spacing:2px;margin-bottom:8px;font-weight:bold} .menu-title{margin:0;font-size:2rem;letter-spacing:2px}
 
-/* 限定機能用特別スタイル */
-.item-special{border:2px solid var(--p);background:rgba(212,175,55,0.05);border-left:6px solid var(--p)}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:15px;width:92%;max-width:480px;margin-bottom:30px} .item{background:var(--card);padding:22px;border-radius:18px;text-decoration:none;color:white;display:flex;justify-content:space-between;align-items:center;border-left:6px solid var(--p);box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:0.2s} .item:active{background:var(--p);color:#000} .item-text{display:flex;flex-direction:column} .item-title{font-weight:bold;font-size:1.15rem;margin-bottom:4px} .item-desc{font-size:0.8rem;color:#94a3b8} .arrow{color:var(--p);font-weight:bold;font-size:1.2rem}
 
-.news-section{width:92%;max-width:480px;background:rgba(255,255,255,0.05);border-radius:20px;padding:20px;margin-bottom:30px;box-sizing:border-box;border:1px solid #334155}
-.news-title{font-size:0.9rem;color:var(--p);font-weight:bold;margin-bottom:15px}
-.news-item{font-size:0.85rem;color:#cbd5e1;padding:10px 0;display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
+/* 特別枠（先行体験） */ .item-special{border:2px solid var(--p);background:rgba(212,175,55,0.05);border-left:6px solid var(--p)}
+
+.news-section{width:92%;max-width:480px;background:rgba(255,255,255,0.05);border-radius:20px;padding:20px;margin-bottom:30px;box-sizing:border-box;border:1px solid #334155} .news-title{font-size:0.9rem;color:var(--p);font-weight:bold;margin-bottom:15px} .news-item{font-size:0.85rem;color:#cbd5e1;padding:10px 0;display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
 
 .share-btn{width:92%;max-width:480px;padding:20px;border-radius:18px;border:2px solid var(--p);background:transparent;color:var(--p);font-weight:bold;font-size:1.1rem;cursor:pointer;margin-bottom:40px}
 
-.footer-nav{display:flex;gap:20px;margin-top:20px}
-.footer-nav a{color:#64748b;font-size:0.8rem;text-decoration:none;border-bottom:1px solid #334155}
+.footer-nav{display:flex;gap:20px;margin-top:20px} .footer-nav a{color:#64748b;font-size:0.8rem;text-decoration:none;border-bottom:1px solid #334155}
 
-/* 翻訳ウィジェット（裏で反映させるため非表示） */
-#google_translate_element{display:none}
-.goog-te-banner-frame.skiptranslate {display: none !important;}
-body {top: 0px !important;}
-</style>
-</head>
-<body>
+#google_translate_element{display:none} </style>
 
-<div id="pwa-banner" onclick="installPWA()">
-    ✨ ホーム画面に追加してアプリとして使用する (Install App)
+</head> <body>
+
+<div id="pwa-banner" onclick="installPWA()"> ✨ ホーム画面に追加してアプリとして使用する (Install App) </div>
+
+<header> <div class="credit-main">制作：篠ノ井乗務区 二周年記念</div> <h1 class="menu-title">機能一覧</h1> </header>
+
+<div class="menu-grid"> <a href="gate-universal.html" class="item item-special"> <div class="item-text"> <span class="item-title" style="color:var(--p)">先行体験ゲート 🔒</span> <span class="item-desc">URLまたはQRスキャンで限定機能を解放</span> </div> <div class="arrow">＞</div> </a>
+
+<a href="calc.html" class="item"><div class="item-text"><span class="item-title">関数電卓（計算機）</span><span class="item-desc">普通 ⇄ 関数 切り替え</span></div><div class="arrow">＞</div></a>
+<a href="timer.html" class="item"><div class="item-text"><span class="item-title">タイマー（残り時間の計測）</span><span class="item-desc">リロード対策済・持続機能</span></div><div class="arrow">＞</div></a>
+<a href="sw.html" class="item"><div class="item-text"><span class="item-title">ストップウォッチ（経過時間の計測）</span><span class="item-desc">正確な運行計測・タイム計測</span></div><div class="arrow">＞</div></a>
+<a href="alarm.html" class="item"><div class="item-text"><span class="item-title">アラーム（目覚まし・通知）</span><span class="item-desc">指定時刻に通知でお知らせ</span></div><div class="arrow">＞</div></a>
+<a href="convert.html" class="item"><div class="item-text"><span class="item-title">単位変換（長さや重さの計算）</span><span class="item-desc">センチ/インチ/℃/℉の変換</span></div><div class="arrow">＞</div></a>
+<a href="pass.html" class="item"><div class="item-text"><span class="item-title">パスワード作成（暗証番号を作る）</span><span class="item-desc">安全な文字列生成</span></div><div class="arrow">＞</div></a>
+<a href="qr.html" class="item"><div class="item-text"><span class="item-title">QRコード作成（画像作成）</span><span class="item-desc">URLや文字を画像に変換</span></div><div class="arrow">＞</div></a>
+<a href="level.html" class="item"><div class="item-text"><span class="item-title">水平器（傾きを調べる）</span><span class="item-desc">スマホで角度や水平を測定</span></div><div class="arrow">＞</div></a>
 </div>
 
-<header>
-    <div class="credit-main">制作：篠ノ井乗務区 二周年記念</div>
-    <h1 class="menu-title">機能一覧</h1>
-</header>
-
-<div class="menu-grid">
-    <a href="calc.html" class="item"><div class="item-text"><span class="item-title">関数電卓（計算機）</span><span class="item-desc">普通 ⇄ 関数 切り替え</span></div><div class="arrow">＞</div></a>
-    <a href="timer.html" class="item"><div class="item-text"><span class="item-title">タイマー（残り時間の計測）</span><span class="item-desc">リロード対策済・持続機能</span></div><div class="arrow">＞</div></a>
-    <a href="sw.html" class="item"><div class="item-text"><span class="item-title">ストップウォッチ（経過時間の計測）</span><span class="item-desc">正確な運行計測・タイム計測</span></div><div class="arrow">＞</div></a>
-    <a href="alarm.html" class="item"><div class="item-text"><span class="item-title">アラーム（目覚まし・通知）</span><span class="item-desc">指定時刻に通知でお知らせ</span></div><div class="arrow">＞</div></a>
-    <a href="convert.html" class="item"><div class="item-text"><span class="item-title">単位変換（長さや重さの計算）</span><span class="item-desc">センチ/インチ/℃/℉の変換</span></div><div class="arrow">＞</div></a>
-    <a href="pass.html" class="item"><div class="item-text"><span class="item-title">パスワード作成（暗証番号を作る）</span><span class="item-desc">安全な文字列生成</span></div><div class="arrow">＞</div></a>
-    <a href="qr.html" class="item"><div class="item-text"><span class="item-title">QRコード作成（画像作成）</span><span class="item-desc">URLや文字を画像に変換</span></div><div class="arrow">＞</div></a>
-    <a href="level.html" class="item"><div class="item-text"><span class="item-title">水平器（傾きを調べる）</span><span class="item-desc">スマホで角度や水平を測定</span></div><div class="arrow">＞</div></a>
-    
-    <a href="gate-with-id.html" class="item item-special">
-        <div class="item-text">
-            <span class="item-title" style="color:var(--p)">先行体験ゲート 🔒</span>
-            <span class="item-desc">公式QRをスキャンして限定機能を解放</span>
-        </div>
-        <div class="arrow">＞</div>
-    </a>
-</div>
-
-<div class="news-section">
-    <div class="news-title">📢 お知らせ (News)</div>
-    <div id="news-list"></div>
-</div>
+<div class="news-section"> <div class="news-title">📢 お知らせ (News)</div> <div id="news-list"></div> </div>
 
 <button class="share-btn" onclick="shareApp()">🔗 アプリを紹介する (Share)</button>
 
-<div class="footer-nav">
-    <a href="terms.html">利用規約 (Terms)</a>
-    <a href="privacy.html">プライバシーポリシー (Privacy)</a>
-</div>
+<div class="footer-nav"> <a href="terms.html">利用規約 (Terms)</a> <a href="privacy.html">プライバシーポリシー (Privacy)</a> </div>
 
 <div id="google_translate_element"></div>
 
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'ja', autoDisplay: false}, 'google_translate_element');
-}
+<script type="text/javascript"> function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'ja', autoDisplay: false}, 'google_translate_element'); }
 
-// お知らせ読み込み
-async function loadNews() {
-    try {
-        const response = await fetch('news.md');
-        const text = await response.text();
-        const list = document.getElementById('news-list');
-        list.innerHTML = ""; // 初期化
-        text.trim().split('\n').forEach(line => {
-            const parts = line.split('|');
-            if(parts.length >= 2) {
-                const div = document.createElement('div');
-                div.className = 'news-item';
-                div.innerHTML = `<span style="color:var(--p);font-family:monospace">${parts[0].trim()}</span><span>${parts[1].trim()}</span>`;
-                list.appendChild(div);
-            }
-        });
-    } catch (e) { document.getElementById('news-list').innerText = "No news."; }
-}
+async function loadNews() { try { const response = await fetch('news.md'); const text = await response.text(); const list = document.getElementById('news-list'); list.innerHTML = ""; text.trim().split('\n').forEach(line => { const parts = line.split('|'); if(parts.length >= 2) { const div = document.createElement('div'); div.className = 'news-item'; div.innerHTML = &lt;span style=&quot;color:var(--p);font-family:monospace&quot;&gt;${parts[0].trim()}&lt;/span&gt;&lt;span&gt;${parts[1].trim()}&lt;/span&gt;; list.appendChild(div); } }); } catch (e) { document.getElementById('news-list').innerText = "No news."; } }
 
-// シェア機能
-async function shareApp() {
-    const url = window.location.href.replace('menu.html', 'index.html');
-    if (navigator.share) { 
-        try {
-            await navigator.share({title: 'Multi-X Utility', url: url}); 
-        } catch (err) {
-            console.log("Share failed");
-        }
-    }
-}
+async function shareApp() { const url = window.location.href.replace('menu.html', 'index.html'); if (navigator.share) { try { await navigator.share({title: 'Multi-X Utility', url: url}); } catch(e){} } }
 
-// PWA勧誘
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('pwa-banner').style.display = 'block';
-});
-function installPWA() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((res) => {
-            if (res.outcome === 'accepted') document.getElementById('pwa-banner').style.display = 'none';
-            deferredPrompt = null;
-        });
-    }
-}
+let deferredPrompt; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('pwa-banner').style.display = 'block'; }); function installPWA() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then((res) => { if (res.outcome === 'accepted') document.getElementById('pwa-banner').style.display = 'none'; deferredPrompt = null; }); } }
 
-loadNews();
-</script>
+// URLパラメータをチェックして、もし鍵を持っていたら自動転送する処理 function checkAutoAccess() { const urlParams = new URLSearchParams(window.location.search); const key = urlParams.get('key'); if (key) { // キーがある場合はゲート（判定用）へ自動で飛ばす window.location.href = "gate-universal.html?key=" + encodeURIComponent(key); } }
+
+checkAutoAccess(); loadNews(); </script>
+
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-</body>
-</html>
+</body> </html>
