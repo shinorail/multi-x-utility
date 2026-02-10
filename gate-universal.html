@@ -1,73 +1,86 @@
 <!DOCTYPE html>
 
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>Gate - Multi-X Utility</title> <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script> <style> :root { --accent: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; } body { background-color: var(--bg); color: var(--text); font-family: 'BIZ UDPGothic', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; } #gate-container { width: 90%; max-width: 400px; background: var(--card); border: 3px solid #475569; border-radius: 24px; padding: 30px; text-align: center; } .lock-icon { font-size: 3rem; margin-bottom: 10px; } h3 { color: var(--accent); margin: 0 0 10px 0; } #scanner-area { position: relative; width: 100%; aspect-ratio: 1; background: #000; border-radius: 15px; overflow: hidden; display: none; margin-bottom: 20px; border: 2px solid var(--accent); } video { width: 100%; height: 100%; object-fit: cover; } .btn { background: var(--accent); color: #000; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; } #status-msg { margin-top: 15px; font-size: 0.8rem; min-height: 1.2em; color: #94a3b8; } #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); color: white; justify-content: center; align-items: center; flex-direction: column; font-size: 1.2rem; z-index: 9999; } </style> </head> <body>
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>Gate - Multi-X Utility</title> <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script> <style> :root { --accent: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; } body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; } #gate-container { width: 90%; max-width: 400px; background: var(--card); border: 3px solid #475569; border-radius: 24px; padding: 30px; text-align: center; display: none; flex-direction: column; align-items: center; } .lock-icon { font-size: 3rem; margin-bottom: 10px; } h3 { color: var(--accent); margin: 0 0 10px 0; } #scanner-area { position: relative; width: 100%; aspect-ratio: 1; background: #000; border-radius: 15px; overflow: hidden; display: none; margin-bottom: 20px; border: 2px solid var(--accent); } video { width: 100%; height: 100%; object-fit: cover; } .btn { background: var(--accent); color: #000; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; } #status-msg { margin-top: 15px; font-size: 0.8rem; min-height: 1.2em; color: #94a3b8; } #loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); color: white; justify-content: center; align-items: center; flex-direction: column; font-size: 1.2rem; z-index: 9999; } </style> </head> <body>
 
-<div id="gate-container"> <div class="lock-icon" id="icon">🔒</div> <h3>先行体験ゲート</h3> <div id="scanner-area"> <video id="v" playsinline></video> </div> <button id="start-btn" class="btn" onclick="initScan()">スキャナー起動</button> <div id="status-msg" id="msg">QRをかざしてください</div> </div>
+<div id="gate-container"> <div class="lock-icon" id="icon">🔒</div> <h3>先行体験ゲート</h3> <div id="scanner-area"> <video id="v" playsinline></video> </div> <button id="start-btn" class="btn" onclick="initScan()">スキャナー起動</button> <div id="status-msg">QRをかざしてください</div> </div>
 
-<div id="loading-overlay"> <p>アクセス認証中...</p> <p id="overlay-msg"></p> </div>
+<div id="loading-overlay"> <p>アクセス認証中...</p> <p id="overlay-msg" style="color:#d4af37; font-weight:bold;"></p> </div>
 
 <canvas id="c" style="display:none;"></canvas>
 
 <script> const video = document.getElementById('v'); const msg = document.getElementById('status-msg'); const icon = document.getElementById('icon'); const loadingOverlay = document.getElementById('loading-overlay'); const overlayMsg = document.getElementById('overlay-msg'); let isFound = false;
 
-// QRに埋め込む合言葉（SECRET_KEYはURLに埋め込まれない、QRカメラ用） const BASE_SECRET_KEY = "MULTI-X-2026-PRE";
+const BASE_SECRET_KEY = &quot;MULTI-X-2026-PRE&quot;;
 
-// URLから認証キーをチェック window.onload = function() { const urlParams = new URLSearchParams(window.location.search); const key = urlParams.get('key'); if (key && key.startsWith(BASE_SECRET_KEY)) { showLoading("URLからの認証キーを検出しました"); const parts = key.split(":"); const name = parts[1] || "公式運営"; handleSuccess(name); return; } // URLにキーがない場合は通常のスキャナー起動モード document.getElementById('gate-container').style.display = 'flex'; };
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const key = urlParams.get(&#39;key&#39;);
+    if (key &amp;&amp; key.startsWith(BASE_SECRET_KEY)) {
+        showLoading(&quot;URLキーを検出しました&quot;);
+        const name = key.split(&quot;:&quot;)[1] || &quot;公式運営&quot;;
+        handleSuccess(name);
+        return;
+    }
+    document.getElementById(&#39;gate-container&#39;).style.display = &#39;flex&#39;;
+};
 
-function showLoading(message) { loadingOverlay.style.display = 'flex'; overlayMsg.innerText = message; }
-
-function initScan() { msg.innerText = "カメラを準備中..."; document.getElementById('gate-container').style.display = 'flex'; //念のため表示
-
-navigator.mediaDevices.getUserMedia({ video: { facingMode: &quot;environment&quot; } })
-    .then(stream =&gt; {
-        document.getElementById(&#39;start-btn&#39;).style.display = &quot;none&quot;;
-        document.getElementById(&#39;scanner-area&#39;).style.display = &quot;block&quot;;
-        video.srcObject = stream;
-        video.setAttribute(&quot;playsinline&quot;, true);
-        video.play();
-        msg.innerText = &quot;QRコードを枠内に入れてください&quot;;
-        requestAnimationFrame(tick);
-    })
-    .catch(err =&gt; {
-        msg.innerText = &quot;エラー: カメラを起動できませんでした。&quot;;
-        msg.style.color = &quot;#ff4757&quot;;
-        console.error(err);
-    });
+function showLoading(text) {
+    loadingOverlay.style.display = &#39;flex&#39;;
+    overlayMsg.innerText = text;
 }
 
-function tick() { if (isFound) return; if (video.readyState === video.HAVE_ENOUGH_DATA) { const canvas = document.getElementById('c'); const ctx = canvas.getContext('2d'); canvas.height = video.videoHeight; canvas.width = video.videoWidth; ctx.drawImage(video, 0, 0, canvas.width, canvas.height); const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); const code = jsQR(imgData.data, imgData.width, imgData.height);
-
-    if (code) {
-        const data = code.data.trim();
-        console.log(&quot;Read QR:&quot;, data); 
-
-        if (data.startsWith(BASE_SECRET_KEY)) {
-            isFound = true;
-            const parts = data.split(&quot;:&quot;);
-            const name = parts[1] || &quot;公式運営&quot;;
-            showLoading(`QR認証に成功: ${name} 様`);
-            handleSuccess(name);
-            return;
-        } else {
-            msg.innerText = &quot;無効なQRです: &quot; + data.substring(0, Math.min(data.length, 15)) + &quot;...&quot;;
+function initScan() {
+    msg.innerText = &quot;カメラを準備中...&quot;;
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: &quot;environment&quot; } })
+        .then(stream =&gt; {
+            document.getElementById(&#39;start-btn&#39;).style.display = &quot;none&quot;;
+            document.getElementById(&#39;scanner-area&#39;).style.display = &quot;block&quot;;
+            video.srcObject = stream;
+            video.play();
+            msg.innerText = &quot;QRコードを枠内に入れてください&quot;;
+            requestAnimationFrame(tick);
+        })
+        .catch(err =&gt; {
+            msg.innerText = &quot;エラー: カメラを起動できませんでした。&quot;;
             msg.style.color = &quot;#ff4757&quot;;
+        });
+}
+
+function tick() {
+    if (isFound) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        const canvas = document.getElementById(&#39;c&#39;);
+        const ctx = canvas.getContext(&#39;2d&#39;);
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imgData.data, imgData.width, imgData.height);
+
+        if (code) {
+            const data = code.data.trim();
+            if (data.includes(BASE_SECRET_KEY)) {
+                isFound = true;
+                const name = data.split(&quot;:&quot;).pop() || &quot;公式&quot;;
+                showLoading(&quot;QR認証に成功: &quot; + name);
+                handleSuccess(name);
+                return;
+            } else {
+                msg.innerText = &quot;無効なQRです&quot;;
+                msg.style.color = &quot;#ff4757&quot;;
+            }
         }
     }
-}
-requestAnimationFrame(tick);
-}
-
-function handleSuccess(name) { icon.innerText = "🔓"; if (navigator.vibrate) navigator.vibrate(200);
-
-setTimeout(() =&gt; {
-    window.location.href = &quot;pre-speed-secure.html?ref=&quot; + encodeURIComponent(name);
-}, 1500);
+    requestAnimationFrame(tick);
 }
 
-// 初期状態ではゲートを非表示にして、URLパラメータチェック後に表示する document.getElementById('gate-container').style.display = 'none';
+function handleSuccess(name) {
+    icon.innerText = &quot;🔓&quot;;
+    if (navigator.vibrate) navigator.vibrate(200);
+    setTimeout(() =&gt; {
+        window.location.href = &quot;pre-speed-secure.html?ref=&quot; + encodeURIComponent(name);
+    }, 1500);
+}
+</script>
 
-
-\</script\>
-
-\</body\>
-\</html\>
+</body> </html>
