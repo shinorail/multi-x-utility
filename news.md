@@ -1,5 +1,19 @@
-2026/02/10 | Alarm sound powered by OtoLogic / アラーム音源（OtoLogic）を導入しました
-2026/02/10 | Terms of Service Updated / 利用規約を更新し、素材権利表記を追加しました
-2026/02/10 | Added visual alert to Alarm / アラーム作動時の画面点滅演出を追加しました
-2026/02/10 | Multi-X Utility 2nd Anniv. Release / 二周年記念版を公開しました
-2026/02/10 | Added Multilingual Support / 全世界対応（Google翻訳）を導入しました
+✨ 新機能の追加
+カスタムテーマエディターの導入
+
+Custom Theme Editor / ユーザー好みの配色に変更できるテーマ編集機能を実装しました。
+
+アラーム通知の最適化
+
+Alarm Notification / バックグラウンド動作時における通知の安定性を向上させました。
+
+🛠 改善・修正
+通知バグの修正
+
+Fixed Notification Bug / 特定の条件下で通知が正しく表示されない不具合を修正しました。
+
+UI/UX のブラッシュアップ
+
+Input Precision / 入力精度の向上と、操作レスポンスのさらなる高速化を行いました。
+
+UNIVERSAL DESIGN ADOPTED 篠ノ井乗務区では、情報の「見つけやすさ」と「読みやすさ」を重視し、すべてのユーザーに配慮した情報発信を行っています。
