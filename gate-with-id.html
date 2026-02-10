@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>Gate - Multi-X Utility</title> <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script> <style> :root { --accent: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; } body { background-color: var(--bg); color: var(--text); font-family: 'BIZ UDPGothic', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; } #gate-container { width: 90%; max-width: 400px; background: var(--card); border: 3px solid #475569; border-radius: 24px; padding: 30px; text-align: center; position: relative; } .lock-icon { font-size: 3rem; margin-bottom: 10px; } h3 { color: var(--accent); margin: 0 0 10px 0; } .desc { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; margin-bottom: 20px; } #scanner-area { position: relative; width: 100%; aspect-ratio: 1; background: #000; border-radius: 15px; overflow: hidden; display: none; margin-bottom: 20px; } video { width: 100%; height: 100%; object-fit: cover; } .overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; height: 60%; border: 2px solid var(--accent); box-shadow: 0 0 0 1000px rgba(0,0,0,0.6); pointer-events: none; } .btn { background: var(--accent); color: #000; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; } #welcome-msg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; justify-content: center; align-items: center; flex-direction: column; text-align: center; } </style> </head> <body>
+
+<div id="gate-container"> <div class="lock-icon">🔒</div> <h3>先行体験ゲート</h3> <p class="desc">X（旧Twitter）で配布されている
+
+
+紹介用QRコードをかざしてください。</p> <div id="scanner-area"> <video id="v" playsinline></video> <div class="overlay"></div> </div> <button id="start-btn" class="btn" onclick="initScan()">スキャナー起動</button> </div>
+
+<div id="welcome-msg"> <h2 style="color: var(--accent);">ACCESS GRANTED</h2> <p id="inviter-text" style="font-size: 1.2rem;"></p> <p style="color: #94a3b8;">先行体験プログラムを開始します...</p> </div>
+
+<canvas id="c" style="display:none;"></canvas>
+
+<script> const gate = document.getElementById('gate-container'); const scanner = document.getElementById('scanner-area'); const btn = document.getElementById('start-btn'); const video = document.getElementById('v'); const canvas = document.getElementById('c'); const ctx = canvas.getContext('2d'); const welcome = document.getElementById('welcome-msg'); const inviterText = document.getElementById('inviter-text');
+
+function initScan() {
+    btn.style.display = &quot;none&quot;;
+    scanner.style.display = &quot;block&quot;;
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: &quot;environment&quot; } })
+        .then(stream =&gt; {
+            video.srcObject = stream;
+            video.play();
+            requestAnimationFrame(tick);
+        });
+}
+
+function tick() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imgData.data, imgData.width, imgData.height);
+
+        if (code &amp;&amp; code.data.startsWith(&quot;MULTI-X-2026-PRE&quot;)) {
+            const parts = code.data.split(&quot;:&quot;);
+            const name = parts[1] || &quot;公式&quot;;
+            handleSuccess(name);
+            return;
+        }
+    }
+    requestAnimationFrame(tick);
+}
+
+function handleSuccess(name) {
+    // 成功フィードバック
+    if (navigator.vibrate) navigator.vibrate(200);
+    document.body.style.backgroundColor = &quot;#064e3b&quot;;
+    
+    inviterText.innerText = `紹介者: ${name} 様`;
+    welcome.style.display = &quot;flex&quot;;
+
+    setTimeout(() =&gt; {
+        window.location.href = &quot;pre-speed-secure.html?ref=&quot; + encodeURIComponent(name);
+    }, 2000);
+}
+</script>
+
+</body> </html>
