@@ -51,9 +51,7 @@
 
 <script>
     (function() {
-        // 開発者モードへの警告
-        console.log("%cMulti-X Utility - High Speed Response", "color: #d4af37; font-size: 20px; font-weight: bold;");
-        console.log("%c警告: ここでのスクリプト実行は推奨されません。不正なスコアは無効となる場合があります。", "color: red;");
+        console.log("%cMulti-X Utility Security Active", "color: #d4af37; font-weight: bold;");
 
         let _c = 0;
         let _tl = 10.0;
@@ -61,32 +59,43 @@
         let _ip = false;
         let _he = false;
         let _lt = 0;
-        let _am = false; // Admin Mode
+        let _sf = false; // Secure Flag (Admin)
+        const _ps = "2222"; // ★運営用パスワード（好きな数字に変えてください）
 
         const btn = document.getElementById('tap-btn');
         const scoreDisp = document.getElementById('score');
         const timerDisp = document.getElementById('timer');
         const mTrigger = document.getElementById('m-trigger');
 
-        // 運営用隠しコマンド（TIME長押し）
+        // --- 運営用パスワードロック ---
         let aTimer;
-        mTrigger.addEventListener('touchstart', () => {
+        const handleStart = () => {
             aTimer = setTimeout(() => {
-                _am = !_am;
-                console.log("Status Updated");
-                // 運営にはこっそり通知
-                mTrigger.style.color = _am ? "#d4af37" : "#94a3b8";
-            }, 5000); // 長押しを5秒に延長してバレにくくする
-        });
-        mTrigger.addEventListener('touchend', () => clearTimeout(aTimer));
+                const input = prompt("認証コードを入力してください");
+                if (input === _ps) {
+                    _sf = true;
+                    mTrigger.style.color = "#d4af37";
+                    alert("管理者認証に成功しました");
+                } else {
+                    _sf = false;
+                    mTrigger.style.color = "#94a3b8";
+                }
+            }, 5000);
+        };
+        const handleEnd = () => clearTimeout(aTimer);
+
+        mTrigger.addEventListener('touchstart', handleStart);
+        mTrigger.addEventListener('touchend', handleEnd);
+        mTrigger.addEventListener('mousedown', handleStart);
+        mTrigger.addEventListener('mouseup', handleEnd);
 
         btn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             if (_he || !e.isPrimary) return;
 
             const now = Date.now();
-            // 不自然な連打のブロック（管理者以外）
-            if (!_am && (now - _lt < 40)) return;
+            // 管理者以外は40ms以下の連打を無効化（マクロ対策）
+            if (!_sf && (now - _lt < 40)) return;
             _lt = now;
 
             if (!_ip) {
@@ -96,9 +105,7 @@
                 _ti = setInterval(() => {
                     _tl -= 0.1;
                     if (_tl <= 0) {
-                        _tl = 0;
-                        _ip = false;
-                        _he = true;
+                        _tl = 0; _ip = false; _he = true;
                         clearInterval(_ti);
                         btn.innerText = "FINISH!";
                         showResult();
@@ -108,7 +115,7 @@
             }
 
             if (_ip) {
-                _c += (_am ? 10 : 1);
+                _c += (_sf ? 10 : 1); // 管理者なら10倍速
                 scoreDisp.innerText = _c;
             }
         });
