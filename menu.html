@@ -11,8 +11,8 @@
 :root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
 body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh}
 header{padding:30px;text-align:center}
-.credit-small{font-size:0.75rem;color:var(--p);letter-spacing:2px;margin-bottom:5px;font-weight:bold}
-.menu-grid{display:grid;grid-template-columns:1fr;gap:12px;width:90%;max-width:450px;margin-bottom:30px}
+.personal-credit{font-size:0.75rem;color:var(--p);letter-spacing:2px;margin-bottom:5px;font-weight:bold}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:12px;width:90%;max-width:450px;margin-bottom:25px}
 .item{background:var(--card);padding:20px;border-radius:15px;text-decoration:none;color:white;display:flex;justify-content:space-between;align-items:center;border-left:5px solid var(--p);transition:0.2s}
 .item:active{background:var(--p);color:#000}
 .item-text{display:flex;flex-direction:column}
@@ -20,17 +20,23 @@ header{padding:30px;text-align:center}
 .item-desc{font-size:0.75rem;color:#94a3b8}
 .arrow{color:var(--p);font-weight:bold}
 
-/* 紹介セクションのスタイル */
-.share-section{width:90%;max-width:450px;margin:20px 0 60px;text-align:center;padding-top:20px;border-top:1px solid #334155}
-.share-p{font-size:0.8rem;color:#94a3b8;margin-bottom:12px}
-.share-btn{width:100%;padding:18px;border-radius:15px;border:1px solid var(--p);background:transparent;color:var(--p);font-weight:bold;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:0.3s}
-.share-btn:active{background:rgba(212,175,55,0.1);transform:scale(0.98)}
+/* お知らせセクション */
+.news-section{width:90%;max-width:450px;background:rgba(255,255,255,0.05);border-radius:15px;padding:15px;margin-bottom:30px;box-sizing:border-box;border:1px solid #334155}
+.news-title{font-size:0.85rem;color:var(--p);font-weight:bold;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.news-list{margin:0;padding:0;list-style:none}
+.news-item{font-size:0.8rem;color:#cbd5e1;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;gap:10px}
+.news-item:last-child{border:none}
+.news-date{color:var(--p);font-family:monospace;flex-shrink:0}
+
+/* 紹介ボタン */
+.share-section{width:90%;max-width:450px;margin-bottom:60px;text-align:center}
+.share-btn{width:100%;padding:18px;border-radius:15px;border:1px solid var(--p);background:transparent;color:var(--p);font-weight:bold;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
 </style>
 </head>
 <body>
 
 <header>
-    <div class="credit-small">制作：篠ノ井乗務区 二周年記念</div>
+    <div class="personal-credit">個人活動名：篠ノ井乗務区 二周年</div>
     <h1 style="margin:0;font-size:1.8rem;letter-spacing:1px">機能一覧</h1>
 </header>
 
@@ -69,45 +75,57 @@ header{padding:30px;text-align:center}
     </a>
 </div>
 
+<div class="news-section">
+    <div class="news-title"><span>📢</span> お知らせ</div>
+    <ul class="news-list" id="news-list">
+        <li class="news-item">お知らせを読み込み中...</li>
+    </ul>
+</div>
+
 <div class="share-section">
-    <p class="share-p">このアプリを仲間に教える</p>
-    <button class="share-btn" onclick="shareApp()">
-        <span>🔗</span> アプリを紹介する
-    </button>
+    <button class="share-btn" onclick="shareApp()"><span>🔗</span> アプリを紹介する</button>
 </div>
 
 <script>
-async function shareApp() {
-    // 友達には最初のwelcome画面(index.html)から見てもらうようにURLを調整
-    const shareUrl = window.location.href.replace('menu.html', 'index.html');
-    const shareData = {
-        title: 'Multi-X Utility',
-        text: '篠ノ井乗務区 二周年記念。運行計測や計算に便利なオールインワンアプリです！',
-        url: shareUrl
-    };
-
+async function loadNews() {
     try {
-        if (navigator.share) {
-            // Android/iPhoneの標準共有メニューを呼び出し
-            await navigator.share(shareData);
-        } else {
-            // 共有機能がない場合はURLをコピー
-            await navigator.clipboard.writeText(shareUrl);
-            alert("アプリのリンクをコピーしました！\nメールやLINEで友達に送ってください。");
-        }
-    } catch (err) {
-        // ユーザーがキャンセルした場合は何もしない
-        if (err.name !== 'AbortError') {
-            console.error("シェア失敗:", err);
-        }
+        const response = await fetch('news.md');
+        if (!response.ok) throw new Error();
+        const text = await response.text();
+        const list = document.getElementById('news-list');
+        list.innerHTML = '';
+        
+        text.trim().split('\n').forEach(line => {
+            const parts = line.split('|');
+            if(parts.length >= 2) {
+                const li = document.createElement('li');
+                li.className = 'news-item';
+                li.innerHTML = `<span class="news-date">${parts[0].trim()}</span><span>${parts[1].trim()}</span>`;
+                list.appendChild(li);
+            }
+        });
+    } catch (e) {
+        document.getElementById('news-list').innerHTML = '<li class="news-item">現在、新しいお知らせはありません。</li>';
     }
 }
+loadNews();
 
-// アプリ誘導バナー（ブラウザ閲覧時のみ）
+async function shareApp() {
+    const shareUrl = window.location.href.replace('menu.html', 'index.html');
+    try {
+        if (navigator.share) {
+            await navigator.share({title: 'Multi-X Utility', url: shareUrl});
+        } else {
+            await navigator.clipboard.writeText(shareUrl);
+            alert("リンクをコピーしました！");
+        }
+    } catch (e) {}
+}
+
 if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
     const b = document.createElement('div');
     b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:fixed;top:0;left:0;z-index:9999;width:100%;box-shadow:0 2px 10px rgba(0,0,0,0.5)";
-    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加してフル機能を使おう";
+    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう";
     b.onclick = () => { window.location.href = 'index.html'; };
     document.body.prepend(b);
 }
