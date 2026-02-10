@@ -1,58 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-  <title>Multi-X Utility | 篠ノ井乗務区 公式フィード</title>
-  <link>https://shinorail.github.io/multi-x-utility/</link>
-  <description>ユニバーサルデザインを採用した高機能ユーティリティツールの最新アップデート情報</description>
-  <language>ja</language>
-  <copyright>Copyright 2026 SHINONOI DEPOT</copyright>
-  
-  <atom:link href="https://shinorail.github.io/multi-x-utility/rss.xml" rel="self" type="application/rss+xml" />
-  
-  <atom:link href="https://shinorail.github.io/multi-x-utility/rss-info.html" rel="alternate" type="text/html" />
 
-  <lastBuildDate>Tue, 10 Feb 2026 18:30:00 +0900</lastBuildDate>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"> <channel> <title>Multi-X Utility | 篠ノ井乗務区 公式フィード</title> <link>https://shinorail.github.io/multi-x-utility/</link> <description>ユニバーサルデザインを採用した高機能ユーティリティツールの最新アップデート情報</description> <language>ja</language> <copyright>Copyright 2026 SHINONOI DEPOT</copyright>
 
-  <item>
-    <title>Multi-X Utility 2周年記念版 公開</title>
-    <link>https://shinorail.github.io/multi-x-utility/index.html</link>
-    <description>
-      <![CDATA[
-        篠ノ井乗務区より、視認性と操作性をさらに追求した「Multi-X Utility」の最新版をリリースしました。
-        PWA機能の強化により、ホーム画面から即座にメニューへアクセス可能です。
-      ]]>
-    </description>
-    <category>Update</category>
-    <pubDate>Tue, 10 Feb 2026 18:30:00 +0900</pubDate>
-    <guid isPermaLink="false">shinorail-multi-x-v2-release</guid>
-  </item>
+<atom:link href="https://shinorail.github.io/multi-x-utility/rss.xml" rel="self" type="application/rss+xml" />
 
-  <item>
-    <title>QR・先行ゲートツールの操作性改善</title>
-    <link>https://shinorail.github.io/multi-x-utility/qr.html</link>
-    <description>
-      <![CDATA[
-        QRコード作成および先行ゲートツールのインターフェースを調整しました。
-        より少ないタップ数で目的の動作ができるよう改善を行っています。
-      ]]>
-    </description>
-    <category>Improvement</category>
-    <pubDate>Sun, 08 Feb 2026 10:00:00 +0900</pubDate>
-    <guid isPermaLink="false">shinorail-multi-x-qr-update</guid>
-  </item>
+<atom:link href="https://shinorail.github.io/multi-x-utility/rss-info.html" rel="alternate" type="text/html" />
 
-  <item>
-    <title>Multi-X Utility プロジェクト始動</title>
-    <link>https://shinorail.github.io/multi-x-utility/about.html</link>
-    <description>
-      <![CDATA[
-        「誰の手の中にも、最高の道具を」をコンセプトとしたユーティリティツールの開発を開始しました。
-      ]]>
-    </description>
-    <category>News</category>
-    <pubDate>Thu, 01 Jan 2026 00:00:00 +0900</pubDate>
-    <guid isPermaLink="false">shinorail-multi-x-project-start</guid>
-  </item>
+<lastBuildDate>Tue, 10 Feb 2026 23:20:00 +0900</lastBuildDate>
 
-</channel>
-</rss>
+<item> <title>【公式資料】ユニバーサルデザイン・ガイドラインを公開</title> <link>https://shinorail.github.io/multi-x-utility/docs/ud-guidelines.pdf</link> <description> <![CDATA[ Multi-X Utilityの設計思想とアクセシビリティ基準をまとめた「UDガイドライン」を公開しました。 視認性の高い配色設定や、操作性を考慮したUI設計の詳細をPDF形式でご覧いただけます。 ]]> </description> <category>Docs</category> <pubDate>Tue, 10 Feb 2026 23:20:00 +0900</pubDate> <guid isPermaLink="false">shinorail-multi-x-ud-pdf-release</guid> </item>
+
+<item> <title>Multi-X Utility 2周年記念版 公開</title> <link>https://shinorail.github.io/multi-x-utility/index.html</link> <description> <![CDATA[ 篠ノ井乗務区より、視認性と操作性をさらに追求した「Multi-X Utility」の最新版をリリースしました。 PWA機能の強化により、ホーム画面から即座にメニューへアクセス可能です。 ]]> </description> <category>Update</category> <pubDate>Tue, 10 Feb 2026 18:30:00 +0900</pubDate> <guid isPermaLink="false">shinorail-multi-x-v2-release</guid> </item>
+
+<item> <title>QR・先行ゲートツールの操作性改善</title> <link>https://shinorail.github.io/multi-x-utility/qr.html</link> <description> <![CDATA[ QRコード作成および先行ゲートツールのインターフェースを調整しました。 より少ないタップ数で目的の動作ができるよう改善を行っています。 ]]> </description> <category>Improvement</category> <pubDate>Sun, 08 Feb 2026 10:00:00 +0900</pubDate> <guid isPermaLink="false">shinorail-multi-x-qr-update</guid> </item>
+
+<item> <title>Multi-X Utility プロジェクト始動</title> <link>https://shinorail.github.io/multi-x-utility/about.html</link> <description> <![CDATA[ 「誰の手の中にも、最高の道具を」をコンセプトとしたユーティリティツールの開発を開始しました。 ]]> </description> <category>News</category> <pubDate>Thu, 01 Jan 2026 00:00:00 +0900</pubDate> <guid isPermaLink="false">shinorail-multi-x-project-start</guid> </item>
+
+</channel> </rss>
