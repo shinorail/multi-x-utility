@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>High-Speed Response - Multi-X Utility</title>
+    <style>
+        :root { --accent: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'BIZ UDPGothic', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        #game-container { position: relative; width: 90%; max-width: 400px; padding: 25px; background: var(--card); border: 3px solid var(--accent); border-radius: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); user-select: none; touch-action: none; }
+        .header h3 { color: var(--accent); margin: 0; font-size: 1.4rem; }
+        .description { font-size: 0.75rem; color: #94a3b8; margin: 10px 0 20px 0; line-height: 1.4; }
+        .stats { display: flex; justify-content: space-around; margin-bottom: 25px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; }
+        .stat-label { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 5px; }
+        .stat-value { font-size: 2.2rem; font-weight: bold; font-family: 'Courier New', monospace; }
+        #tap-btn { width: 100%; height: 200px; background: radial-gradient(circle, #334155, #0f172a); border: 4px solid #475569; border-radius: 20px; color: #fff; font-size: 1.8rem; font-weight: bold; cursor: pointer; transition: transform 0.05s; outline: none; -webkit-tap-highlight-color: transparent; }
+        #tap-btn:active { transform: scale(0.95); border-color: var(--accent); }
+        #result-area { margin-top: 20px; display: none; }
+        .share-btn { display: block; background: #1da1f2; color: #fff; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+        .reset-btn { margin-top: 10px; background: transparent; color: #64748b; border: none; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
+        .pre-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #ff4757; color: white; padding: 4px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; z-index: 10; }
+        .disclaimer { font-size: 0.6rem; color: #475569; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div class="pre-badge">SPECIAL PRE-RELEASE</div>
+    <div class="header">
+        <h3>High-Speed Response</h3>
+        <p class="description">2周年記念アップデート先行体験版<br><span style="color:#64748b;">※本機能の正式実装は未定です</span></p>
+    </div>
+    <div class="stats">
+        <div>
+            <span class="stat-label" id="m-trigger">TIME</span>
+            <span id="timer" class="stat-value">10.0</span>
+        </div>
+        <div>
+            <span class="stat-label">COUNT</span>
+            <span id="score" class="stat-value" style="color: var(--accent);">0</span>
+        </div>
+    </div>
+    <button id="tap-btn">START</button>
+    <div id="result-area">
+        <p id="rank-text" style="font-weight: bold; color: var(--accent); margin: 0;"></p>
+        <a id="share-link" href="#" target="_blank" class="share-btn">先行体験の記録をXで報告</a>
+        <button onclick="resetGame()" class="reset-btn">もう一度挑戦する</button>
+    </div>
+    <p class="disclaimer">※開発中のため、動作や仕様は予告なく変更される場合があります。</p>
+</div>
+
+<script>
+    (function() {
+        // 開発者モードへの警告
+        console.log("%cMulti-X Utility - High Speed Response", "color: #d4af37; font-size: 20px; font-weight: bold;");
+        console.log("%c警告: ここでのスクリプト実行は推奨されません。不正なスコアは無効となる場合があります。", "color: red;");
+
+        let _c = 0;
+        let _tl = 10.0;
+        let _ti = null;
+        let _ip = false;
+        let _he = false;
+        let _lt = 0;
+        let _am = false; // Admin Mode
+
+        const btn = document.getElementById('tap-btn');
+        const scoreDisp = document.getElementById('score');
+        const timerDisp = document.getElementById('timer');
+        const mTrigger = document.getElementById('m-trigger');
+
+        // 運営用隠しコマンド（TIME長押し）
+        let aTimer;
+        mTrigger.addEventListener('touchstart', () => {
+            aTimer = setTimeout(() => {
+                _am = !_am;
+                console.log("Status Updated");
+                // 運営にはこっそり通知
+                mTrigger.style.color = _am ? "#d4af37" : "#94a3b8";
+            }, 5000); // 長押しを5秒に延長してバレにくくする
+        });
+        mTrigger.addEventListener('touchend', () => clearTimeout(aTimer));
+
+        btn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            if (_he || !e.isPrimary) return;
+
+            const now = Date.now();
+            // 不自然な連打のブロック（管理者以外）
+            if (!_am && (now - _lt < 40)) return;
+            _lt = now;
+
+            if (!_ip) {
+                _ip = true;
+                _c = 0;
+                btn.innerText = "TAP!";
+                _ti = setInterval(() => {
+                    _tl -= 0.1;
+                    if (_tl <= 0) {
+                        _tl = 0;
+                        _ip = false;
+                        _he = true;
+                        clearInterval(_ti);
+                        btn.innerText = "FINISH!";
+                        showResult();
+                    }
+                    timerDisp.innerText = _tl.toFixed(1);
+                }, 100);
+            }
+
+            if (_ip) {
+                _c += (_am ? 10 : 1);
+                scoreDisp.innerText = _c;
+            }
+        });
+
+        function showResult() {
+            let r = _c >= 100 ? "神速級 ⚡" : _c >= 70 ? "達人級 🔥" : "一般級 👍";
+            document.getElementById('rank-text').innerText = `結果：${_c}回 (${r})`;
+            const st = `【High-Speed Response 先行体験】\nスコア：[ ${_c} ] 回\n称号：${r}\n#MultiX #篠ノ井乗務区`;
+            document.getElementById('share-link').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(st)}&url=${encodeURIComponent(window.location.href)}`;
+            document.getElementById('result-area').style.display = "block";
+        }
+
+        window.resetGame = function() {
+            _c = 0; _tl = 10.0; _ip = false; _he = false;
+            scoreDisp.innerText = "0"; timerDisp.innerText = "10.0";
+            btn.innerText = "START";
+            document.getElementById('result-area').style.display = "none";
+        };
+    })();
+</script>
+</body>
+</html>
