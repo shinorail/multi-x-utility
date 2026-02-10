@@ -1,120 +1,109 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gate - Multi-X Utility</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <style>
-        :root { --accent: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #gate-container { width: 90%; max-width: 400px; background: var(--card); border: 2px solid #475569; border-radius: 20px; padding: 30px; text-align: center; box-sizing: border-box; }
-        #v-area { width: 100%; aspect-ratio: 1; background: #000; border-radius: 12px; overflow: hidden; display: none; margin-bottom: 20px; border: 2px solid var(--accent); position: relative; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .btn { background: var(--accent); color: #000; padding: 15px; border-radius: 10px; border: none; font-weight: bold; width: 100%; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-        .btn:active { opacity: 0.8; transform: scale(0.98); }
-        #status { margin-top: 15px; font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
-        #overlay { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 100; flex-direction: column; justify-content: center; align-items: center; }
-    </style>
-</head>
-<body>
 
-<div id="gate-container">
-    <div style="font-size:3rem; margin-bottom:10px;">🔒</div>
-    <h3 style="color:var(--accent); margin:0 0 15px 0; letter-spacing: 1px;">先行体験ゲート</h3>
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>Gate - Multi-X Utility</title> <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script> <style> :root { --accent: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; } body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; } #gate-container { width: 90%; max-width: 400px; background: var(--card); border: 2px solid #475569; border-radius: 20px; padding: 30px; text-align: center; box-sizing: border-box; } #v-area { width: 100%; aspect-ratio: 1; background: #000; border-radius: 12px; overflow: hidden; display: none; margin-bottom: 20px; border: 2px solid var(--accent); position: relative; } video { width: 100%; height: 100%; object-fit: cover; } .btn { background: var(--accent); color: #000; padding: 15px; border-radius: 10px; border: none; font-weight: bold; width: 100%; font-size: 1rem; cursor: pointer; transition: 0.2s; } .btn:active { opacity: 0.8; transform: scale(0.98); } #status { margin-top: 15px; font-size: 0.85rem; color: #94a3b8; line-height: 1.5; } #overlay { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 100; flex-direction: column; justify-content: center; align-items: center; } .m-msg { color: #ff4757; font-weight: bold; border: 1px solid #ff4757; padding: 10px; border-radius: 8px; margin-top: 20px; } </style> </head> <body>
+
+<div id="gate-container"> <div id="m-icon" style="font-size:3rem; margin-bottom:10px;">🔒</div> <h3 id="m-title" style="color:var(--accent); margin:0 0 15px 0; letter-spacing: 1px;">先行体験ゲート</h3>
+
+<div id="active-content">
     <div id="v-area"><video id="video" playsinline></video></div>
     <button id="btn" class="btn" onclick="start()">スキャナーを起動</button>
     <div id="status">招待QRコードをかざしてください</div>
 </div>
 
-<div id="overlay">
-    <div style="font-size:4rem;">🔓</div>
-    <h2 style="color:var(--accent);" id="user-name">認証成功</h2>
-    <p>まもなく転送します...</p>
+<div id="maintenance-content" style="display:none;">
+    <div class="m-msg">現在メンテナンス中です</div>
+    <p style="font-size:0.85rem; color:#94a3b8;">オフライン機能追加および<br>アップデート作業を行っています。</p>
+    <button class="btn" onclick="location.href='menu.html'">メニューに戻る</button>
 </div>
+</div>
+
+<div id="overlay"> <div style="font-size:4rem;">🔓</div> <h2 style="color:var(--accent);" id="user-name">認証成功</h2> <p>まもなく転送します...</p> </div>
 
 <canvas id="canvas" style="display:none;"></canvas>
 
-<script>
-    const video = document.getElementById('video');
-    const status = document.getElementById('status');
-    const overlay = document.getElementById('overlay');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const SECRET = "MULTI-X-2026-PRE";
+<script> // ★ メンテナンス設定（trueで制限、falseで公開） const isMaintenance = true;
 
-    // 1. URLパラメータチェック
-    window.addEventListener('load', () => {
-        const p = new URLSearchParams(window.location.search);
-        const k = p.get('key');
-        if (k && k.includes(SECRET)) {
-            const name = k.split(":")[1] || "招待ユーザー";
-            go(name);
-        }
-    });
+const video = document.getElementById(&#39;video&#39;);
+const status = document.getElementById(&#39;status&#39;);
+const overlay = document.getElementById(&#39;overlay&#39;);
+const canvas = document.getElementById(&#39;canvas&#39;);
+const ctx = canvas.getContext(&#39;2d&#39;, { willReadFrequently: true });
+const SECRET = &quot;MULTI-X-2026-PRE&quot;;
 
-    // 2. カメラ起動処理
-    async function start() {
-        status.innerText = "カメラをリクエスト中...";
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "environment" } 
-            });
-            document.getElementById('btn').style.display = 'none';
-            document.getElementById('v-area').style.display = 'block';
-            video.srcObject = stream;
-            video.onloadedmetadata = () => {
-                video.play();
-                status.innerText = "QRコードを枠内に映してください";
-                requestAnimationFrame(tick);
-            };
-        } catch (err) {
-            status.innerHTML = "エラー: カメラを起動できません。<br>ブラウザの設定でカメラを許可してください。";
-            status.style.color = "#ff4757";
-            console.error(err);
-        }
+// 1. 初期化処理
+window.addEventListener(&#39;load&#39;, () =&gt; {
+    // オフライン用Service Workerの登録
+    if (&#39;serviceWorker&#39; in navigator) {
+        navigator.serviceWorker.register(&#39;./sw.js&#39;)
+            .then(() =&gt; console.log(&quot;Offline support ready.&quot;))
+            .catch(err =&gt; console.log(&quot;SW failed:&quot;, err));
     }
 
-    // 3. QRスキャンループ
-    function tick() {
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.height = video.videoHeight;
-            canvas.width = video.videoWidth;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            
-            // jsQRライブラリの呼び出し
-            const code = jsQR(imgData.data, imgData.width, imgData.height, {
-                inversionAttempts: "dontInvert",
-            });
-
-            if (code) {
-                const d = code.data.trim();
-                if (d.includes(SECRET)) {
-                    const name = d.split(":").pop() || "公式";
-                    go(name);
-                    return; // 成功したらループ停止
-                }
-            }
-        }
-        requestAnimationFrame(tick);
+    // メンテナンス判定
+    if (isMaintenance) {
+        document.getElementById(&#39;active-content&#39;).style.display = &#39;none&#39;;
+        document.getElementById(&#39;maintenance-content&#39;).style.display = &#39;block&#39;;
+        document.getElementById(&#39;m-icon&#39;).innerText = &quot;🛠️&quot;;
+        document.getElementById(&#39;m-title&#39;).innerText = &quot;Maintenance&quot;;
+        return;
     }
 
-    // 4. 成功時の転送
-    function go(name) {
-        overlay.style.display = 'flex';
-        document.getElementById('user-name').innerText = name + " 様";
-        
-        // カメラ停止
-        if (video.srcObject) {
-            video.srcObject.getTracks().forEach(track => track.stop());
-        }
-
-        setTimeout(() => {
-            // リダイレクト
-            window.location.href = "pre-speed-secure.html?ref=" + encodeURIComponent(name);
-        }, 1500);
+    // URLパラメータチェック
+    const p = new URLSearchParams(window.location.search);
+    const k = p.get(&#39;key&#39;);
+    if (k &amp;&amp; k.includes(SECRET)) {
+        const name = k.split(&quot;:&quot;)[1] || &quot;招待ユーザー&quot;;
+        go(name);
     }
+});
+
+// 2. カメラ起動
+async function start() {
+    status.innerText = &quot;カメラをリクエスト中...&quot;;
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: &quot;environment&quot; } });
+        document.getElementById(&#39;btn&#39;).style.display = &#39;none&#39;;
+        document.getElementById(&#39;v-area&#39;).style.display = &#39;block&#39;;
+        video.srcObject = stream;
+        video.onloadedmetadata = () =&gt; {
+            video.play();
+            status.innerText = &quot;QRコードを枠内に映してください&quot;;
+            requestAnimationFrame(tick);
+        };
+    } catch (err) {
+        status.innerHTML = &quot;エラー: カメラを起動できませんでした。&quot;;
+        status.style.color = &quot;#ff4757&quot;;
+    }
+}
+
+// 3. QRスキャン
+function tick() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imgData.data, imgData.width, imgData.height);
+
+        if (code &amp;&amp; code.data.includes(SECRET)) {
+            go(code.data.split(&quot;:&quot;).pop() || &quot;公式&quot;);
+            return;
+        }
+    }
+    requestAnimationFrame(tick);
+}
+
+// 4. 成功転送
+function go(name) {
+    overlay.style.display = &#39;flex&#39;;
+    document.getElementById(&#39;user-name&#39;).innerText = name + &quot; 様&quot;;
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track =&gt; track.stop());
+    }
+    setTimeout(() =&gt; {
+        window.location.href = &quot;pre-speed-secure.html?ref=&quot; + encodeURIComponent(name);
+    }, 1500);
+}
 </script>
-</body>
-</html>
+
+</body> </html>
