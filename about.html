@@ -6,28 +6,31 @@
 <title>About | Multi-X Utility</title>
 <style>
 :root{--p:#d4af37;--bg:#0f172a;--txt:#f8fafc}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;line-height:1.8;padding:40px 20px}
-.cont{max-width:700px;margin:0 auto}
-h1{color:var(--p);font-size:2.2rem}
-.badge-info{background:rgba(212,175,55,0.1);border:1px solid var(--p);color:var(--p);padding:10px;border-radius:10px;font-size:0.85rem;margin:20px 0}
-h2{border-left:4px solid var(--p);padding-left:15px;margin-top:40px}
-.back-link{display:inline-block;margin-top:40px;color:var(--p);text-decoration:none;font-weight:bold}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;line-height:1.8;padding:40px 20px;display:flex;justify-content:center}
+.cont{width:100%;max-width:800px}
+h1{color:var(--p);font-size:2.2rem;border-bottom:1px solid rgba(212,175,55,0.3);padding-bottom:10px}
+.highlight{background:rgba(212,175,55,0.1);padding:20px;border-radius:15px;border:1px solid var(--p);margin:30px 0}
+h2{color:var(--p);margin-top:40px}
+.back-btn{display:inline-block;margin-top:40px;color:var(--p);text-decoration:none;font-weight:bold;border:1px solid var(--p);padding:10px 25px;border-radius:50px;transition:0.3s}
+.back-btn:hover{background:var(--p);color:#000}
 </style>
 </head>
 <body>
 <div class="cont">
-    <h1>About Project</h1>
-    <p>Multi-X Utilityは、篠ノ井乗務区の設立二周年を記念した特別プロジェクトです。日常に溶け込む「精密機材」をコンセプトに開発されました。</p>
+    <h1>About Multi-X</h1>
+    <p>Multi-X Utilityは、篠ノ井乗務区の二周年を記念して制作されました。私たちの目標は、Web技術の限界に挑戦し、ネイティブアプリに負けない「手応え」を実現することです。</p>
 
-    <div class="badge-info">
-        <b>💡 ダウンロードについて</b><br>
-        本アプリはPWA技術を採用しており、ホーム画面へ追加（ダウンロード）して使用することが可能です。ただし、データの取得や初期読み込みのため、現在はインターネット接続が必要です。
+    <div class="highlight">
+        <strong>⚡ レスポンスへのこだわり</strong><br>
+        一分一秒を争う現場で、動作の遅延は許されません。Multi-Xは徹底した軽量化を行い、ボタンを押した瞬間の反応速度を極限まで高めています。
     </div>
 
-    <h2>今後の展開</h2>
-    <p>現在、完全オフライン動作（電波のない場所での全機能使用）に向けて内部システムの構築を進めています。現在のバージョンは、オンライン環境での動作を前提としています。</p>
+    <h2>制作のコンセプト</h2>
+    <p>「多機能でありながら、迷わせない」。この二律背反を解決するために、デザインは引き算で構成しました。漆黒のインターフェースは、視覚的なノイズを最小限に抑え、必要な情報だけを浮かび上がらせます。</p>
 
-    <a href="index.html" class="back-link">← TOPへ戻る</a>
+    <p style="color:#ef4444; font-size:0.9rem">※現在、オフライン動作は開発中です。通信環境下でご利用ください。</p>
+
+    <a href="index.html" class="back-btn">← TOPへ戻る</a>
 </div>
 </body>
 </html>
