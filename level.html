@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>水平器 | Multi-X Utility</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="image/icon.png">
+<link rel="icon" type="image/png" href="image/icon.png">
+<style>
+:root{--p:#d4af37;--bg:#020617;--card:#1e293b;--txt:#f8fafc}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.credit{font-size:0.7rem;color:var(--p);padding:10px;text-align:center}
+.cont{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.base{width:250px;height:250px;border:4px solid #334155;border-radius:50%;position:relative}
+.ball{width:40px;height:40px;background:var(--p);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 15px var(--p)}
+.val{margin-top:40px;font-size:2rem;font-family:monospace;color:var(--p)}
+.btn-req{padding:15px 30px;background:var(--p);border:none;border-radius:50px;font-weight:bold;cursor:pointer}
+.nav{height:65px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #334155}
+.nav a{color:#94a3b8;text-decoration:none;font-size:0.8rem;display:flex;flex-direction:column;align-items:center}
+</style>
+</head>
+<body>
+<div class="credit">制作：篠ノ井乗務区 二周年記念</div>
+<div class="cont" id="main">
+    <button id="reqBtn" class="btn-req" onclick="req()">センサーを開始する</button>
+    <div class="base" id="base" style="display:none">
+        <div class="ball" id="ball"></div>
+    </div>
+    <div class="val" id="val">0.0°</div>
+</div>
+<nav class="nav">
+    <a href="menu.html"><span>🏠</span>ホーム</a>
+    <a href="calc.html"><span>🔢</span>計算機</a>
+    <a href="timer.html"><span>⌛</span>タイマー</a>
+    <a href="level.html" style="color:var(--p)"><span>📏</span>水平器</a>
+</nav>
+<script>
+function req() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission().then(res => {
+            if (res === 'granted') { init(); }
+        });
+    } else { init(); }
+}
+function init() {
+    document.getElementById('reqBtn').style.display = 'none';
+    document.getElementById('base').style.display = 'block';
+    window.addEventListener('deviceorientation', (e) => {
+        let x = e.beta;  // 前後
+        let y = e.gamma; // 左右
+        if (x > 90) x = 90; if (x < -90) x = -90;
+        document.getElementById('ball').style.top = (50 + (x/90)*50) + '%';
+        document.getElementById('ball').style.left = (50 + (y/90)*50) + '%';
+        document.getElementById('val').innerText = Math.abs(x).toFixed(1) + '°';
+    });
+}
+if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)) {
+    const b = document.createElement('div');
+    b.style.cssText = "background:var(--p);color:#000;text-align:center;padding:10px;font-size:0.85rem;font-weight:bold;position:sticky;top:0;z-index:9999;width:100%";
+    b.innerHTML = "✨ この先はアプリで！ホーム画面に追加して使いましょう";
+    b.onclick = () => { window.location.href = 'index.html'; };
+    document.body.prepend(b);
+}
+</script>
+</body>
+</html>
