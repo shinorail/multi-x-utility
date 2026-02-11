@@ -5,45 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ultimate Calc | Multi-X Utility</title>
 <style>
-/* 壱万円クラスのテーマ設計 */
+@import url('https://fonts.googleapis.com/css2?family=BIZ+UDP+Gothic:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap');
+
 :root { --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --btn: #1e293b; --btn-txt: #ffffff; }
+
+/* UD自動カラーセット */
+[data-theme="dark"] { --bg: #000000; --card: #111111; --p: #ffffff; --txt: #ffffff; --btn: #222222; --btn-txt: #ffffff; }
+[data-theme="light"] { --bg: #f8fafc; --card: #ffffff; --p: #0f172a; --txt: #0f172a; --btn: #e2e8f0; --btn-txt: #0f172a; }
+
+/* 手動テーマ */
 body.theme-black { --bg: #000000; --card: #111111; --p: #ffffff; --txt: #ffffff; --btn: #222222; --btn-txt: #ffffff; }
 body.theme-white { --bg: #f8fafc; --card: #ffffff; --p: #0f172a; --txt: #0f172a; --btn: #e2e8f0; --btn-txt: #0f172a; }
 body.theme-gold { --bg: #1c1917; --card: #292524; --p: #d4af37; --txt: #f8fafc; --btn: #44403c; --btn-txt: #ffffff; }
 
-body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: 0.3s; overflow-x: hidden; }
+body { font-family: 'BIZ UDPGothic', sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: 0.3s; overflow-x: hidden; }
 
-/* ヘッダー・操作系 */
 .header { width: 90%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
 .theme-selector { display: flex; gap: 12px; }
 .t-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--p); cursor: pointer; transition: 0.2s; }
-.t-btn:active { transform: scale(0.8); }
 .help-btn { text-decoration: none; color: var(--p); font-size: 1.4rem; font-weight: bold; width: 30px; text-align: right; }
 
-/* プレミアム・ディスプレイ */
 .display-container { width: 90%; max-width: 400px; background: var(--card); padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); margin-bottom: 20px; text-align: right; border: 1px solid rgba(212,175,55,0.2); box-sizing: border-box; }
-#history { font-size: 0.9rem; color: #64748b; height: 20px; font-family: monospace; overflow: hidden; margin-bottom: 5px; }
-#result { font-size: 3.2rem; font-weight: bold; color: var(--p); overflow-x: auto; white-space: nowrap; font-family: 'Courier New', monospace; }
+#history { font-size: 0.9rem; color: #64748b; height: 20px; font-family: 'BIZ UDPGothic', monospace; overflow: hidden; margin-bottom: 5px; }
+#result { font-size: 3.2rem; font-weight: bold; color: var(--p); overflow-x: auto; white-space: nowrap; font-family: 'BIZ UDPGothic', sans-serif; }
 
-/* モード切替タブ */
 .tabs { display: flex; gap: 8px; margin-bottom: 15px; width: 90%; max-width: 400px; }
 .tab { flex: 1; padding: 10px; border-radius: 12px; font-size: 0.75rem; text-align: center; cursor: pointer; background: var(--card); color: #94a3b8; border: 1px solid rgba(128,128,128,0.2); font-weight: bold; transition: 0.2s; }
 .tab.active { background: var(--p); color: var(--bg); border-color: var(--p); }
 
-/* 計算グリッド */
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 90%; max-width: 400px; }
-button { height: 70px; border-radius: 20px; border: none; font-size: 1.4rem; font-weight: bold; background: var(--btn); color: var(--btn-txt); cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+button { height: 70px; border-radius: 20px; border: none; font-size: 1.4rem; font-weight: bold; background: var(--btn); color: var(--btn-txt); cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.2); font-family: inherit; }
 button:active { transform: translateY(3px); box-shadow: none; filter: brightness(1.3); }
 
-/* 特殊ボタン */
 .btn-op { color: var(--p); }
 .btn-eq { background: var(--p); color: var(--bg); grid-column: span 2; }
 .btn-ac { color: #ef4444; }
 .btn-sci { font-size: 1rem; background: rgba(128,128,128,0.1); }
 
-/* 追加パネル（関数・定数） */
 #panel-extra { display: none; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 90%; max-width: 400px; margin-bottom: 10px; }
 .c-btn { font-size: 0.7rem; height: 50px; border-color: var(--p); }
+
+/* PWA Install Section */
+.install-banner { width: 90%; max-width: 400px; margin: 30px 0 10px 0; padding: 20px; background: rgba(212,175,55,0.1); border: 1px dashed var(--p); border-radius: 20px; text-align: center; box-sizing: border-box; }
 
 .footer-credit { margin-top: 30px; font-size: 0.7rem; color: #64748b; letter-spacing: 2px; text-align: center; padding-bottom: 40px; }
 .back-link { color: var(--p); text-decoration: none; font-weight: bold; margin-bottom: 20px; }
@@ -53,12 +56,12 @@ button:active { transform: translateY(3px); box-shadow: none; filter: brightness
 
 <div class="header">
     <div class="theme-selector">
-        <div class="t-btn" style="background:#000" onclick="setTheme('black')" title="漆黒"></div>
-        <div class="t-btn" style="background:#fff" onclick="setTheme('white')" title="純白"></div>
-        <div class="t-btn" style="background:#d4af37" onclick="setTheme('gold')" title="黄金"></div>
+        <div class="t-btn vibrate-on" style="background:#000" onclick="setTheme('black')"></div>
+        <div class="t-btn vibrate-on" style="background:#fff" onclick="setTheme('white')"></div>
+        <div class="t-btn vibrate-on" style="background:#d4af37" onclick="setTheme('gold')"></div>
     </div>
-    <div style="font-weight: bold; color: var(--p); font-size: 0.8rem;">ULTIMATE CALC</div>
-    <a href="calc-manual.html" class="help-btn">?</a>
+    <div style="font-weight: bold; color: var(--p); font-size: 0.8rem; font-family: 'Shippori Mincho', serif;">ULTIMATE CALC</div>
+    <a href="calc-manual.html" class="help-btn vibrate-on">?</a>
 </div>
 
 <div class="display-container">
@@ -67,37 +70,46 @@ button:active { transform: translateY(3px); box-shadow: none; filter: brightness
 </div>
 
 <div class="tabs">
-    <div id="t-norm" class="tab active" onclick="setMode('norm')">NORMAL</div>
-    <div id="t-sci" class="tab" onclick="setMode('sci')">SCIENTIFIC</div>
-    <div id="t-const" class="tab" onclick="setMode('const')">CONSTANTS</div>
+    <div id="t-norm" class="tab active vibrate-on" onclick="setMode('norm')">NORMAL</div>
+    <div id="t-sci" class="tab vibrate-on" onclick="setMode('sci')">SCIENTIFIC</div>
+    <div id="t-const" class="tab vibrate-on" onclick="setMode('const')">CONSTANTS</div>
 </div>
 
-<div id="panel-extra" class="grid">
-    </div>
+<div id="panel-extra" class="grid"></div>
 
 <div class="grid">
-    <button class="btn-ac" onclick="cls()">AC</button>
-    <button class="btn-sci" onclick="push('(')">(</button>
-    <button class="btn-sci" onclick="push(')')">)</button>
-    <button class="btn-op" onclick="push('/')">÷</button>
+    <button class="btn-ac vibrate-on" onclick="cls()">AC</button>
+    <button class="btn-sci vibrate-on" onclick="push('(')">(</button>
+    <button class="btn-sci vibrate-on" onclick="push(')')">)</button>
+    <button class="btn-op vibrate-on" onclick="push('/')">÷</button>
     
-    <button onclick="push('7')">7</button><button onclick="push('8')">8</button><button onclick="push('9')">9</button>
-    <button class="btn-op" onclick="push('*')">×</button>
+    <button class="vibrate-on" onclick="push('7')">7</button><button class="vibrate-on" onclick="push('8')">8</button><button class="vibrate-on" onclick="push('9')">9</button>
+    <button class="btn-op vibrate-on" onclick="push('*')">×</button>
     
-    <button onclick="push('4')">4</button><button onclick="push('5')">5</button><button onclick="push('6')">6</button>
-    <button class="btn-op" onclick="push('-')">-</button>
+    <button class="vibrate-on" onclick="push('4')">4</button><button class="vibrate-on" onclick="push('5')">5</button><button class="vibrate-on" onclick="push('6')">6</button>
+    <button class="btn-op vibrate-on" onclick="push('-')">-</button>
     
-    <button onclick="push('1')">1</button><button onclick="push('2')">2</button><button onclick="push('3')">3</button>
-    <button class="btn-op" onclick="push('+')">+</button>
+    <button class="vibrate-on" onclick="push('1')">1</button><button class="vibrate-on" onclick="push('2')">2</button><button class="vibrate-on" onclick="push('3')">3</button>
+    <button class="btn-op vibrate-on" onclick="push('+')">+</button>
     
-    <button onclick="push('0')">0</button>
-    <button onclick="push('.')">.</button>
-    <button class="btn-eq" onclick="execute()">=</button>
+    <button class="vibrate-on" onclick="push('0')">0</button>
+    <button class="vibrate-on" onclick="push('.')">.</button>
+    <button class="btn-eq vibrate-on" onclick="execute()">=</button>
+</div>
+
+<div id="pwa-install-container" class="install-banner" style="display: none;">
+    <div style="font-size: 0.85rem; color: var(--p); font-weight: bold; margin-bottom: 10px;">OFFICIAL APP AVAILABLE</div>
+    <div style="font-size: 0.75rem; color: var(--txt); line-height: 1.5; margin-bottom: 15px;">
+        アプリをダウンロードすると快適に使えます。<br>全画面表示で現場の操作ミスを防止。
+    </div>
+    <button id="pwa-install-btn" class="vibrate-on" style="height: 50px; width: 100%; background: var(--p); color: var(--bg); font-size: 0.9rem; border-radius: 12px; font-weight: bold;">
+        APPをインストールする
+    </button>
 </div>
 
 <div class="footer-credit">
     PRECISION INSTRUMENT BY SHINONOI DEPOT<br>
-    <a href="menu.html" class="back-link">← BACK TO MENU</a>
+    <a href="menu.html" class="back-link vibrate-on">← BACK TO MENU</a>
 </div>
 
 <script>
@@ -111,16 +123,13 @@ function push(v) {
     exp += v;
     resDisplay.innerText = exp;
 }
-
 function cls() {
     exp = '';
     resDisplay.innerText = '0';
     histDisplay.innerText = '';
 }
-
 function execute() {
     try {
-        // 表示用の記号を計算用に置換
         let calcExp = exp.replace(/×/g, '*').replace(/÷/g, '/');
         let result = eval(calcExp);
         histDisplay.innerText = exp + ' =';
@@ -131,46 +140,37 @@ function execute() {
         exp = '';
     }
 }
-
 function setTheme(t) {
     document.body.className = 'theme-' + t;
     localStorage.setItem('calcTheme', t);
+    document.documentElement.removeAttribute('data-theme');
 }
-
 function setMode(m) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     extraPanel.style.display = 'grid';
     extraPanel.innerHTML = '';
-
     if (m === 'norm') {
         document.getElementById('t-norm').classList.add('active');
         extraPanel.style.display = 'none';
     } else if (m === 'sci') {
         document.getElementById('t-sci').classList.add('active');
-        const keys = [
-            {n:'sin', v:'Math.sin('}, {n:'cos', v:'Math.cos('}, 
-            {n:'tan', v:'Math.tan('}, {n:'√', v:'Math.sqrt('}
-        ];
+        const keys = [{n:'sin', v:'Math.sin('}, {n:'cos', v:'Math.cos('}, {n:'tan', v:'Math.tan('}, {n:'√', v:'Math.sqrt('}];
         keys.forEach(k => {
-            extraPanel.innerHTML += `<button class="btn-sci c-btn" onclick="push('${k.v}')">${k.n}</button>`;
+            extraPanel.innerHTML += `<button class="btn-sci c-btn vibrate-on" onclick="push('${k.v}')">${k.n}</button>`;
         });
     } else if (m === 'const') {
         document.getElementById('t-const').classList.add('active');
-        const consts = [
-            {n:'π', v:'3.14159'}, {n:'e', v:'2.71828'}, 
-            {n:'c', v:'299792458'}, {n:'g', v:'9.80665'}
-        ];
+        const consts = [{n:'π', v:'3.14159'}, {n:'e', v:'2.71828'}, {n:'c', v:'299792458'}, {n:'g', v:'9.80665'}];
         consts.forEach(c => {
-            extraPanel.innerHTML += `<button class="btn-sci c-btn" onclick="push('${c.v}')">${c.n}</button>`;
+            extraPanel.innerHTML += `<button class="btn-sci c-btn vibrate-on" onclick="push('${c.v}')">${c.n}</button>`;
         });
     }
 }
-
-// 初期化
 window.onload = () => {
     const savedTheme = localStorage.getItem('calcTheme');
     if (savedTheme) setTheme(savedTheme);
 };
 </script>
+<script src="app.js"></script>
 </body>
 </html>
