@@ -1,35 +1,28 @@
 /* ======================================================
-   Multi-X Utility : Universal Design & PWA Engine
-   (c) 2026 篠ノ井乗務区
+   Multi-X Utility : Engine v2.0
    ====================================================== */
 "use strict";
 
+let deferredPrompt = null;
+
 const MultiX_UD = {
-    // 振動機能
+    // 振動
     haptic: (ms) => {
         if ("vibrate" in navigator) navigator.vibrate(ms);
     },
-
-    // センサー連動（環境光）
+    // センサー
     setupLightSensor: () => {
         if ('AmbientLightSensor' in window) {
             try {
                 const sensor = new AmbientLightSensor();
                 sensor.addEventListener('reading', () => {
-                    if (sensor.illuminance < 10) {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    } else {
-                        document.documentElement.setAttribute('data-theme', 'light');
-                    }
+                    document.documentElement.setAttribute('data-theme', sensor.illuminance < 10 ? 'dark' : 'light');
                 });
                 sensor.start();
-            } catch (err) {
-                console.log("Sensor access denied.");
-            }
+            } catch (err) { console.log("Sensor disabled"); }
         }
     },
-
-    // 自動テーマ初期化（センサーが動かない場合のフォールバック）
+    // テーマ
     initTheme: () => {
         const mq = window.matchMedia('(prefers-color-scheme: dark)');
         const apply = (e) => {
@@ -40,8 +33,7 @@ const MultiX_UD = {
         mq.addEventListener('change', apply);
         apply(mq);
     },
-
-    // 振動イベントの一括登録
+    // 振動一括登録
     initHaptics: () => {
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('vibrate-on') || e.target.closest('.vibrate-on')) {
@@ -51,30 +43,39 @@ const MultiX_UD = {
     }
 };
 
-/* ======================================================
-   PWA 強制表示対応版ロジック
-   ====================================================== */
+// PWA インストールロジック
 const setupPWA = () => {
     const popup = document.getElementById('pwa-popup');
-    
-    // A: ブラウザが「インストール可能」と判断した時に発火
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        console.log("PWA: インストール準備完了");
         if (popup) popup.style.display = 'block';
     });
-
-    // B: 【重要】イベントが来なくても5秒後に強制表示（誘致を優先）
+    // 強制表示
     setTimeout(() => {
-        if (popup && popup.style.display !== 'block') {
-            console.log("PWA: 強制表示モード起動");
-            popup.style.display = 'block';
-        }
-    }, 5000); 
+        if (popup && popup.style.display !== 'block') { popup.style.display = 'block'; }
+    }, 4000);
 };
 
-// 起動
+// ダウンロード実行
+window.installPWA = async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            document.getElementById('pwa-popup').style.display = 'none';
+        }
+        deferredPrompt = null;
+    } else {
+        const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isiOS) {
+            alert("【iPhoneの方へ】\nブラウザ下部の「共有ボタン」から「ホーム画面に追加」を選択してダウンロードしてください。");
+        } else {
+            alert("既にインストール済みか、ブラウザのメニューから「ホーム画面に追加」を選択してください。");
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     MultiX_UD.initTheme();
     MultiX_UD.initHaptics();
