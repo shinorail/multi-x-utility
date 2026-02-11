@@ -1,15 +1,35 @@
 /* ======================================================
-   Multi-X Utility : UD & PWA Module
+   Multi-X Utility : Universal Design & PWA Engine
+   (c) 2026 篠ノ井乗務区
    ====================================================== */
 "use strict";
 
 const MultiX_UD = {
-    // 振動
+    // 振動機能
     haptic: (ms) => {
-        if (navigator.vibrate) navigator.vibrate(ms);
+        if ("vibrate" in navigator) navigator.vibrate(ms);
     },
 
-    // 自動テーマ
+    // センサー連動（環境光）
+    setupLightSensor: () => {
+        if ('AmbientLightSensor' in window) {
+            try {
+                const sensor = new AmbientLightSensor();
+                sensor.addEventListener('reading', () => {
+                    if (sensor.illuminance < 10) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    }
+                });
+                sensor.start();
+            } catch (err) {
+                console.log("Sensor access denied.");
+            }
+        }
+    },
+
+    // 自動テーマ初期化（センサーが動かない場合のフォールバック）
     initTheme: () => {
         const mq = window.matchMedia('(prefers-color-scheme: dark)');
         const apply = (e) => {
@@ -21,7 +41,7 @@ const MultiX_UD = {
         apply(mq);
     },
 
-    // 振動一括登録
+    // 振動イベントの一括登録
     initHaptics: () => {
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('vibrate-on') || e.target.closest('.vibrate-on')) {
@@ -34,71 +54,31 @@ const MultiX_UD = {
 // PWA インストールロジック
 let deferredPrompt;
 const setupPWA = () => {
-    const installContainer = document.getElementById('pwa-install-container');
-    const installBtn = document.getElementById('pwa-install-btn');
-
+    const popup = document.getElementById('pwa-popup');
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        if (installContainer) installContainer.style.display = 'block';
-    });
-
-    if (installBtn) {
-        installBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installContainer.style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
-    }
-
-    window.addEventListener('appinstalled', () => {
-        if (installContainer) installContainer.style.display = 'none';
+        setTimeout(() => { if (popup) popup.style.display = 'block'; }, 2000);
     });
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    MultiX_UD.initTheme();
-    MultiX_UD.initHaptics();
-    setupPWA();
-});
-/* ======================================================
-   Multi-X Utility : 環境光センサー適応モジュール
-   ====================================================== */
-
-const setupLightSensor = () => {
-    // 1. 環境光センサーAPIが利用可能かチェック
-    if ('AmbientLightSensor' in window) {
-        try {
-            const sensor = new AmbientLightSensor();
-            sensor.addEventListener('reading', () => {
-                // 明るさの単位は lux（ルクス）
-                // 10ルクス以下（かなり暗い場所）ならダークモードへ
-                if (sensor.illuminance < 10) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    console.log("[Sensor] 暗がりを検知：夜間モード起動");
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    console.log("[Sensor] 明るい環境を検知：通常モード起動");
-                }
-            });
-            sensor.start();
-        } catch (err) {
-            console.log("センサーアクセスが拒否されました。PWAとして実行してください。");
-        }
-    } else {
-        // 2. センサーが使えない場合は、OSのダークモード設定（時間連動）にフォールバック
-        console.log("環境光センサー非対応。OS設定連動モードを継続します。");
+window.installPWA = async () => {
+    if (!deferredPrompt) {
+        alert("ブラウザのメニューから「ホーム画面に追加」を選択してください。");
+        return;
     }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+        document.getElementById('pwa-popup').style.display = 'none';
+    }
+    deferredPrompt = null;
 };
 
-// 既存のDOMContentLoaded内に追加
+// 起動
 document.addEventListener('DOMContentLoaded', () => {
     MultiX_UD.initTheme();
     MultiX_UD.initHaptics();
+    MultiX_UD.setupLightSensor();
     setupPWA();
-    setupLightSensor(); // これを追加
 });
