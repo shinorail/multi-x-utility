@@ -1,16 +1,14 @@
 /* ======================================================
-   Multi-X Utility : Engine v2.0
+   Multi-X Utility : Engine v2.1 (PWA Action Fixed)
    ====================================================== */
 "use strict";
 
 let deferredPrompt = null;
 
 const MultiX_UD = {
-    // 振動
     haptic: (ms) => {
         if ("vibrate" in navigator) navigator.vibrate(ms);
     },
-    // センサー
     setupLightSensor: () => {
         if ('AmbientLightSensor' in window) {
             try {
@@ -22,7 +20,6 @@ const MultiX_UD = {
             } catch (err) { console.log("Sensor disabled"); }
         }
     },
-    // テーマ
     initTheme: () => {
         const mq = window.matchMedia('(prefers-color-scheme: dark)');
         const apply = (e) => {
@@ -33,7 +30,6 @@ const MultiX_UD = {
         mq.addEventListener('change', apply);
         apply(mq);
     },
-    // 振動一括登録
     initHaptics: () => {
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('vibrate-on') || e.target.closest('.vibrate-on')) {
@@ -43,35 +39,49 @@ const MultiX_UD = {
     }
 };
 
-// PWA インストールロジック
 const setupPWA = () => {
     const popup = document.getElementById('pwa-popup');
     window.addEventListener('beforeinstallprompt', (e) => {
+        console.log("PWA: インストール準備が整いました（許可証受理）");
         e.preventDefault();
         deferredPrompt = e;
         if (popup) popup.style.display = 'block';
     });
-    // 強制表示
+
+    // 4秒後に強制表示（許可証がなくても「誘惑」は出す）
     setTimeout(() => {
-        if (popup && popup.style.display !== 'block') { popup.style.display = 'block'; }
+        if (popup && popup.style.display !== 'block') {
+            console.log("PWA: 許可証未着のため、案内モードで表示します");
+            popup.style.display = 'block';
+        }
     }, 4000);
 };
 
-// ダウンロード実行
+// ダウンロードボタン実行関数
 window.installPWA = async () => {
+    MultiX_UD.haptic(30); // 押し心地を追加
+
+    // パターン1: ブラウザがインストール準備完了している場合
     if (deferredPrompt) {
+        console.log("PWA: 標準インストールダイアログを起動します");
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
             document.getElementById('pwa-popup').style.display = 'none';
         }
         deferredPrompt = null;
-    } else {
+    } 
+    // パターン2: 準備ができていない、またはiPhoneの場合
+    else {
         const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+
         if (isiOS) {
-            alert("【iPhoneの方へ】\nブラウザ下部の「共有ボタン」から「ホーム画面に追加」を選択してダウンロードしてください。");
+            alert("【iPhoneでのダウンロード方法】\n\n1. ブラウザ下部の中央にある「共有ボタン（□に↑）」をタップします。\n2. メニューを下にスクロールし、「ホーム画面に追加」を選択します。\n3. 右上の「追加」を押すと、アプリアイコンがホーム画面に並びます。");
+        } else if (isChrome) {
+            alert("【Android/PCでのダウンロード方法】\n\n1. ブラウザ右上の「⋮（三点リーダー）」をタップします。\n2. 「アプリをインストール」または「ホーム画面に追加」を選択してください。");
         } else {
-            alert("既にインストール済みか、ブラウザのメニューから「ホーム画面に追加」を選択してください。");
+            alert("既にインストール済みか、お使いのブラウザが直接実行に対応していません。\n\nブラウザの設定メニューから「ホーム画面に追加」を行ってください。");
         }
     }
 };
