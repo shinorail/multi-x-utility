@@ -1,63 +1,67 @@
 /* ======================================================
-   Multi-X Utility : UD Core System
-   (c) 2026 篠ノ井乗務区
-   機能：自動カラーセット切り替え・触覚フィードバック
+   Multi-X Utility : UD & PWA Module
    ====================================================== */
-
 "use strict";
 
-const MultiXApp = {
-    // 1. 触覚フィードバック（バイブレーション）設定
-    haptics: {
-        enabled: true,
-        play: (type = 'light') => {
-            if (!navigator.vibrate || !MultiXApp.haptics.enabled) return;
-            
-            const patterns = {
-                light: 10,       // 標準ボタン入力用
-                medium: 30,      // 決定・計算完了用
-                error: [50, 50, 50] // エラー警告用
-            };
-            navigator.vibrate(patterns[type] || patterns.light);
-        }
+const MultiX_UD = {
+    // 振動
+    haptic: (ms) => {
+        if (navigator.vibrate) navigator.vibrate(ms);
     },
 
-    // 2. カラーセット（ダークモード）自動適応設定
-    theme: {
-        init: () => {
-            const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            const apply = (e) => {
-                const mode = e.matches ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', mode);
-                console.log(`[Multi-X] Theme adaptive: ${mode}`);
-            };
-
-            // 初期実行と監視開始
-            darkMediaQuery.addEventListener('change', apply);
-            apply(darkMediaQuery);
-        }
+    // 自動テーマ
+    initTheme: () => {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        const apply = (e) => {
+            if (!localStorage.getItem('calcTheme')) {
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        };
+        mq.addEventListener('change', apply);
+        apply(mq);
     },
 
-    // 3. UIイベントの紐付け
-    ui: {
-        setupEventListeners: () => {
-            // "vibrate-on" クラスを持つ全ての要素に振動を付与
-            document.body.addEventListener('click', (e) => {
-                if (e.target.classList.contains('vibrate-on') || e.target.closest('.vibrate-on')) {
-                    MultiXApp.haptics.play('light');
-                }
-            });
-        }
-    },
-
-    // アプリの起動処理
-    start: () => {
-        MultiXApp.theme.init();
-        MultiXApp.ui.setupEventListeners();
-        console.log("Multi-X Utility: UD Engine started.");
+    // 振動一括登録
+    initHaptics: () => {
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('vibrate-on') || e.target.closest('.vibrate-on')) {
+                MultiX_UD.haptic(15);
+            }
+        });
     }
 };
 
-// DOM構築完了後に起動
-document.addEventListener('DOMContentLoaded', MultiXApp.start);
+// PWA インストールロジック
+let deferredPrompt;
+const setupPWA = () => {
+    const installContainer = document.getElementById('pwa-install-container');
+    const installBtn = document.getElementById('pwa-install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installContainer) installContainer.style.display = 'block';
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installContainer.style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+    }
+
+    window.addEventListener('appinstalled', () => {
+        if (installContainer) installContainer.style.display = 'none';
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    MultiX_UD.initTheme();
+    MultiX_UD.initHaptics();
+    setupPWA();
+});
