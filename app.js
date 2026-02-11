@@ -51,28 +51,27 @@ const MultiX_UD = {
     }
 };
 
-// PWA インストールロジック
-let deferredPrompt;
+/* ======================================================
+   PWA 強制表示対応版ロジック
+   ====================================================== */
 const setupPWA = () => {
     const popup = document.getElementById('pwa-popup');
+    
+    // A: ブラウザが「インストール可能」と判断した時に発火
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        setTimeout(() => { if (popup) popup.style.display = 'block'; }, 2000);
+        console.log("PWA: インストール準備完了");
+        if (popup) popup.style.display = 'block';
     });
-};
 
-window.installPWA = async () => {
-    if (!deferredPrompt) {
-        alert("ブラウザのメニューから「ホーム画面に追加」を選択してください。");
-        return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-        document.getElementById('pwa-popup').style.display = 'none';
-    }
-    deferredPrompt = null;
+    // B: 【重要】イベントが来なくても5秒後に強制表示（誘致を優先）
+    setTimeout(() => {
+        if (popup && popup.style.display !== 'block') {
+            console.log("PWA: 強制表示モード起動");
+            popup.style.display = 'block';
+        }
+    }, 5000); 
 };
 
 // 起動
