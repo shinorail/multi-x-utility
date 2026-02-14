@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>詳細ガイド | Multi-X Utility</title>
+<style>
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--line:rgba(212,175,55,0.3);--info:#38bdf8;--accent:#fbbf24}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',sans-serif;background:var(--bg);color:var(--txt);margin:0;line-height:1.7;display:flex;flex-direction:column;align-items:center;padding:20px;box-sizing:border-box}
+.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-bottom:10px}
+header{text-align:center;margin-bottom:40px;width:100%}
+header h1{font-size:2rem;color:var(--p);margin:5px 0}
+.guide-wrapper{width:100%;max-width:700px;display:flex;flex-direction:column;gap:35px}
+
+/* セクション共通 */
+section{background:var(--card);border-radius:28px;padding:30px;border:1px solid var(--line);box-shadow:0 15px 40px rgba(0,0,0,0.5);position:relative}
+h2{font-size:1.4rem;color:var(--p);margin:0 0 20px 0;display:flex;align-items:center;gap:15px;border-bottom:2px solid var(--line);padding-bottom:12px}
+h3{font-size:1.1rem;color:var(--accent);margin:20px 0 10px 0;display:flex;align-items:center;gap:8px}
+
+/* 詳細リスト */
+.feature-box{margin-bottom:20px;padding:15px;background:rgba(255,255,255,0.03);border-radius:15px}
+.usage-scene{background:rgba(56,189,248,0.1);padding:12px;border-radius:12px;font-size:0.9rem;margin-top:10px;border-left:4px solid var(--info)}
+.tech-spec{font-size:0.8rem;color:#94a3b8;margin-top:8px;font-family:monospace}
+
+/* Q&A形式 */
+.faq-item{margin-bottom:15px}
+.faq-q{font-weight:bold;color:var(--p);display:block}
+.faq-a{font-size:0.9rem;color:#cbd5e1}
+
+.back-btn{margin:40px 0;color:var(--p);text-decoration:none;font-weight:bold;border:2px solid var(--p);padding:15px 40px;border-radius:50px;transition:0.3s;background:rgba(212,175,55,0.05)}
+.back-btn:active{background:var(--p);color:#000}
+</style>
+
+</head>
+<body>
+
+<div class="credit">篠ノ井乗務区</div>
+
+<header>
+<h1>マニュアル & 仕様書</h1>
+<div style="font-size:0.9rem; color:#94a3b8">Multi-X Utility のすべて</div>
+</header>
+
+<div class="guide-wrapper">
+
+<section>
+    <h2>RecMemo (録音・メモ)🎤</h2>
+    <div class="feature-box">
+        <h3>録音エンジンの仕組み</h3>
+        <p>ブラウザ標準のMediaRecorder APIを使用。録音データはメモリ内で処理され、停止と同時にBlob形式でダウンロードURLが生成されます。</p>
+        <div class="usage-scene">💡 <strong>活用シーン：</strong> 外出先でのアイデア記録、ボイスレターの作成、会議の重要事項の備忘録。</div>
+        <div class="tech-spec">SPEC: MP3(Lame変換シミュレート) / 44.1kHz / Mono / HTTPS必須</div>
+    </div>
+    <div class="feature-box">
+        <h3>自動保存(LocalStorage)の仕様</h3>
+        <p>メモ欄への入力は1文字ごとにブラウザの保存領域（LocalStorage）へ即座に書き込まれます。保存ボタンを押し忘れても、電源が落ちても、データは守られます。</p>
+        <div class="usage-scene">💡 <strong>活用シーン：</strong> 長文の下書き、TODOリストの管理、日記、買い物メモ。</div>
+    </div>
+</section>
+
+<section>
+    <h2>QRツール & ゲート 🔳</h2>
+    <div class="feature-box">
+        <h3>生成と読取の仕組み</h3>
+        <p>JavaScriptライブラリを用いて、ブラウザ上でQRコードをレンダリングします。画像はサーバーを経由せず、あなたのデバイス内で完結して作成されます。</p>
+        <div class="usage-scene">💡 <strong>活用シーン：</strong> 連絡先の交換、Wi-Fi設定の共有、先行公開コンテンツへのアクセス。</div>
+        <div class="tech-spec">SPEC: QRCode.js Engine / Camera API (Scan)</div>
+    </div>
+</section>
+
+<section>
+    <h2>計測・計算システム⏳</h2>
+    <div class="feature-box">
+        <h3>持続型タイマー・ストップウォッチ</h3>
+        <p>通常のタイマーと異なり、開始時刻（UNIXタイム）を記憶する仕組みを採用。タブを閉じたり再読み込みしても、経過時間は正確に計算され続けます。</p>
+        <div class="usage-scene">💡 <strong>活用シーン：</strong> 料理の計測、学習時間の管理、運行時間の正確な記録。</div>
+    </div>
+    <div class="feature-box">
+        <h3>センサーによる水平器</h3>
+        <p>スマホ内蔵のジャイロ・加速度センサーを利用。0.1度単位での傾きを検知し、視覚的に水平状態を表示します。</p>
+        <div class="tech-spec">SPEC: DeviceOrientationEvent / DeviceMotionEvent</div>
+    </div>
+</section>
+
+<section>
+    <h2>よくあるご質問 (FAQ)</h2>
+    <div class="faq-item">
+        <span class="faq-q">Q. 録音データはどこに保存されますか？</span>
+        <span class="faq-a">A. 「SAVE」ボタンを押すと、お使いのスマホの「ダウンロード」フォルダに保存されます。</span>
+    </div>
+    <div class="faq-item">
+        <span class="faq-q">Q. メモが勝手に消えることはありますか？</span>
+        <span class="faq-a">A. ブラウザのキャッシュを完全に削除（初期化）しない限り、LocalStorageに保持されます。</span>
+    </div>
+    <div class="faq-item">
+        <span class="faq-q">Q. マイクが反応しません。</span>
+        <span class="faq-a">A. サイトのURLが「https://」で始まっているか確認し、設定からマイク権限を許可してください。</span>
+    </div>
+</section>
+</div>
+
+<a href="menu.html" class="back-btn">← MENUに戻る</a>
+
+<div style="margin-bottom:50px; font-size:0.75rem; color:#64748b; text-align:center">
+&copy; 篠ノ井乗務区 All Rights Reserved.
+</div>
+
+</body>
+</html>
