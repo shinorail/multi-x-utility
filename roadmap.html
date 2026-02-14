@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Roadmap | Multi-X Utility</title>
+<style>
+:root {
+    --p: #d4af37; /* 記念モデルのゴールド */
+    --bg: #0f172a; /* 深い紺色 */
+    --txt: #f8fafc;
+    --card: rgba(255, 255, 255, 0.03);
+}
+body {
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", sans-serif;
+    background: var(--bg);
+    color: var(--txt);
+    margin: 0;
+    line-height: 1.8;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+}
+.cont {
+    width: 100%;
+    max-width: 800px;
+}
+h1 {
+    color: var(--p);
+    font-size: 2rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding-bottom: 15px;
+    letter-spacing: 2px;
+}
+.mission-log {
+    margin: 40px 0;
+}
+h2 {
+    color: var(--p);
+    font-size: 1.2rem;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(212, 175, 55, 0.2);
+}
+
+/* クエスト形式の進捗リスト */
+.roadmap-box {
+    background: var(--card);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-left: 4px solid var(--p);
+    padding: 20px;
+    border-radius: 0 15px 15px 0;
+    margin-bottom: 20px;
+}
+.status {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+.status.done { background: var(--p); color: #000; }
+.status.ongoing { border: 1px solid var(--p); color: var(--p); }
+
+.roadmap-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+.roadmap-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #94a3b8;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 50px;
+    color: var(--p);
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid var(--p);
+    padding: 12px 35px;
+    border-radius: 50px;
+    transition: 0.3s;
+}
+.back-btn:hover {
+    background: var(--p);
+    color: #000;
+}
+
+/* レスポンシブ対応：PCで見ると2列に */
+@media (min-width: 768px) {
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="cont">
+    <h1>Development Roadmap</h1>
+    <p>Multi-X Utilityの進化は止まりません。私たちは、現場で求められる機能を、最も洗練された形で提供し続けることを約束します。</p>
+
+    <h2>Phase 1: Foundations (完了)</h2>
+    <div class="grid">
+        <div class="roadmap-box">
+            <span class="status done">COMPLETE</span>
+            <h3>NativeMemo Pro</h3>
+            <p>スマホを振って録音を止める独自ジェスチャーと、遅延のない自動保存メモを実装しました。</p>
+        </div>
+        <div class="roadmap-box">
+            <span class="status done">COMPLETE</span>
+            <h3>UI 2.0 Dashboard</h3>
+            <p>二周年記念モデルのデザインへの刷新。視認性と操作性を極限まで高めました。</p>
+        </div>
+    </div>
+
+    <h2>Phase 2: Extension (進行中)</h2>
+    <div class="grid">
+        <div class="roadmap-box">
+            <span class="status ongoing">ONGOING</span>
+            <h3>Silent Alarm Logic</h3>
+            <p>音を出さず、振動パターンだけで通知する機能。鉄道業務等の音が出せない環境に特化。</p>
+        </div>
+        <div class="roadmap-box">
+            <span class="status ongoing">ONGOING</span>
+            <h3>Responsive Grid</h3>
+            <p>全デバイスで「完璧なレイアウト」を保証するためのレスポンシブ最適化作業。</p>
+        </div>
+    </div>
+
+    <h2>Phase 3: Future (計画)</h2>
+    <div class="roadmap-box" style="border-left-color: #444;">
+        <span class="status" style="background:#444; color:#fff">PLANNED</span>
+        <h3>Offline Data Ecosystem</h3>
+        <p>ネットワークがない環境でも全データにアクセスし、管理できる完全オフラインモードの構築。</p>
+    </div>
+
+    <a href="index.html" class="back-btn">← TOPへ戻る</a>
+</div>
+</body>
+</html>
