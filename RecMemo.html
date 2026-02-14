@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>NativeMemo Pro</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root {
+--bg: #000;
+--card: #1c1c1e;
+--text: #fff;
+--accent: #32d74b;
+--danger: #ff453a;
+}
+body {
+font-family: -apple-system, sans-serif;
+background: var(--bg);
+color: var(--text);
+margin: 0;
+height: 100vh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+}
+#blocker {
+display: flex; flex-direction: column; justify-content: center;
+align-items: center; height: 100vh; padding: 40px; text-align: center;
+}
+#app { display: none; flex-direction: column; height: 100%; }
+header { padding: 50px 20px 10px; font-size: 22px; font-weight: bold; }
+main { flex: 1; overflow-y: auto; padding: 20px; }
+textarea {
+width: 100%; height: 150px; background: var(--card); border: none;
+border-radius: 12px; color: var(--text); padding: 15px;
+box-sizing: border-box; font-size: 16px; margin-bottom: 20px;
+}
+.btn {
+width: 100%; padding: 18px; border-radius: 15px; border: none;
+font-weight: bold; font-size: 16px; margin-bottom: 15px; cursor: pointer;
+}
+.btn-rec { background: var(--danger); color: white; }
+.btn-stop { background: #444; color: white; }
+.btn-clear { background: #2c2c2e; color: #888; font-size: 12px; padding: 10px; }
+.audio-item { background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+audio { width: 100%; }
+.info { font-size: 11px; color: #888; margin-bottom: 10px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div id="blocker">
+<h1>App Required</h1>
+<p>「ホーム画面に追加」して起動してください。</p>
+</div>
+
+<div id="app">
+<header>Memo & Voice</header>
+<main>
+<div id="status" class="info">振って停止モード：有効</div>
+<textarea id="memo" placeholder="メモ..."></textarea>
+
+    <button id="recBtn" class="btn btn-rec">録音開始</button>
+    <button id="stopBtn" class="btn btn-stop" style="display:none;">停止（またはスマホを振る）</button>
+
+    <div id="list"></div>
+    <button id="clearBtn" class="btn btn-clear">録音データを全削除</button>
+</main>
+</div>
+
+<script>
+const app = document.getElementById('app');
+const blocker = document.getElementById('blocker');
+const memo = document.getElementById('memo');
+const recBtn = document.getElementById('recBtn');
+const stopBtn = document.getElementById('stopBtn');
+const clearBtn = document.getElementById('clearBtn');
+const list = document.getElementById('list');
+
+const isStandalone = window.navigator.standalone === true || window.matchMedia(&#39;(display-mode: standalone)&#39;).matches;
+
+if (isStandalone) {
+    blocker.style.display = &#39;none&#39;;
+    app.style.display = &#39;flex&#39;;
+    initApp();
+}
+
+function initApp() {
+    let recorder;
+    let chunks = [];
+    let isRecording = false;
+
+    // メモの保存
+    memo.value = localStorage.getItem(&#39;v4_memo&#39;) || &#39;&#39;;
+    memo.addEventListener(&#39;input&#39;, () =&gt; localStorage.setItem(&#39;v4_memo&#39;, memo.value));
+
+    // 録音データの読み込み
+    loadRecordings();
+
+    // センサー：振って停止
+    window.addEventListener(&#39;devicemotion&#39;, (e) =&gt; {
+        if (!isRecording) return;
+        const acc = e.acceleration;
+        if (!acc) return;
+        const threshold = 15;
+        if (Math.abs(acc.x) &gt; threshold || Math.abs(acc.y) &gt; threshold || Math.abs(acc.z) &gt; threshold) {
+            stopRecording();
+        }
+    });
+
+    recBtn.onclick = async () =&gt; {
+        try {
+            // iOSでのモーション権限要求
+            if (typeof DeviceMotionEvent.requestPermission === &#39;function&#39;) {
+                await DeviceMotionEvent.requestPermission();
+            }
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recorder = new MediaRecorder(stream);
+            chunks = [];
+
+            recorder.ondataavailable = (e) =&gt; chunks.push(e.data);
+            recorder.onstop = async () =&gt; {
+                const blob = new Blob(chunks, { type: &#39;audio/webm&#39; });
+                const base64 = await blobToBase64(blob);
+                saveRecording(base64);
+                renderAudio(base64);
+            };
+
+            recorder.start();
+            isRecording = true;
+            recBtn.style.display = &#39;none&#39;;
+            stopBtn.style.display = &#39;block&#39;;
+        } catch (err) {
+            alert(&#39;エラー: &#39; + err);
+        }
+    };
+
+    stopBtn.onclick = stopRecording;
+
+    function stopRecording() {
+        if (recorder &amp;&amp; recorder.state !== &#39;inactive&#39;) {
+            recorder.stop();
+            isRecording = false;
+            recBtn.style.display = &#39;block&#39;;
+            stopBtn.style.display = &#39;none&#39;;
+        }
+    }
+
+    function blobToBase64(blob) {
+        return new Promise((resolve) =&gt; {
+            const reader = new FileReader();
+            reader.onloadend = () =&gt; resolve(reader.result);
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    function saveRecording(base64) {
+        let data = JSON.parse(localStorage.getItem(&#39;v4_audio&#39;) || &#39;[]&#39;);
+        data.unshift({ id: Date.now(), audio: base64 });
+        try {
+            localStorage.setItem(&#39;v4_audio&#39;, JSON.stringify(data));
+        } catch (e) {
+            alert(&#39;容量不足のため保存できませんでした。古い録音を削除してください。&#39;);
+        }
+    }
+
+    function loadRecordings() {
+        const data = JSON.parse(localStorage.getItem(&#39;v4_audio&#39;) || &#39;[]&#39;);
+        data.forEach(item =&gt; renderAudio(item.audio));
+    }
+
+    function renderAudio(base64) {
+        const div = document.createElement(&#39;div&#39;);
+        div.className = &#39;audio-item&#39;;
+        div.innerHTML = `&lt;audio src=&quot;${base64}&quot; controls&gt;&lt;/audio&gt;`;
+        list.appendChild(div);
+    }
+
+    clearBtn.onclick = () =&gt; {
+        if (confirm(&#39;すべての録音を削除しますか？&#39;)) {
+            localStorage.removeItem(&#39;v4_audio&#39;);
+            list.innerHTML = &#39;&#39;;
+        }
+    };
+}
+</script>
+
+</body>
+</html>
