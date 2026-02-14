@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -9,148 +8,140 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root {
---bg: #0f172a;
---card: #1e293b;
---p: #d4af37;
---txt: #f8fafc;
---red: #ef4444;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --p: #d4af37;
+    --txt: #f8fafc;
+    --red: #ef4444;
 }
 body {
-font-family: -apple-system, sans-serif;
-background: var(--bg);
-color: var(--txt);
-margin: 0;
-padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
-display: flex;
-flex-direction: column;
-height: 100vh;
-box-sizing: border-box;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", sans-serif;
+    background: var(--bg);
+    color: var(--txt);
+    margin: 0;
+    padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
-header { padding: 20px 0; border-bottom: 1px solid rgba(212,175,55,0.2); }
-h1 { color: var(--p); font-size: 1.5rem; margin: 0; }
-
-    main { flex: 1; display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
-    
-    textarea {
-        width: 100%; height: 120px; background: var(--card); border: 1px solid rgba(212,175,55,0.1);
-        border-radius: 12px; color: var(--txt); padding: 15px; box-sizing: border-box;
-        font-size: 16px; outline: none; resize: none;
-    }
-    
-    .btn {
-        width: 100%; padding: 18px; border-radius: 50px; border: none;
-        font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s;
-    }
-    .btn-rec { background: var(--red); color: white; }
-    .btn-stop { background: var(--p); color: #000; display: none; }
-    
-    .status-msg { font-size: 12px; color: var(--p); text-align: center; height: 20px; }
-    
-    #list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-    .audio-item { background: var(--card); padding: 10px; border-radius: 10px; }
-    audio { width: 100%; height: 35px; }
-    
-    .back-link { display: block; text-align: center; margin-top: auto; padding: 20px; color: var(--p); text-decoration: none; font-size: 14px; }
+header {
+    padding: 30px 0 15px;
+    border-bottom: 1px solid rgba(212,175,55,0.3);
+    text-align: center;
+}
+header h1 {
+    color: var(--p);
+    font-size: 1.4rem;
+    margin: 0;
+    letter-spacing: 2px;
+}
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px 0;
+}
+#status {
+    font-size: 11px;
+    color: var(--p);
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    height: 1.5rem;
+}
+textarea {
+    width: 100%;
+    height: 150px;
+    background: var(--card);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 15px;
+    color: var(--txt);
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    resize: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 50px;
+    border: none;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.btn-rec {
+    background: var(--red);
+    color: #fff;
+}
+.btn-stop {
+    background: var(--p);
+    color: #000;
+    display: none;
+}
+.btn:active {
+    transform: scale(0.96);
+    filter: brightness(0.8);
+}
+#list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.audio-item {
+    background: var(--card);
+    padding: 12px;
+    border-radius: 12px;
+    border-left: 3px solid var(--p);
+}
+audio {
+    width: 100%;
+    height: 35px;
+}
+.back-link {
+    display: block;
+    text-align: center;
+    padding: 20px;
+    color: var(--p);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
 </style>
 </head>
 <body>
 
 <header>
-<h1>RecMemo Pro</h1>
+    <h1>RecMemo Pro</h1>
 </header>
 
 <main>
-<div id="status" class="status-msg">READY</div>
-<textarea id="memo" placeholder="自動保存メモ..."></textarea>
+    <div id="status">READY</div>
+    <textarea id="memo" placeholder="現場の記録、アイディアをここに..."></textarea>
+    
+    <div class="controls">
+        <button id="recBtn" class="btn btn-rec">RECORDING START</button>
+        <button id="stopBtn" class="btn btn-stop">SHAKE TO STOP</button>
+    </div>
 
-<button id="recBtn" class="btn btn-rec">REC START</button>
-<button id="stopBtn" class="btn btn-stop">STOP (SHAKE TO STOP)</button>
-
-<div id="list"></div>
+    <div id="list"></div>
 </main>
 
-<a href="index.html" class="back-link">← TOPへ戻る</a>
+<a href="index.html" class="back-link">← DASHBOARD</a>
 
-<script>
-const recBtn = document.getElementById('recBtn');
-const stopBtn = document.getElementById('stopBtn');
-const statusMsg = document.getElementById('status');
-const memo = document.getElementById('memo');
-const list = document.getElementById('list');
-
-let recorder;
-let chunks = [];
-let isRecording = false;
-
-// メモ自動保存
-memo.value = localStorage.getItem(&#39;multi_x_memo&#39;) || &#39;&#39;;
-memo.oninput = () =&gt; localStorage.setItem(&#39;multi_x_memo&#39;, memo.value);
-
-// 加速度センサーの監視（振って停止の心臓部）
-async function initSensor() {
-    if (typeof DeviceMotionEvent.requestPermission === &#39;function&#39;) {
-        await DeviceMotionEvent.requestPermission();
-    }
-    window.addEventListener(&#39;devicemotion&#39;, (e) =&gt; {
-        if (!isRecording) return;
-        const acc = e.acceleration;
-        if (!acc) return;
-        
-        // 閾値の設定（15以上で検知）
-        const threshold = 15;
-        if (Math.abs(acc.x) &gt; threshold || Math.abs(acc.y) &gt; threshold || Math.abs(acc.z) &gt; threshold) {
-            stopRecording();
-        }
-    });
-}
-
-// 録音開始
-recBtn.onclick = async () =&gt; {
-    try {
-        await initSensor(); // センサー起動
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recorder = new MediaRecorder(stream);
-        chunks = [];
-
-        recorder.ondataavailable = (e) =&gt; chunks.push(e.data);
-        recorder.onstop = async () =&gt; {
-            const blob = new Blob(chunks, { type: &#39;audio/webm&#39; });
-            const url = URL.createObjectURL(blob);
-            addAudioUI(url);
-        };
-
-        recorder.start();
-        isRecording = true;
-        statusMsg.innerText = &quot;🔴 RECORDING...&quot;;
-        recBtn.style.display = &#39;none&#39;;
-        stopBtn.style.display = &#39;block&#39;;
-    } catch (err) {
-        alert(&quot;マイクとセンサーの許可が必要です。&quot;);
-    }
-};
-
-stopBtn.onclick = stopRecording;
-
-function stopRecording() {
-    if (recorder &amp;&amp; recorder.state !== &#39;inactive&#39;) {
-        recorder.stop();
-        isRecording = false;
-        statusMsg.innerText = &quot;SAVED&quot;;
-        recBtn.style.display = &#39;block&#39;;
-        stopBtn.style.display = &#39;none&#39;;
-        
-        // 停止時に短いバイブで通知（触覚フィードバック）
-        if (navigator.vibrate) navigator.vibrate(50);
-    }
-}
-
-function addAudioUI(url) {
-    const div = document.createElement(&#39;div&#39;);
-    div.className = &#39;audio-item&#39;;
-    div.innerHTML = `&lt;audio src=&quot;${url}&quot; controls&gt;&lt;/audio&gt;`;
-    list.prepend(div);
-}
-</script>
-
+<script src="recmemo.js"></script>
 </body>
 </html>
