@@ -1,35 +1,47 @@
+ロードマップをさらに「今後の展望」に特化させ、ユーザーがワクワクするような具体的な機能拡充案を盛り込んだ**「完全版：ロードマップ＆テクニカルガイド」**を作成しました。
+
+「生活に溶け込む便利さ」を追求する姿勢を前面に出しています。
+
 <!DOCTYPE html>
 
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>詳細ガイド | Multi-X Utility</title>
+<title>Roadmap & Specs | Multi-X Utility</title>
 <style>
-:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--line:rgba(212,175,55,0.3);--info:#38bdf8;--accent:#fbbf24}
-body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',sans-serif;background:var(--bg);color:var(--txt);margin:0;line-height:1.7;display:flex;flex-direction:column;align-items:center;padding:20px;box-sizing:border-box}
-.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-bottom:10px}
-header{text-align:center;margin-bottom:40px;width:100%}
-header h1{font-size:2rem;color:var(--p);margin:5px 0}
-.guide-wrapper{width:100%;max-width:700px;display:flex;flex-direction:column;gap:35px}
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--line:rgba(212,175,55,0.3);--accent:#38bdf8;--future:#94a3b8}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box;line-height:1.6}
+.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:10px;margin-bottom:10px}
+.title-area{text-align:center;margin-bottom:40px}
+.title-area h1{font-size:1.8rem;color:var(--p);text-shadow:0 0 15px rgba(212,175,55,0.3);margin:10px 0}
 
-/* セクション共通 */
-section{background:var(--card);border-radius:28px;padding:30px;border:1px solid var(--line);box-shadow:0 15px 40px rgba(0,0,0,0.5);position:relative}
-h2{font-size:1.4rem;color:var(--p);margin:0 0 20px 0;display:flex;align-items:center;gap:15px;border-bottom:2px solid var(--line);padding-bottom:12px}
-h3{font-size:1.1rem;color:var(--accent);margin:20px 0 10px 0;display:flex;align-items:center;gap:8px}
+.container{width:100%;max-width:650px;display:flex;flex-direction:column;gap:30px}
 
-/* 詳細リスト */
-.feature-box{margin-bottom:20px;padding:15px;background:rgba(255,255,255,0.03);border-radius:15px}
-.usage-scene{background:rgba(56,189,248,0.1);padding:12px;border-radius:12px;font-size:0.9rem;margin-top:10px;border-left:4px solid var(--info)}
-.tech-spec{font-size:0.8rem;color:#94a3b8;margin-top:8px;font-family:monospace}
+/* PWA推奨バッジ */
+.app-notice{background:linear-gradient(45deg, var(--p), #fde047);color:#000;padding:18px;border-radius:18px;font-weight:bold;text-align:center;box-shadow:0 10px 20px rgba(0,0,0,0.3);border:2px solid #fff}
 
-/* Q&A形式 */
-.faq-item{margin-bottom:15px}
-.faq-q{font-weight:bold;color:var(--p);display:block}
-.faq-a{font-size:0.9rem;color:#cbd5e1}
+/* セクション設定 */
+section{background:var(--card);padding:25px;border-radius:24px;border:1px solid var(--line);box-shadow:0 15px 35px rgba(0,0,0,0.4)}
+h2{font-size:1.3rem;color:var(--p);margin:0 0 20px 0;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--line);padding-bottom:12px}
+h3{font-size:1.1rem;color:#fff;margin:15px 0 8px 0}
 
-.back-btn{margin:40px 0;color:var(--p);text-decoration:none;font-weight:bold;border:2px solid var(--p);padding:15px 40px;border-radius:50px;transition:0.3s;background:rgba(212,175,55,0.05)}
-.back-btn:active{background:var(--p);color:#000}
+/* 技術・活用ボックス */
+.spec-box{background:rgba(255,255,255,0.03);padding:18px;border-radius:16px;margin-bottom:15px;border-left:5px solid var(--accent);transition:0.3s}
+.tech-tag{font-size:0.75rem;color:var(--accent);font-family:monospace;display:block;margin-top:8px;background:rgba(56,189,248,0.1);padding:4px 8px;border-radius:6px;width:fit-content}
+.scene-box{font-size:0.9rem;color:#cbd5e1;margin-top:8px;padding:10px;background:rgba(0,0,0,0.2);border-radius:10px}
+
+/* ロードマップ：今後の展望 */
+.roadmap-list{position:relative;padding-left:25px;border-left:2px dashed var(--line);margin-left:10px}
+.roadmap-item{margin-bottom:30px;position:relative}
+.roadmap-item::before{content:'';position:absolute;left:-32px;top:6px;width:12px;height:12px;background:var(--p);border-radius:50%;box-shadow:0 0 10px var(--p)}
+.roadmap-date{font-size:0.85rem;color:var(--p);font-weight:bold;display:block;margin-bottom:4px}
+.future-item{opacity:0.85}
+.future-item::before{background:var(--bg);border:2px solid var(--p)}
+
+.back-btn{margin:40px 0;color:var(--p);text-decoration:none;font-weight:bold;font-size:1rem;border:2px solid var(--p);padding:12px 40px;border-radius:50px;transition:0.3s}
+.back-btn:hover{background:var(--p);color:#000}
+.footer-copy{margin-bottom:50px;font-size:0.75rem;color:#64748b}
 </style>
 
 </head>
@@ -37,72 +49,96 @@ h3{font-size:1.1rem;color:var(--accent);margin:20px 0 10px 0;display:flex;align-
 
 <div class="credit">篠ノ井乗務区</div>
 
-<header>
-<h1>マニュアル & 仕様書</h1>
-<div style="font-size:0.9rem; color:#94a3b8">Multi-X Utility のすべて</div>
-</header>
+<div class="title-area">
+<h1>Roadmap & Specs</h1>
+<div style="font-size:0.9rem; color:#94a3b8">進化し続けるライフユーティリティ</div>
+</div>
 
-<div class="guide-wrapper">
+<div class="container">
+
+<div class="app-notice">
+    🚀 【推奨】ホーム画面に追加して起動！<br>
+    ブラウザの制限を受けず、マイク・センサー・通知を含む<br>全ての機能がアプリとして解放されます。
+</div>
 
 <section>
-    <h2>RecMemo (録音・メモ)🎤</h2>
-    <div class="feature-box">
-        <h3>録音エンジンの仕組み</h3>
-        <p>ブラウザ標準のMediaRecorder APIを使用。録音データはメモリ内で処理され、停止と同時にBlob形式でダウンロードURLが生成されます。</p>
-        <div class="usage-scene">💡 <strong>活用シーン：</strong> 外出先でのアイデア記録、ボイスレターの作成、会議の重要事項の備忘録。</div>
-        <div class="tech-spec">SPEC: MP3(Lame変換シミュレート) / 44.1kHz / Mono / HTTPS必須</div>
+    <h2>安全性と保存の仕組み</h2>
+    <div class="spec-box" style="border-left-color:var(--p)">
+        <h3>プライバシー・ファースト</h3>
+        <p style="font-size:0.95rem;">入力したメモや録音した音声は、**一切サーバーに送信されません。**全ての処理はあなたのスマホ（ブラウザ内部）で行われるため、情報漏洩の心配なく安心してご利用いただけます。</p>
     </div>
-    <div class="feature-box">
-        <h3>自動保存(LocalStorage)の仕様</h3>
-        <p>メモ欄への入力は1文字ごとにブラウザの保存領域（LocalStorage）へ即座に書き込まれます。保存ボタンを押し忘れても、電源が落ちても、データは守られます。</p>
-        <div class="usage-scene">💡 <strong>活用シーン：</strong> 長文の下書き、TODOリストの管理、日記、買い物メモ。</div>
+    <div class="spec-box">
+        <h3>データの所在</h3>
+        <p style="font-size:0.95rem;">メモはブラウザの「LocalStorage」に自動保存されます。「SAVE」ボタンを押すことで、大切なデータをファイルとして自分のフォルダに永久保存できます。</p>
     </div>
 </section>
 
 <section>
-    <h2>QRツール & ゲート 🔳</h2>
-    <div class="feature-box">
-        <h3>生成と読取の仕組み</h3>
-        <p>JavaScriptライブラリを用いて、ブラウザ上でQRコードをレンダリングします。画像はサーバーを経由せず、あなたのデバイス内で完結して作成されます。</p>
-        <div class="usage-scene">💡 <strong>活用シーン：</strong> 連絡先の交換、Wi-Fi設定の共有、先行公開コンテンツへのアクセス。</div>
-        <div class="tech-spec">SPEC: QRCode.js Engine / Camera API (Scan)</div>
+    <h2>機能別ガイド & 技術仕様</h2>
+    <div class="spec-box">
+        <strong>RecMemo (録音・メモ)</strong>
+        <div class="scene-box">💡 活用：急なアイデアの記録、買い物リストの作成、ボイスメモ</div>
+        <span class="tech-tag">MediaRecorder API / LocalStorage / Blob URL</span>
+    </div>
+    <div class="spec-box">
+        <strong>計測ツール (Timer / SW)</strong>
+        <div class="scene-box">💡 活用：正確な運行記録、料理、学習のタイムアタック</div>
+        <span class="tech-tag">Date.now() 持続型ロジック / バックグラウンド動作</span>
+    </div>
+    <div class="spec-box">
+        <strong>QR・水平器</strong>
+        <div class="scene-box">💡 活用：連絡先共有、家具の配置、DIYの傾き調整</div>
+        <span class="tech-tag">Device Orientation API / QR-Generation-Engine</span>
     </div>
 </section>
 
 <section>
-    <h2>計測・計算システム⏳</h2>
-    <div class="feature-box">
-        <h3>持続型タイマー・ストップウォッチ</h3>
-        <p>通常のタイマーと異なり、開始時刻（UNIXタイム）を記憶する仕組みを採用。タブを閉じたり再読み込みしても、経過時間は正確に計算され続けます。</p>
-        <div class="usage-scene">💡 <strong>活用シーン：</strong> 料理の計測、学習時間の管理、運行時間の正確な記録。</div>
-    </div>
-    <div class="feature-box">
-        <h3>センサーによる水平器</h3>
-        <p>スマホ内蔵のジャイロ・加速度センサーを利用。0.1度単位での傾きを検知し、視覚的に水平状態を表示します。</p>
-        <div class="tech-spec">SPEC: DeviceOrientationEvent / DeviceMotionEvent</div>
+    <h2>今後の展望 (Roadmap)</h2>
+    <div class="roadmap-list">
+        <div class="roadmap-item">
+            <span class="roadmap-date">2026.02.14</span>
+            <div style="font-weight:bold; font-size:1.1rem;">【Release】RecMemo 実装</div>
+            <p style="font-size:0.9rem; color:#cbd5e1;">2周年を記念し、録音とメモを統合した主力機能をリリースしました。</p>
+        </div>
+        
+        <div class="roadmap-item future-item">
+            <span class="roadmap-date">2026.SPRING (予定)</span>
+            <div style="font-weight:bold; font-size:1.1rem;">Smart Checklist</div>
+            <p style="font-size:0.9rem; color:#cbd5e1;">「忘れ物防止」や「日課の管理」ができる、シンプルかつ強力なチェックリスト機能を追加予定。</p>
+        </div>
+
+        <div class="roadmap-item future-item">
+            <span class="roadmap-date">2026.SUMMER (予定)</span>
+            <div style="font-weight:bold; font-size:1.1rem;">Visual Customizer</div>
+            <p style="font-size:0.9rem; color:#cbd5e1;">アプリのアクセントカラーを自由に変更。あなただけの「Multi-X」へカスタマイズ可能にします。</p>
+        </div>
+
+        <div class="roadmap-item future-item">
+            <span class="roadmap-date">2026.BEYOND</span>
+            <div style="font-weight:bold; font-size:1.1rem;">Global Search & Sync</div>
+            <p style="font-size:0.9rem; color:#cbd5e1;">過去のメモや録音履歴を瞬時に検索する機能。さらに、より安全なデータバックアップ方法を模索します。</p>
+        </div>
     </div>
 </section>
 
 <section>
-    <h2>よくあるご質問 (FAQ)</h2>
-    <div class="faq-item">
-        <span class="faq-q">Q. 録音データはどこに保存されますか？</span>
-        <span class="faq-a">A. 「SAVE」ボタンを押すと、お使いのスマホの「ダウンロード」フォルダに保存されます。</span>
-    </div>
-    <div class="faq-item">
-        <span class="faq-q">Q. メモが勝手に消えることはありますか？</span>
-        <span class="faq-a">A. ブラウザのキャッシュを完全に削除（初期化）しない限り、LocalStorageに保持されます。</span>
-    </div>
-    <div class="faq-item">
-        <span class="faq-q">Q. マイクが反応しません。</span>
-        <span class="faq-a">A. サイトのURLが「https://」で始まっているか確認し、設定からマイク権限を許可してください。</span>
+    <h2>よくある質問 (FAQ)</h2>
+    <div style="font-size:0.95rem; display:grid; gap:15px;">
+        <div>
+            <strong style="color:var(--p)">Q. 録音が始まらないのですが？</strong><br>
+            <span>A. ブラウザの「マイク権限」を許可し、必ずHTTPS接続（またはPWA起動）でご利用ください。</span>
+        </div>
+        <div>
+            <strong style="color:var(--p)">Q. メモはどれくらい保存できますか？</strong><br>
+            <span>A. ブラウザの容量に依存しますが、テキストであれば数万文字以上保存可能です。</span>
+        </div>
     </div>
 </section>
 </div>
 
-<a href="menu.html" class="back-btn">← MENUに戻る</a>
+<a href="menu.html" class="back-btn">メニューに戻る</a>
 
-<div style="margin-bottom:50px; font-size:0.75rem; color:#64748b; text-align:center">
+<div class="footer-copy">
 &copy; 篠ノ井乗務区 All Rights Reserved.
 </div>
 
