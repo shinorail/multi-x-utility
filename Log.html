@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>multi-x-utility | Quest Hub</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root {
+--bg: #050507;
+--panel: #12121a;
+--accent: #32d74b;
+--sub-accent: #0a84ff;
+--text: #ffffff;
+--border: #2c2c2e;
+--rare: #bf5af2;
+}
+
+    body {
+        font-family: "Hiragino Sans", "Meiryo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 900px;
+    }
+
+    header {
+        padding: 40px 0 20px;
+        border-bottom: 2px solid var(--border);
+        margin-bottom: 30px;
+    }
+
+    .user-info {
+        font-size: 12px;
+        color: var(--accent);
+        font-weight: bold;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: -1px;
+    }
+
+    /* レスポンシブグリッド：スマホ1列 / PC2~3列 */
+    .quest-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+        .quest-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .quest-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* クエストパネルのデザイン */
+    .quest-item {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quest-item:active {
+        transform: scale(0.97);
+        background: #1c1c28;
+    }
+
+    /* 装飾的なライン */
+    .quest-item::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 4px; height: 100%;
+        background: var(--border);
+    }
+
+    .quest-item.active::before { background: var(--accent); }
+    .quest-item.update::before { background: var(--sub-accent); }
+
+    .quest-header {
+        padding: 15px 20px 5px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        font-weight: bold;
+        color: #888;
+    }
+
+    .quest-body {
+        padding: 5px 20px 20px;
+    }
+
+    .quest-title {
+        font-size: 18px;
+        font-weight: 800;
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quest-desc {
+        font-size: 12px;
+        color: #aaa;
+        line-height: 1.4;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: #222;
+    }
+
+    .reward-info {
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--border);
+        font-size: 11px;
+        color: var(--accent);
+    }
+
+    footer {
+        margin-top: 50px;
+        padding: 20px;
+        text-align: center;
+        font-size: 11px;
+        color: #444;
+        border-top: 1px solid var(--border);
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+<div class="user-info">PLAYER: SHINORAIL | RANK: DEVELOPER</div>
+<h1>Quest Hub</h1>
+</header>
+
+<div class="quest-grid">
+    <a href="RecMemo.html" class="quest-item active">
+        <div class="quest-header">
+            <span>RANK: S</span>
+            <span class="status-badge" style="color:var(--accent)">READY</span>
+        </div>
+        <div class="quest-body">
+            <div class="quest-title">🎙️ NativeMemo</div>
+            <p class="quest-desc">スマホを振って録音停止。ネイティブ級の操作感を持つ最強メモツール。</p>
+            <div class="reward-info">REWARD: <b>Voice Storage Unlocked</b></div>
+        </div>
+    </a>
+
+    <a href="alarm.html" class="quest-item update">
+        <div class="quest-header">
+            <span>RANK: A</span>
+            <span class="status-badge" style="color:var(--sub-accent)">UPDATING</span>
+        </div>
+        <div class="quest-body">
+            <div class="quest-title">⏰ Silent Alarm</div>
+            <p class="quest-desc">音を出さずに振動だけで通知。隠密行動に最適なアラーム機能。</p>
+            <div class="reward-info">REWARD: <b>Vibration Patterns</b></div>
+        </div>
+    </a>
+
+    <a href="calc.html" class="quest-item">
+        <div class="quest-header">
+            <span>RANK: B</span>
+            <span class="status-badge">STABLE</span>
+        </div>
+        <div class="quest-body">
+            <div class="quest-title">🔢 Smart Calc</div>
+            <p class="quest-desc">シンプルな計算機。今後のアップデートで履歴保存機能を解放予定。</p>
+            <div class="reward-info">REWARD: <b>Calc History</b></div>
+        </div>
+    </a>
+
+    <a href="roadmap.html" class="quest-item" style="border-color: var(--rare);">
+        <div class="quest-header">
+            <span style="color: var(--rare);">SPECIAL</span>
+            <span class="status-badge">VIEW ONLY</span>
+        </div>
+        <div class="quest-body">
+            <div class="quest-title" style="color: var(--rare);">📜 Quest Log</div>
+            <p class="quest-desc">開発ロードマップを確認し、次なるアップデートの予定を把握せよ。</p>
+            <div class="reward-info" style="color: var(--rare);">REWARD: <b>Future Insights</b></div>
+        </div>
+    </a>
+</div>
+
+<footer>
+    &copy; 2026 shinorail / multi-x-utility <br>
+    All Systems Operational.
+</footer>
+</div>
+
+</body>
+</html>
