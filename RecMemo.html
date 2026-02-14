@@ -3,221 +3,146 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>NativeMemo Pro</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Terms & Policy | 篠ノ井乗務区</title>
 <style>
-:root {
---bg: #000;
---card: #1c1c1e;
---text: #fff;
---accent: #32d74b;
---danger: #ff453a;
-}
-body {
-font-family: -apple-system, sans-serif;
-background: var(--bg);
-color: var(--text);
-margin: 0;
-height: 100vh;
-display: flex;
-flex-direction: column;
-overflow: hidden;
-}
-/* ブラウザ閲覧時のブロック画面 /
-#blocker {
-display: flex; flex-direction: column; justify-content: center;
-align-items: center; height: 100vh; padding: 40px; text-align: center;
-background: #000; z-index: 9999;
-}
-/ アプリ本体：初期状態は非表示 */
-#app { display: none; flex-direction: column; height: 100%; }
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--alert:#ef4444}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box}
+.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:20px;margin-bottom:10px}
+.title-area{text-align:center;margin-bottom:30px}
+.title-area h1{font-size:1.5rem;color:var(--p);text-shadow:0 0 15px rgba(212,175,55,0.3);margin:10px 0}
 
-    header { padding: 60px 20px 10px; font-size: 24px; font-weight: bold; border-bottom: 0.5px solid #333; }
-    main { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
-    
-    textarea {
-        width: 100%; height: 180px; background: var(--card); border: none;
-        border-radius: 16px; color: var(--text); padding: 15px;
-        box-sizing: border-box; font-size: 16px; margin-bottom: 20px;
-        outline: none; -webkit-appearance: none;
-    }
-    
-    .btn {
-        width: 100%; padding: 20px; border-radius: 16px; border: none;
-        font-weight: bold; font-size: 16px; margin-bottom: 15px; cursor: pointer;
-        transition: opacity 0.2s;
-    }
-    .btn:active { opacity: 0.7; }
-    .btn-rec { background: var(--danger); color: white; }
-    .btn-stop { background: #444; color: white; }
-    .btn-clear { background: #1c1c1e; color: #ff453a; font-size: 13px; margin-top: 30px; border: 0.5px solid #333; }
-    
-    .audio-item { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 15px; }
-    audio { width: 100%; height: 40px; }
-    .info-tag { font-size: 10px; color: var(--accent); text-align: center; margin-bottom: 15px; letter-spacing: 1px; }
+.main-card{width:100%;max-width:800px;background:var(--card);padding:25px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.2);box-sizing:border-box}
+
+.alert-banner{background:rgba(239,68,68,0.1);border:1px solid var(--alert);color:var(--alert);padding:15px;border-radius:15px;font-size:0.85rem;margin-bottom:25px;line-height:1.6}
+.alert-banner strong{display:block;margin-bottom:5px;font-size:1rem}
+
+.nav-box{background:rgba(0,0,0,0.3);padding:20px;border-radius:15px;margin-bottom:30px}
+.nav-box p{margin-top:0;font-weight:bold;color:var(--p);font-size:0.9rem}
+.nav-box ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.nav-box ul{grid-template-columns:1fr}}
+.nav-box a{color:var(--txt);text-decoration:none;font-size:0.8rem;transition:0.3s}
+.nav-box a:hover{color:var(--p)}
+
+h2{font-size:1.2rem;color:var(--p);border-left:4px solid var(--p);padding:5px 15px;margin:40px 0 20px 0}
+h3{font-size:1rem;color:var(--txt);background:rgba(212,175,55,0.1);padding:10px;border-radius:8px;margin-top:25px}
+p{font-size:0.9rem;line-height:1.8;color:#cbd5e1;margin-bottom:15px}
+
+.important-txt{color:var(--alert);font-weight:bold;border-bottom:1px solid var(--alert)}
+
+.ad-space{margin:30px 0;text-align:center;background:rgba(255,255,255,0.05);padding:10px;border-radius:10px}
+
+.contact-panel{background:rgba(0,0,0,0.3);padding:25px;border-radius:20px;text-align:center;border:1px solid var(--p);margin:40px 0}
+.btn{display:inline-block;padding:15px 40px;border-radius:50px;background:var(--p);color:#000;text-decoration:none;font-weight:bold;font-size:1rem;transition:0.3s}
+.btn:hover{box-shadow:0 0 20px rgba(212,175,55,0.5)}
+
+.back-btn{margin:40px 0;color:var(--p);text-decoration:none;font-weight:bold;font-size:0.9rem}
+.footer-copy{margin-bottom:40px;font-size:0.7rem;color:#64748b;letter-spacing:1px}
+
+section{scroll-margin-top:20px}
 </style>
+
 </head>
 <body>
 
-<div id="blocker">
-<h1 style="font-size: 24px; margin-bottom: 10px;">Native Application Required</h1>
-<p style="color: #888; line-height: 1.6; font-size: 14px;">
-ブラウザ上では「振って停止」や「録音」等の全機能がロックされています。
+<div class="credit">篠ノ井乗務区</div>
 
-
-
-
-共有メニューから
-
-
-<strong>「ホーム画面に追加」</strong>
-
-
-して起動してください。
-</p>
+<div class="title-area">
+<h1>Terms & Policy</h1>
+<div style="font-size:0.8rem; color:#94a3b8">総合利用規約・詳細ポリシー</div>
 </div>
 
-<div id="app">
-<header>NativeMemo Pro</header>
-<main>
-<div class="info-tag">UNLIMITED APP MODE ACTIVE</div>
-<textarea id="memo" placeholder="メモを入力... (自動保存)"></textarea>
-
-    <button id="recBtn" class="btn btn-rec">REC START</button>
-    <button id="stopBtn" class="btn btn-stop" style="display:none;">STOP (or SHAKE)</button>
-
-    <div id="list"></div>
-    <button id="clearBtn" class="btn btn-clear">全録音データをリセット</button>
-</main>
+<div class="main-card">
+<div class="ad-space">
+<script src="https://adm.shinobi.jp/s/c7ad42cb47e9c4896a30298280add186"></script>
 </div>
 
-<script>
-const app = document.getElementById('app');
-const blocker = document.getElementById('blocker');
-const memo = document.getElementById('memo');
-const recBtn = document.getElementById('recBtn');
-const stopBtn = document.getElementById('stopBtn');
-const clearBtn = document.getElementById('clearBtn');
-const list = document.getElementById('list');
+<div class="alert-banner">
+    <strong>【最重要：鉄道事業者等への問い合わせ厳禁】</strong>
+    当サイトは個人による非公式ファンサイトです。掲載内容について鉄道事業者等へ直接問い合わせる行為は、相手方の業務を妨害する迷惑行為となります。確認された場合、即座に利用停止（BAN）措置を講じます。
+</div>
 
-// 強力なスタンドアロン判定
-const isStandalone = window.navigator.standalone === true || 
-                     window.matchMedia(&#39;(display-mode: standalone)&#39;).matches;
+<div class="nav-box">
+    <p>CONTENTS / 目次</p>
+    <ul>
+        <li><a href="#privacy">第1章：プライバシー</a></li>
+        <li><a href="#membership">第2章：会員制度・守秘義務</a></li>
+        <li><a href="#comments">第3章：コメント基準</a></li>
+        <li><a href="#response">第4章：運営レスポンス</a></li>
+        <li><a href="#account-delete">第5章：退会手続き</a></li>
+        <li><a href="#ads-policy">第6章：広告配信同意</a></li>
+        <li><a href="#copyright">第7章：知的財産権</a></li>
+        <li><a href="#disclaimer">第8章：免責事項</a></li>
+    </ul>
+</div>
 
-if (isStandalone) {
-    // アプリ起動時のみUIを表示し、全機能を解凍
-    blocker.style.display = &#39;none&#39;;
-    app.style.display = &#39;flex&#39;;
-    initNativeApp();
-} else {
-    // ブラウザ起動時は全イベントを無効化
-    console.log(&quot;Browser mode: Sensors and Recording are disabled.&quot;);
-}
+<section id="privacy">
+    <h2>第1章：プライバシーポリシー</h2>
+    <h3>第1条（収集情報の種類）</h3>
+    <p>ユーザー名、メールアドレス、生年月日を収集します。</p>
+    <h3>第2条（情報の安全性）</h3>
+    <p>SSL通信により保護し、パスワードは暗号化して保存します。</p>
+</section>
 
-function initNativeApp() {
-    let recorder;
-    let chunks = [];
-    let isRecording = false;
+<div class="ad-space">
+    <script src="[https://adm.shinobi.jp/s/9b7ba88cacde1619c31b839b2a95c8d3](https://adm.shinobi.jp/s/9b7ba88cacde1619c31b839b2a95c8d3)"></script>
+</div>
 
-    // メモ保存
-    memo.value = localStorage.getItem(&#39;pro_memo_data&#39;) || &#39;&#39;;
-    memo.addEventListener(&#39;input&#39;, () =&gt; {
-        localStorage.setItem(&#39;pro_memo_data&#39;, memo.value);
-    });
+<section id="membership">
+    <h2>第2章：会員登録制度・限定号厳秘義務</h2>
+    <p><span class="important-txt">会員専用情報のSNS転載、スクリーンショット公開は一切禁止です。</span>発見次第、法的措置を含めた対応を行います。</p>
+</section>
 
-    // 録音履歴
-    loadHistory();
+<section id="comments">
+    <h2>第3章：コメント投稿基準</h2>
+    <p>完全承認制です。誹謗中傷やマナー違反は管理者の判断で掲載拒否・削除します。</p>
+</section>
 
-    // 【限定機能】スマホを振って停止（ブラウザでは動作しない）
-    window.addEventListener(&#39;devicemotion&#39;, (e) =&gt; {
-        if (!isRecording) return;
-        const acc = e.acceleration;
-        if (!acc) return;
-        const sensitivity = 15;
-        if (Math.abs(acc.x) &gt; sensitivity || Math.abs(acc.y) &gt; sensitivity || Math.abs(acc.z) &gt; sensitivity) {
-            stopRecording();
-        }
-    });
+<section id="response">
+    <h2>第4章：運営レスポンス方針</h2>
+    <p>全ての問い合わせへの返信を確約するものではありません。特に情報公開前の事項については回答を差し控えます。</p>
+</section>
 
-    // 【限定機能】録音開始（ブラウザでは動作しない）
-    recBtn.onclick = async () =&gt; {
-        try {
-            if (typeof DeviceMotionEvent.requestPermission === &#39;function&#39;) {
-                await DeviceMotionEvent.requestPermission();
-            }
-            
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            recorder = new MediaRecorder(stream);
-            chunks = [];
+<section id="account-delete">
+    <h2>第5章：アカウント削除（退会）手続き</h2>
+    <div class="contact-panel">
+        <p style="color:var(--txt); margin-bottom:20px">下記3点を正確に明記して申請してください。<br><strong>1. ユーザー名 / 2. メールアドレス / 3. 生年月日</strong></p>
+        <a href="[https://shinorail.github.io/main/contact.html](https://shinorail.github.io/main/contact.html)" class="btn" target="_blank">退会申請フォームへ</a>
+    </div>
+</section>
 
-            recorder.ondataavailable = (e) =&gt; chunks.push(e.data);
-            recorder.onstop = async () =&gt; {
-                const blob = new Blob(chunks, { type: &#39;audio/webm&#39; });
-                const base64 = await toBase64(blob);
-                saveData(base64);
-                addUI(base64);
-            };
+<section id="ads-policy">
+    <h2>第6章：広告配信サービスへの同意</h2>
+    <p>サーバー維持費等のため忍者AdMaxを表示しています。利用者はこれに同意したものとみなします。</p>
+</section>
 
-            recorder.start();
-            isRecording = true;
-            recBtn.style.display = &#39;none&#39;;
-            stopBtn.style.display = &#39;block&#39;;
-        } catch (err) {
-            alert(&#39;マイクとセンサーの許可をオンにしてください。&#39;);
-        }
-    };
+<section id="copyright">
+    <h2>第7章：知的財産権・転載禁止</h2>
+    <p>当サイトのコンテンツ著作権は篠ノ井乗務区に帰属します。無断転載を固く禁じます。</p>
+</section>
 
-    stopBtn.onclick = stopRecording;
+<section id="disclaimer">
+    <h2>第8章：免責事項</h2>
+    <p>情報の正確性には万全を期していますが、利用により生じた損害について運営者は一切の責任を負いません。</p>
+</section>
 
-    function stopRecording() {
-        if (recorder &amp;&amp; recorder.state !== &#39;inactive&#39;) {
-            recorder.stop();
-            isRecording = false;
-            recBtn.style.display = &#39;block&#39;;
-            stopBtn.style.display = &#39;none&#39;;
-        }
-    }
+<div class="ad-space">
+    <script src="[https://adm.shinobi.jp/s/c7ad42cb47e9c4896a30298280add186](https://adm.shinobi.jp/s/c7ad42cb47e9c4896a30298280add186)"></script>
+</div>
 
-    function toBase64(blob) {
-        return new Promise((r) =&gt; {
-            const reader = new FileReader();
-            reader.onloadend = () =&gt; r(reader.result);
-            reader.readAsDataURL(blob);
-        });
-    }
+<div style="text-align: right; font-size: 0.7rem; color: #64748b; margin-top: 40px;">
+    制定：2025年7月20日<br>
+    最終改訂：2026年2月14日
+</div>
+</div>
 
-    function saveData(b64) {
-        let history = JSON.parse(localStorage.getItem(&#39;pro_audio_history&#39;) || &#39;[]&#39;);
-        history.unshift({ time: new Date().toLocaleString(), data: b64 });
-        try {
-            localStorage.setItem(&#39;pro_audio_history&#39;, JSON.stringify(history));
-        } catch (e) {
-            alert(&#39;端末の容量が限界です。不要な音声を削除してください。&#39;);
-        }
-    }
+<a href="menu.html" class="back-btn">← MENU / 戻る</a>
 
-    function loadHistory() {
-        const history = JSON.parse(localStorage.getItem(&#39;pro_audio_history&#39;) || &#39;[]&#39;);
-        history.forEach(item =&gt; addUI(item.data));
-    }
+<div class="footer-copy">
+&copy; 篠ノ井乗務区 All Rights Reserved.
+</div>
 
-    function addUI(b64) {
-        const div = document.createElement(&#39;div&#39;);
-        div.className = &#39;audio-item&#39;;
-        div.innerHTML = `&lt;audio src=&quot;${b64}&quot; controls&gt;&lt;/audio&gt;`;
-        list.prepend(div);
-    }
-
-    clearBtn.onclick = () =&gt; {
-        if (confirm(&#39;すべての録音データを消去しますか？&#39;)) {
-            localStorage.removeItem(&#39;pro_audio_history&#39;);
-            list.innerHTML = &#39;&#39;;
-        }
-    };
-}
-</script>
+<script src="menu.js"></script>
 
 </body>
 </html>
