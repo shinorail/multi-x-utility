@@ -3,75 +3,154 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RecMemo | Multi-X Utility</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>RecMemo Pro | Multi-X</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--alert:#ef4444}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box}
-.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:10px;margin-bottom:10px}
-.title-area{text-align:center;margin-bottom:20px}
-.title-area h1{font-size:1.5rem;color:var(--p);text-shadow:0 0 15px rgba(212,175,55,0.3);margin:5px 0}
-.main-container{width:100%;max-width:600px;display:flex;flex-direction:column;gap:20px}
-.rec-card{background:var(--card);padding:25px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.2);text-align:center}
-.timer{font-size:2.5rem;font-family:monospace;color:var(--p);margin-bottom:20px}
-.rec-controls{display:flex;justify-content:center;gap:15px;margin-bottom:20px}
-.circle-btn{width:70px;height:70px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.3s;font-weight:bold}
-.btn-rec{background:var(--alert);color:white}
-.btn-rec.recording{animation:pulse 1.5s infinite}
-.btn-stop{background:#64748b;color:white;display:none}
-@keyframes pulse { 0% { opacity:1; } 50% { opacity:0.5; } 100% { opacity:1; } }
-.memo-card{background:var(--card);padding:25px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.2)}
-textarea{width:100%;height:200px;background:rgba(0,0,0,0.3);border:1px solid rgba(212,175,55,0.3);border-radius:15px;color:var(--txt);padding:15px;box-sizing:border-box;font-size:1rem;outline:none;resize:none;line-height:1.6}
-.memo-footer{display:flex;justify-content:space-between;align-items:center;margin-top:15px}
-.save-status{font-size:0.8rem;color:#94a3b8}
-.list-card{background:rgba(0,0,0,0.2);border-radius:20px;padding:15px;margin-top:10px;text-align:left}
-.list-item{display:flex;flex-direction:column;align-items:flex-start;padding:12px;border-bottom:1px solid rgba(212,175,55,0.2);font-size:0.85rem;gap:10px}
-.list-item:last-child{border-bottom:none}
-.btn-action{padding:10px 20px;border-radius:10px;border:none;background:var(--p);color:#000;font-weight:bold;cursor:pointer;font-size:0.8rem;transition:0.2s}
-.btn-action:active{opacity:0.7}
-.back-btn{margin:30px 0;color:var(--p);text-decoration:none;font-weight:bold;font-size:0.9rem}
-.footer-copy{margin-bottom:40px;font-size:0.7rem;color:#64748b}
+:root {
+--bg: #0f172a;
+--card: #1e293b;
+--p: #d4af37;
+--txt: #f8fafc;
+--red: #ef4444;
+}
+body {
+font-family: -apple-system, sans-serif;
+background: var(--bg);
+color: var(--txt);
+margin: 0;
+padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+display: flex;
+flex-direction: column;
+height: 100vh;
+box-sizing: border-box;
+}
+header { padding: 20px 0; border-bottom: 1px solid rgba(212,175,55,0.2); }
+h1 { color: var(--p); font-size: 1.5rem; margin: 0; }
+
+    main { flex: 1; display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
+    
+    textarea {
+        width: 100%; height: 120px; background: var(--card); border: 1px solid rgba(212,175,55,0.1);
+        border-radius: 12px; color: var(--txt); padding: 15px; box-sizing: border-box;
+        font-size: 16px; outline: none; resize: none;
+    }
+    
+    .btn {
+        width: 100%; padding: 18px; border-radius: 50px; border: none;
+        font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-rec { background: var(--red); color: white; }
+    .btn-stop { background: var(--p); color: #000; display: none; }
+    
+    .status-msg { font-size: 12px; color: var(--p); text-align: center; height: 20px; }
+    
+    #list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+    .audio-item { background: var(--card); padding: 10px; border-radius: 10px; }
+    audio { width: 100%; height: 35px; }
+    
+    .back-link { display: block; text-align: center; margin-top: auto; padding: 20px; color: var(--p); text-decoration: none; font-size: 14px; }
 </style>
 </head>
 <body>
 
-<div class="credit">制作：篠ノ井乗務区</div>
+<header>
+<h1>RecMemo Pro</h1>
+</header>
 
-<div class="title-area">
-<h1>RecMemo</h1>
-<div style="font-size:0.8rem; color:#94a3b8">Voice Recorder & Notepad</div>
-</div>
+<main>
+<div id="status" class="status-msg">READY</div>
+<textarea id="memo" placeholder="自動保存メモ..."></textarea>
 
-<div class="main-container">
-<div class="rec-card">
-<div id="timer" class="timer">00:00</div>
-<div class="rec-controls">
-<button id="startBtn" class="circle-btn btn-rec">REC</button>
-<button id="stopBtn" class="circle-btn btn-stop">STOP</button>
-</div>
-<div class="list-card">
-<div style="font-size:0.7rem; color:#64748b; margin-bottom:10px">RECORDINGS LIST</div>
-<div id="recordingsList"></div>
-</div>
-</div>
+<button id="recBtn" class="btn btn-rec">REC START</button>
+<button id="stopBtn" class="btn btn-stop">STOP (SHAKE TO STOP)</button>
 
-<div class="memo-card">
-    <textarea id="memoArea" placeholder="メモを入力..." oninput="autoSave()"></textarea>
-    <div class="memo-footer">
-        <span id="saveStatus" class="save-status">自動保存済み</span>
-        <div style="display:flex; gap:10px;">
-            <button class="btn-action" onclick="downloadMemo()">TXT SAVE</button>
-            <button class="btn-action" onclick="clearMemo()" style="background:#475569; color:#fff;">CLEAR</button>
-        </div>
-    </div>
-</div>
-</div>
+<div id="list"></div>
+</main>
 
-<a href="menu.html" class="back-btn">← MENU / 戻る</a>
+<a href="index.html" class="back-link">← TOPへ戻る</a>
 
-<div class="footer-copy">&copy; 篠ノ井乗務区 All Rights Reserved.</div>
+<script>
+const recBtn = document.getElementById('recBtn');
+const stopBtn = document.getElementById('stopBtn');
+const statusMsg = document.getElementById('status');
+const memo = document.getElementById('memo');
+const list = document.getElementById('list');
 
-<script src="rec-core.js"></script>
+let recorder;
+let chunks = [];
+let isRecording = false;
+
+// メモ自動保存
+memo.value = localStorage.getItem(&#39;multi_x_memo&#39;) || &#39;&#39;;
+memo.oninput = () =&gt; localStorage.setItem(&#39;multi_x_memo&#39;, memo.value);
+
+// 加速度センサーの監視（振って停止の心臓部）
+async function initSensor() {
+    if (typeof DeviceMotionEvent.requestPermission === &#39;function&#39;) {
+        await DeviceMotionEvent.requestPermission();
+    }
+    window.addEventListener(&#39;devicemotion&#39;, (e) =&gt; {
+        if (!isRecording) return;
+        const acc = e.acceleration;
+        if (!acc) return;
+        
+        // 閾値の設定（15以上で検知）
+        const threshold = 15;
+        if (Math.abs(acc.x) &gt; threshold || Math.abs(acc.y) &gt; threshold || Math.abs(acc.z) &gt; threshold) {
+            stopRecording();
+        }
+    });
+}
+
+// 録音開始
+recBtn.onclick = async () =&gt; {
+    try {
+        await initSensor(); // センサー起動
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recorder = new MediaRecorder(stream);
+        chunks = [];
+
+        recorder.ondataavailable = (e) =&gt; chunks.push(e.data);
+        recorder.onstop = async () =&gt; {
+            const blob = new Blob(chunks, { type: &#39;audio/webm&#39; });
+            const url = URL.createObjectURL(blob);
+            addAudioUI(url);
+        };
+
+        recorder.start();
+        isRecording = true;
+        statusMsg.innerText = &quot;🔴 RECORDING...&quot;;
+        recBtn.style.display = &#39;none&#39;;
+        stopBtn.style.display = &#39;block&#39;;
+    } catch (err) {
+        alert(&quot;マイクとセンサーの許可が必要です。&quot;);
+    }
+};
+
+stopBtn.onclick = stopRecording;
+
+function stopRecording() {
+    if (recorder &amp;&amp; recorder.state !== &#39;inactive&#39;) {
+        recorder.stop();
+        isRecording = false;
+        statusMsg.innerText = &quot;SAVED&quot;;
+        recBtn.style.display = &#39;block&#39;;
+        stopBtn.style.display = &#39;none&#39;;
+        
+        // 停止時に短いバイブで通知（触覚フィードバック）
+        if (navigator.vibrate) navigator.vibrate(50);
+    }
+}
+
+function addAudioUI(url) {
+    const div = document.createElement(&#39;div&#39;);
+    div.className = &#39;audio-item&#39;;
+    div.innerHTML = `&lt;audio src=&quot;${url}&quot; controls&gt;&lt;/audio&gt;`;
+    list.prepend(div);
+}
+</script>
 
 </body>
 </html>
