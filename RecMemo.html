@@ -25,53 +25,71 @@ display: flex;
 flex-direction: column;
 overflow: hidden;
 }
+/* ブラウザ閲覧時のブロック画面 /
 #blocker {
 display: flex; flex-direction: column; justify-content: center;
 align-items: center; height: 100vh; padding: 40px; text-align: center;
+background: #000; z-index: 9999;
 }
+/ アプリ本体：初期状態は非表示 */
 #app { display: none; flex-direction: column; height: 100%; }
-header { padding: 50px 20px 10px; font-size: 22px; font-weight: bold; }
-main { flex: 1; overflow-y: auto; padding: 20px; }
-textarea {
-width: 100%; height: 150px; background: var(--card); border: none;
-border-radius: 12px; color: var(--text); padding: 15px;
-box-sizing: border-box; font-size: 16px; margin-bottom: 20px;
-outline: none;
-}
-.btn {
-width: 100%; padding: 18px; border-radius: 15px; border: none;
-font-weight: bold; font-size: 16px; margin-bottom: 15px; cursor: pointer;
--webkit-appearance: none;
-}
-.btn-rec { background: var(--danger); color: white; }
-.btn-stop { background: #444; color: white; }
-.btn-clear { background: #2c2c2e; color: #888; font-size: 12px; padding: 10px; border-radius: 8px; }
-.audio-item { background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-audio { width: 100%; }
-.info { font-size: 11px; color: #888; margin-bottom: 10px; text-align: center; }
+
+    header { padding: 60px 20px 10px; font-size: 24px; font-weight: bold; border-bottom: 0.5px solid #333; }
+    main { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+    
+    textarea {
+        width: 100%; height: 180px; background: var(--card); border: none;
+        border-radius: 16px; color: var(--text); padding: 15px;
+        box-sizing: border-box; font-size: 16px; margin-bottom: 20px;
+        outline: none; -webkit-appearance: none;
+    }
+    
+    .btn {
+        width: 100%; padding: 20px; border-radius: 16px; border: none;
+        font-weight: bold; font-size: 16px; margin-bottom: 15px; cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .btn:active { opacity: 0.7; }
+    .btn-rec { background: var(--danger); color: white; }
+    .btn-stop { background: #444; color: white; }
+    .btn-clear { background: #1c1c1e; color: #ff453a; font-size: 13px; margin-top: 30px; border: 0.5px solid #333; }
+    
+    .audio-item { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 15px; }
+    audio { width: 100%; height: 40px; }
+    .info-tag { font-size: 10px; color: var(--accent); text-align: center; margin-bottom: 15px; letter-spacing: 1px; }
 </style>
 </head>
 <body>
 
 <div id="blocker">
-<h1>App Required</h1>
-<p>ブラウザの「共有」から
+<h1 style="font-size: 24px; margin-bottom: 10px;">Native Application Required</h1>
+<p style="color: #888; line-height: 1.6; font-size: 14px;">
+ブラウザ上では「振って停止」や「録音」等の全機能がロックされています。
 
 
-「ホーム画面に追加」して起動してください。</p>
+
+
+共有メニューから
+
+
+<strong>「ホーム画面に追加」</strong>
+
+
+して起動してください。
+</p>
 </div>
 
 <div id="app">
-<header>Memo & Voice</header>
+<header>NativeMemo Pro</header>
 <main>
-<div id="status" class="info">振って停止モード：有効</div>
-<textarea id="memo" placeholder="メモを入力..."></textarea>
+<div class="info-tag">UNLIMITED APP MODE ACTIVE</div>
+<textarea id="memo" placeholder="メモを入力... (自動保存)"></textarea>
 
-    <button id="recBtn" class="btn btn-rec">録音開始</button>
-    <button id="stopBtn" class="btn btn-stop" style="display:none;">停止（またはスマホを振る）</button>
+    <button id="recBtn" class="btn btn-rec">REC START</button>
+    <button id="stopBtn" class="btn btn-stop" style="display:none;">STOP (or SHAKE)</button>
 
     <div id="list"></div>
-    <button id="clearBtn" class="btn btn-clear">録音データを全削除</button>
+    <button id="clearBtn" class="btn btn-clear">全録音データをリセット</button>
 </main>
 </div>
 
@@ -84,45 +102,48 @@ const stopBtn = document.getElementById('stopBtn');
 const clearBtn = document.getElementById('clearBtn');
 const list = document.getElementById('list');
 
-// 判定条件の強化
+// 強力なスタンドアロン判定
 const isStandalone = window.navigator.standalone === true || 
-                     window.matchMedia(&#39;(display-mode: standalone)&#39;).matches ||
-                     location.search.includes(&#39;pwa=true&#39;);
+                     window.matchMedia(&#39;(display-mode: standalone)&#39;).matches;
 
 if (isStandalone) {
+    // アプリ起動時のみUIを表示し、全機能を解凍
     blocker.style.display = &#39;none&#39;;
     app.style.display = &#39;flex&#39;;
-    initApp();
+    initNativeApp();
+} else {
+    // ブラウザ起動時は全イベントを無効化
+    console.log(&quot;Browser mode: Sensors and Recording are disabled.&quot;);
 }
 
-function initApp() {
+function initNativeApp() {
     let recorder;
     let chunks = [];
     let isRecording = false;
 
-    // メモの保存（LocalStorage）
-    memo.value = localStorage.getItem(&#39;v4_memo&#39;) || &#39;&#39;;
+    // メモ保存
+    memo.value = localStorage.getItem(&#39;pro_memo_data&#39;) || &#39;&#39;;
     memo.addEventListener(&#39;input&#39;, () =&gt; {
-        localStorage.setItem(&#39;v4_memo&#39;, memo.value);
+        localStorage.setItem(&#39;pro_memo_data&#39;, memo.value);
     });
 
-    // 保存済み録音の表示
-    loadRecordings();
+    // 録音履歴
+    loadHistory();
 
-    // センサー：振って停止
+    // 【限定機能】スマホを振って停止（ブラウザでは動作しない）
     window.addEventListener(&#39;devicemotion&#39;, (e) =&gt; {
         if (!isRecording) return;
         const acc = e.acceleration;
         if (!acc) return;
-        const threshold = 15;
-        if (Math.abs(acc.x) &gt; threshold || Math.abs(acc.y) &gt; threshold || Math.abs(acc.z) &gt; threshold) {
+        const sensitivity = 15;
+        if (Math.abs(acc.x) &gt; sensitivity || Math.abs(acc.y) &gt; sensitivity || Math.abs(acc.z) &gt; sensitivity) {
             stopRecording();
         }
     });
 
+    // 【限定機能】録音開始（ブラウザでは動作しない）
     recBtn.onclick = async () =&gt; {
         try {
-            // iOSモーション許可リクエスト
             if (typeof DeviceMotionEvent.requestPermission === &#39;function&#39;) {
                 await DeviceMotionEvent.requestPermission();
             }
@@ -134,9 +155,9 @@ function initApp() {
             recorder.ondataavailable = (e) =&gt; chunks.push(e.data);
             recorder.onstop = async () =&gt; {
                 const blob = new Blob(chunks, { type: &#39;audio/webm&#39; });
-                const base64 = await blobToBase64(blob);
-                saveRecording(base64);
-                renderAudio(base64);
+                const base64 = await toBase64(blob);
+                saveData(base64);
+                addUI(base64);
             };
 
             recorder.start();
@@ -144,7 +165,7 @@ function initApp() {
             recBtn.style.display = &#39;none&#39;;
             stopBtn.style.display = &#39;block&#39;;
         } catch (err) {
-            alert(&#39;エラー: マイクまたはセンサーの許可が必要です&#39;);
+            alert(&#39;マイクとセンサーの許可をオンにしてください。&#39;);
         }
     };
 
@@ -159,39 +180,39 @@ function initApp() {
         }
     }
 
-    function blobToBase64(blob) {
-        return new Promise((resolve) =&gt; {
+    function toBase64(blob) {
+        return new Promise((r) =&gt; {
             const reader = new FileReader();
-            reader.onloadend = () =&gt; resolve(reader.result);
+            reader.onloadend = () =&gt; r(reader.result);
             reader.readAsDataURL(blob);
         });
     }
 
-    function saveRecording(base64) {
-        let data = JSON.parse(localStorage.getItem(&#39;v4_audio&#39;) || &#39;[]&#39;);
-        data.unshift({ id: Date.now(), audio: base64 });
+    function saveData(b64) {
+        let history = JSON.parse(localStorage.getItem(&#39;pro_audio_history&#39;) || &#39;[]&#39;);
+        history.unshift({ time: new Date().toLocaleString(), data: b64 });
         try {
-            localStorage.setItem(&#39;v4_audio&#39;, JSON.stringify(data));
+            localStorage.setItem(&#39;pro_audio_history&#39;, JSON.stringify(history));
         } catch (e) {
-            alert(&#39;メモリ不足です。古い録音を削除してください。&#39;);
+            alert(&#39;端末の容量が限界です。不要な音声を削除してください。&#39;);
         }
     }
 
-    function loadRecordings() {
-        const data = JSON.parse(localStorage.getItem(&#39;v4_audio&#39;) || &#39;[]&#39;);
-        data.forEach(item =&gt; renderAudio(item.audio));
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem(&#39;pro_audio_history&#39;) || &#39;[]&#39;);
+        history.forEach(item =&gt; addUI(item.data));
     }
 
-    function renderAudio(base64) {
+    function addUI(b64) {
         const div = document.createElement(&#39;div&#39;);
         div.className = &#39;audio-item&#39;;
-        div.innerHTML = `&lt;audio src=&quot;${base64}&quot; controls&gt;&lt;/audio&gt;`;
+        div.innerHTML = `&lt;audio src=&quot;${b64}&quot; controls&gt;&lt;/audio&gt;`;
         list.prepend(div);
     }
 
     clearBtn.onclick = () =&gt; {
-        if (confirm(&#39;すべての録音を削除しますか？&#39;)) {
-            localStorage.removeItem(&#39;v4_audio&#39;);
+        if (confirm(&#39;すべての録音データを消去しますか？&#39;)) {
+            localStorage.removeItem(&#39;pro_audio_history&#39;);
             list.innerHTML = &#39;&#39;;
         }
     };
