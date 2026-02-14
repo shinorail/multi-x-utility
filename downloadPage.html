@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Download / Install | 篠ノ井乗務区</title>
+<style>
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--alert:#ef4444}
+body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box}
+.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:20px;margin-bottom:10px}
+.title-area{text-align:center;margin-bottom:30px}
+.title-area h1{font-size:1.8rem;color:var(--p);text-shadow:0 0 15px rgba(212,175,55,0.3);margin:10px 0}
+
+.main-card{width:100%;max-width:500px;background:var(--card);padding:30px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.2);box-sizing:border-box;text-align:center}
+
+.app-icon{width:80px;height:80px;background:var(--bg);border:2px solid var(--p);border-radius:20px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 0 20px rgba(212,175,55,0.2)}
+
+.status-badge{display:inline-block;padding:5px 15px;background:rgba(239,68,68,0.1);color:var(--alert);border:1px solid var(--alert);border-radius:50px;font-size:0.8rem;margin-bottom:20px;font-weight:bold}
+
+.step-box{background:rgba(0,0,0,0.3);padding:20px;border-radius:20px;margin-top:20px;text-align:left}
+.step-box h3{color:var(--p);font-size:1rem;margin-top:0;display:flex;align-items:center}
+.step-box h3 span{background:var(--p);color:#000;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;margin-right:10px}
+.step-box p{font-size:0.85rem;line-height:1.6;color:#cbd5e1;margin-bottom:0}
+
+.install-btn{display:block;width:100%;padding:18px;background:var(--p);color:#000;text-decoration:none;border-radius:15px;font-weight:bold;margin-top:30px;transition:0.3s;border:none;cursor:pointer;font-size:1.1rem}
+.install-btn:hover{box-shadow:0 0 20px rgba(212,175,55,0.5);transform:translateY(-2px)}
+
+.info-text{margin-top:25px;font-size:0.8rem;color:#94a3b8;line-height:1.6}
+.back-btn{margin:40px 0;color:var(--p);text-decoration:none;font-weight:bold;font-size:0.9rem}
+.footer-copy{margin-bottom:40px;font-size:0.7rem;color:#64748b}
+
+/* 共有メニューなどのアイコンを模したもの */
+.icon-ui{display:inline-block;width:18px;height:18px;vertical-align:middle;margin:0 2px}
+</style>
+
+</head>
+<body>
+
+<div class="credit">篠ノ井乗務区</div>
+
+<div class="title-area">
+<h1>Multi-X Utility</h1>
+<div style="font-size:0.9rem; color:#94a3b8">Native Application Setup</div>
+</div>
+
+<div class="main-card">
+<div class="app-icon">MX</div>
+
+<div class="status-badge">NATIVE APP REQUIRED</div>
+
+<p style="font-weight:bold; font-size:1.1rem; margin-bottom:10px">機能をフル活用するために</p>
+<p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:25px">ブラウザ制限を解除し、振って停止機能や高精度録音を有効にします。</p>
+
+<div class="step-box">
+    <h3><span>1</span>iOS (Safari) の場合</h3>
+    <p>画面下の共有ボタン（□に↑）を押し、メニュー内の<strong>「ホーム画面に追加」</strong>を選択してください。</p>
+</div>
+
+<div class="step-box">
+    <h3><span>2</span>Android (Chrome) の場合</h3>
+    <p>画面右上のメニュー（︙）を押し、<strong>「アプリをインストール」</strong>または「ホーム画面に追加」を選択してください。</p>
+</div>
+
+<button id="pwa-install-btn" class="install-btn" style="display:none;">INSTALL APP</button>
+
+<div class="info-text">
+    ホーム画面のアイコンから起動することで、<br>
+    「Native Application」として認識されます。
+</div>
+</div>
+
+<a href="menu.html" class="back-btn">← MENU / 戻る</a>
+
+<div class="footer-copy">
+&copy; 篠ノ井乗務区 All Rights Reserved.
+</div>
+
+<script>
+// PWAのインストールプロンプト制御
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+e.preventDefault();
+deferredPrompt = e;
+const btn = document.getElementById('pwa-install-btn');
+btn.style.display = 'block';
+
+btn.addEventListener(&#39;click&#39;, () =&gt; {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) =&gt; {
+        if (choiceResult.outcome === &#39;accepted&#39;) {
+            console.log(&#39;User accepted the install prompt&#39;);
+        }
+        deferredPrompt = null;
+    });
+});
+});
+
+// すでにアプリとして起動している場合の処理
+if (window.matchMedia('(display-mode: standalone)').matches) {
+document.querySelector('.status-badge').innerText = 'NATIVE MODE ACTIVE';
+document.querySelector('.status-badge').style.borderColor = '#22c55e';
+document.querySelector('.status-badge').style.color = '#22c55e';
+document.querySelector('.status-badge').style.background = 'rgba(34,197,94,0.1)';
+document.querySelector('.info-text').innerHTML = '現在ネイティブモードで動作中です。
+
+
+すべての機能が利用可能です。';
+}
+</script>
+
+<script src="menu.js"></script>
+
+</body>
+</html>
