@@ -11,10 +11,7 @@ body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;displ
 .credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:10px;margin-bottom:10px}
 .title-area{text-align:center;margin-bottom:20px}
 .title-area h1{font-size:1.5rem;color:var(--p);text-shadow:0 0 15px rgba(212,175,55,0.3);margin:5px 0}
-
 .main-container{width:100%;max-width:600px;display:flex;flex-direction:column;gap:20px}
-
-/* 録音セクション */
 .rec-card{background:var(--card);padding:25px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.2);text-align:center}
 .timer{font-size:2.5rem;font-family:monospace;color:var(--p);margin-bottom:20px}
 .rec-controls{display:flex;justify-content:center;gap:15px;margin-bottom:20px}
@@ -23,25 +20,17 @@ body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;displ
 .btn-rec.recording{animation:pulse 1.5s infinite}
 .btn-stop{background:#64748b;color:white;display:none}
 @keyframes pulse { 0% { opacity:1; } 50% { opacity:0.5; } 100% { opacity:1; } }
-
-/* メモセクション */
 .memo-card{background:var(--card);padding:25px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.2)}
 textarea{width:100%;height:200px;background:rgba(0,0,0,0.3);border:1px solid rgba(212,175,55,0.3);border-radius:15px;color:var(--txt);padding:15px;box-sizing:border-box;font-size:1rem;outline:none;resize:none;line-height:1.6}
-textarea:focus{border-color:var(--p)}
 .memo-footer{display:flex;justify-content:space-between;align-items:center;margin-top:15px}
 .save-status{font-size:0.8rem;color:#94a3b8}
-
-.list-card{background:rgba(0,0,0,0.2);border-radius:20px;padding:15px;margin-top:10px}
+.list-card{background:rgba(0,0,0,0.2);border-radius:20px;padding:15px;margin-top:10px;text-align:left}
 .list-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:0.85rem}
-.list-item:last-child{border-bottom:none}
 .list-item a{color:var(--p);text-decoration:none}
-
 .btn-action{padding:10px 20px;border-radius:10px;border:none;background:var(--p);color:#000;font-weight:bold;cursor:pointer;font-size:0.8rem}
-
 .back-btn{margin:30px 0;color:var(--p);text-decoration:none;font-weight:bold;font-size:0.9rem}
 .footer-copy{margin-bottom:40px;font-size:0.7rem;color:#64748b}
 </style>
-
 </head>
 <body>
 
@@ -56,17 +45,17 @@ textarea:focus{border-color:var(--p)}
 <div class="rec-card">
 <div id="timer" class="timer">00:00</div>
 <div class="rec-controls">
-<button id="startBtn" class="circle-btn btn-rec" onclick="startRecording()">REC</button>
-<button id="stopBtn" class="circle-btn btn-stop" onclick="stopRecording()">STOP</button>
+<button id="startBtn" class="circle-btn btn-rec">REC</button>
+<button id="stopBtn" class="circle-btn btn-stop">STOP</button>
 </div>
-<div id="audio-list" class="list-card">
-<div style="font-size:0.7rem; color:#64748b; margin-bottom:10px">RECENT RECORDINGS</div>
+<div class="list-card">
+<div style="font-size:0.7rem; color:#64748b; margin-bottom:10px">RECORDINGS LIST</div>
 <div id="recordingsList"></div>
 </div>
 </div>
 
 <div class="memo-card">
-    <textarea id="memoArea" placeholder="乗務記録やメモを入力..." oninput="autoSave()"></textarea>
+    <textarea id="memoArea" placeholder="メモを入力..." oninput="autoSave()"></textarea>
     <div class="memo-footer">
         <span id="saveStatus" class="save-status">自動保存済み</span>
         <button class="btn-action" onclick="clearMemo()">CLEAR</button>
@@ -76,9 +65,7 @@ textarea:focus{border-color:var(--p)}
 
 <a href="menu.html" class="back-btn">← MENU / 戻る</a>
 
-<div class="footer-copy">
-&copy; 篠ノ井乗務区 All Rights Reserved.
-</div>
+<div class="footer-copy">&copy; 篠ノ井乗務区 All Rights Reserved.</div>
 
 <script>
 let mediaRecorder;
@@ -86,89 +73,94 @@ let audioChunks = [];
 let startTime;
 let timerInterval;
 
-// 録音開始
-async function startRecording() {
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const timerDisplay = document.getElementById('timer');
+const recordingsList = document.getElementById('recordingsList');
+
+// 録音開始処理
+startBtn.addEventListener('click', async () => {
 try {
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-mediaRecorder = new MediaRecorder(stream);
-audioChunks = [];
 
-    mediaRecorder.ondataavailable = (event) =&gt; {
-        audioChunks.push(event.data);
+    // ブラウザごとの互換性を考慮したMIMEタイプ設定
+    const mimeType = MediaRecorder.isTypeSupported(&#39;audio/webm&#39;) ? &#39;audio/webm&#39; : &#39;audio/mp4&#39;;
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
+    
+    audioChunks = [];
+    mediaRecorder.ondataavailable = (e) =&gt; {
+        if (e.data.size &gt; 0) audioChunks.push(e.data);
     };
 
     mediaRecorder.onstop = () =&gt; {
-        const audioBlob = new Blob(audioChunks, { type: &#39;audio/mp3&#39; });
+        const audioBlob = new Blob(audioChunks, { type: mimeType });
         const audioUrl = URL.createObjectURL(audioBlob);
-        addAudioToList(audioUrl);
+        const ext = mimeType.includes(&#39;webm&#39;) ? &#39;webm&#39; : &#39;m4a&#39;;
+        addAudioToList(audioUrl, ext);
+        
+        // ストップ後にマイクの使用を終了させる
+        stream.getTracks().forEach(track =&gt; track.stop());
     };
 
     mediaRecorder.start();
-    document.getElementById(&#39;startBtn&#39;).classList.add(&#39;recording&#39;);
-    document.getElementById(&#39;startBtn&#39;).style.display = &#39;none&#39;;
-    document.getElementById(&#39;stopBtn&#39;).style.display = &#39;flex&#39;;
+    
+    // UI更新
+    startBtn.style.display = &#39;none&#39;;
+    stopBtn.style.display = &#39;flex&#39;;
+    startBtn.classList.add(&#39;recording&#39;);
     
     startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
+    timerInterval = setInterval(() =&gt; {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const m = String(Math.floor(elapsed / 60)).padStart(2, &#39;0&#39;);
+        const s = String(elapsed % 60).padStart(2, &#39;0&#39;);
+        timerDisplay.innerText = `${m}:${s}`;
+    }, 1000);
+
 } catch (err) {
-    alert(&quot;マイクの使用が許可されていないか、非推奨環境です。PWAとして起動してください。&quot;);
+    console.error(err);
+    alert(&quot;エラー: マイクのアクセスを許可してください。\n※ブラウザのURL欄が「https」でない場合や、ホーム画面に追加していない場合は動作しません。&quot;);
 }
-}
+});
 
-// 録音停止
-function stopRecording() {
+// 録音停止処理
+stopBtn.addEventListener('click', () => {
+if (mediaRecorder && mediaRecorder.state !== 'inactive') {
 mediaRecorder.stop();
-document.getElementById('startBtn').classList.remove('recording');
-document.getElementById('startBtn').style.display = 'flex';
-document.getElementById('stopBtn').style.display = 'none';
 clearInterval(timerInterval);
-document.getElementById('timer').innerText = "00:00";
+timerDisplay.innerText = "00:00";
+startBtn.style.display = 'flex';
+stopBtn.style.display = 'none';
+startBtn.classList.remove('recording');
 }
+});
 
-function updateTimer() {
-const elapsed = Math.floor((Date.now() - startTime) / 1000);
-const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
-const s = String(elapsed % 60).padStart(2, '0');
-document.getElementById('timer').innerText = ${m}:${s};
-}
-
-function addAudioToList(url) {
-const list = document.getElementById('recordingsList');
+function addAudioToList(url, ext) {
 const now = new Date();
 const timeStr = ${now.getHours()}:${String(now.getMinutes()).padStart(2, &#39;0&#39;)};
-
-const item = document.createElement(&#39;div&#39;);
-item.className = &#39;list-item&#39;;
-item.innerHTML = `
-    &lt;span&gt;録音レコード ${timeStr}&lt;/span&gt;
-    &lt;a href=&quot;${url}&quot; download=&quot;rec_${Date.now()}.mp3&quot;&gt;DOWNLOAD&lt;/a&gt;
-`;
-list.prepend(item);
+const item = document.createElement('div');
+item.className = 'list-item';
+item.innerHTML = &lt;span&gt;録音レコード ${timeStr}&lt;/span&gt; &lt;a href=&quot;${url}&quot; download=&quot;rec_${Date.now()}.${ext}&quot;&gt;SAVE&lt;/a&gt;;
+recordingsList.prepend(item);
 }
 
-// メモ自動保存機能
+// メモ機能
 function autoSave() {
-const text = document.getElementById('memoArea').value;
-localStorage.setItem('recmemo_data', text);
-document.getElementById('saveStatus').innerText = "入力中...";
-setTimeout(() => {
-document.getElementById('saveStatus').innerText = "自動保存済み";
-}, 500);
+localStorage.setItem('recmemo_data', document.getElementById('memoArea').value);
+document.getElementById('saveStatus').innerText = "保存中...";
+setTimeout(() => { document.getElementById('saveStatus').innerText = "自動保存済み"; }, 500);
 }
 
 function clearMemo() {
-if(confirm("メモをすべて消去しますか？")) {
+if(confirm("消去しますか？")) {
 document.getElementById('memoArea').value = "";
 localStorage.removeItem('recmemo_data');
 }
 }
 
-// ページ読み込み時に保存されたメモを復元
 window.onload = () => {
-const savedData = localStorage.getItem('recmemo_data');
-if (savedData) {
-document.getElementById('memoArea').value = savedData;
-}
+const saved = localStorage.getItem('recmemo_data');
+if (saved) document.getElementById('memoArea').value = saved;
 };
 </script>
 
