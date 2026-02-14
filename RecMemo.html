@@ -36,14 +36,16 @@ textarea {
 width: 100%; height: 150px; background: var(--card); border: none;
 border-radius: 12px; color: var(--text); padding: 15px;
 box-sizing: border-box; font-size: 16px; margin-bottom: 20px;
+outline: none;
 }
 .btn {
 width: 100%; padding: 18px; border-radius: 15px; border: none;
 font-weight: bold; font-size: 16px; margin-bottom: 15px; cursor: pointer;
+-webkit-appearance: none;
 }
 .btn-rec { background: var(--danger); color: white; }
 .btn-stop { background: #444; color: white; }
-.btn-clear { background: #2c2c2e; color: #888; font-size: 12px; padding: 10px; }
+.btn-clear { background: #2c2c2e; color: #888; font-size: 12px; padding: 10px; border-radius: 8px; }
 .audio-item { background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
 audio { width: 100%; }
 .info { font-size: 11px; color: #888; margin-bottom: 10px; text-align: center; }
@@ -53,14 +55,17 @@ audio { width: 100%; }
 
 <div id="blocker">
 <h1>App Required</h1>
-<p>「ホーム画面に追加」して起動してください。</p>
+<p>ブラウザの「共有」から
+
+
+「ホーム画面に追加」して起動してください。</p>
 </div>
 
 <div id="app">
 <header>Memo & Voice</header>
 <main>
 <div id="status" class="info">振って停止モード：有効</div>
-<textarea id="memo" placeholder="メモ..."></textarea>
+<textarea id="memo" placeholder="メモを入力..."></textarea>
 
     <button id="recBtn" class="btn btn-rec">録音開始</button>
     <button id="stopBtn" class="btn btn-stop" style="display:none;">停止（またはスマホを振る）</button>
@@ -79,7 +84,10 @@ const stopBtn = document.getElementById('stopBtn');
 const clearBtn = document.getElementById('clearBtn');
 const list = document.getElementById('list');
 
-const isStandalone = window.navigator.standalone === true || window.matchMedia(&#39;(display-mode: standalone)&#39;).matches;
+// 判定条件の強化
+const isStandalone = window.navigator.standalone === true || 
+                     window.matchMedia(&#39;(display-mode: standalone)&#39;).matches ||
+                     location.search.includes(&#39;pwa=true&#39;);
 
 if (isStandalone) {
     blocker.style.display = &#39;none&#39;;
@@ -92,11 +100,13 @@ function initApp() {
     let chunks = [];
     let isRecording = false;
 
-    // メモの保存
+    // メモの保存（LocalStorage）
     memo.value = localStorage.getItem(&#39;v4_memo&#39;) || &#39;&#39;;
-    memo.addEventListener(&#39;input&#39;, () =&gt; localStorage.setItem(&#39;v4_memo&#39;, memo.value));
+    memo.addEventListener(&#39;input&#39;, () =&gt; {
+        localStorage.setItem(&#39;v4_memo&#39;, memo.value);
+    });
 
-    // 録音データの読み込み
+    // 保存済み録音の表示
     loadRecordings();
 
     // センサー：振って停止
@@ -112,10 +122,11 @@ function initApp() {
 
     recBtn.onclick = async () =&gt; {
         try {
-            // iOSでのモーション権限要求
+            // iOSモーション許可リクエスト
             if (typeof DeviceMotionEvent.requestPermission === &#39;function&#39;) {
                 await DeviceMotionEvent.requestPermission();
             }
+            
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             recorder = new MediaRecorder(stream);
             chunks = [];
@@ -133,7 +144,7 @@ function initApp() {
             recBtn.style.display = &#39;none&#39;;
             stopBtn.style.display = &#39;block&#39;;
         } catch (err) {
-            alert(&#39;エラー: &#39; + err);
+            alert(&#39;エラー: マイクまたはセンサーの許可が必要です&#39;);
         }
     };
 
@@ -162,7 +173,7 @@ function initApp() {
         try {
             localStorage.setItem(&#39;v4_audio&#39;, JSON.stringify(data));
         } catch (e) {
-            alert(&#39;容量不足のため保存できませんでした。古い録音を削除してください。&#39;);
+            alert(&#39;メモリ不足です。古い録音を削除してください。&#39;);
         }
     }
 
@@ -175,7 +186,7 @@ function initApp() {
         const div = document.createElement(&#39;div&#39;);
         div.className = &#39;audio-item&#39;;
         div.innerHTML = `&lt;audio src=&quot;${base64}&quot; controls&gt;&lt;/audio&gt;`;
-        list.appendChild(div);
+        list.prepend(div);
     }
 
     clearBtn.onclick = () =&gt; {
