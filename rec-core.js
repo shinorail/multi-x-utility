@@ -9,17 +9,14 @@ const timerDisplay = document.getElementById('timer');
 const recordingsList = document.getElementById('recordingsList');
 const memoArea = document.getElementById('memoArea');
 
-// 録音機能の初期化
 if (startBtn) {
 startBtn.addEventListener('click', async () => {
 try {
-// マイク権限の取得
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-        // サポートされている形式の確認
         let mimeType = 'audio/webm';
         if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'audio/mp4'; // iOS用
+            mimeType = 'audio/mp4'; 
         }
 
         mediaRecorder = new MediaRecorder(stream, { mimeType });
@@ -34,26 +31,33 @@ const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const audioUrl = URL.createObjectURL(audioBlob);
             const extension = mimeType.includes('webm') ? 'webm' : 'm4a';
             
-            // リストへ追加
             const now = new Date();
             const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
             const item = document.createElement('div');
             item.className = 'list-item';
-            item.innerHTML = `<span>Rec ${timeStr}</span><a href="${audioUrl}" download="rec_${Date.now()}.${extension}">SAVE</a>`;
+            item.style.flexDirection = 'column';
+            item.style.alignItems = 'flex-start';
+            item.style.gap = '10px';
+
+            item.innerHTML = `
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                    <span>Rec ${timeStr}</span>
+                    <a href="${audioUrl}" download="rec_${Date.now()}.${extension}" style="font-size:0.7rem; background:rgba(212,175,55,0.2); padding:4px 8px; border-radius:5px;">DL / SAVE</a>
+                </div>
+                <audio src="${audioUrl}" controls style="width:100%; height:30px; filter: invert(80%) hue-rotate(180deg);"></audio>
+            `;
             recordingsList.prepend(item);
 
-            // ストリームを完全に停止してインジケーターを消す
             stream.getTracks().forEach(track => track.stop());
         };
 
         mediaRecorder.start();
 
-        // UIの切り替え
         startBtn.style.display = 'none';
         stopBtn.style.display = 'flex';
         startBtn.classList.add('recording');
 
-        // タイマー開始
         startTime = Date.now();
         timerInterval = setInterval(() => {
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -64,7 +68,7 @@ const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     } catch (err) {
         console.error('Recording Error:', err);
-        alert("録音を開始できません。マイクの許可設定と、HTTPS接続であることを確認してください。");
+        alert("録音を開始できません。マイクの許可とHTTPS接続を確認してください。");
     }
 });
 }
@@ -82,7 +86,6 @@ startBtn.classList.remove('recording');
 });
 }
 
-// メモ機能（オートセーブ）
 function autoSave() {
 localStorage.setItem('recmemo_data', memoArea.value);
 const status = document.getElementById('saveStatus');
@@ -97,7 +100,6 @@ localStorage.removeItem('recmemo_data');
 }
 }
 
-// ページ読み込み時の復元
 window.addEventListener('DOMContentLoaded', () => {
 const saved = localStorage.getItem('recmemo_data');
 if (saved) memoArea.value = saved;
