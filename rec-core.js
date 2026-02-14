@@ -13,11 +13,7 @@ if (startBtn) {
 startBtn.addEventListener('click', async () => {
 try {
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-        let mimeType = 'audio/webm';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'audio/mp4'; 
-        }
+const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
 
         mediaRecorder = new MediaRecorder(stream, { mimeType });
         audioChunks = [];
@@ -27,9 +23,8 @@ const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         };
 
         mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunks, { type: mimeType });
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
             const audioUrl = URL.createObjectURL(audioBlob);
-            const extension = mimeType.includes('webm') ? 'webm' : 'm4a';
             
             const now = new Date();
             const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -39,21 +34,22 @@ const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             item.style.flexDirection = 'column';
             item.style.alignItems = 'flex-start';
             item.style.gap = '10px';
+            item.style.marginBottom = '15px';
+            item.style.paddingBottom = '15px';
+            item.style.borderBottom = '1px solid rgba(212,175,55,0.2)';
 
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                    <span>Rec ${timeStr}</span>
-                    <a href="${audioUrl}" download="rec_${Date.now()}.${extension}" style="font-size:0.7rem; background:rgba(212,175,55,0.2); padding:4px 8px; border-radius:5px;">DL / SAVE</a>
+                    <span style="color:var(--p); font-weight:bold;">REC_${timeStr}</span>
+                    <a href="${audioUrl}" download="rec_${Date.now()}.mp3" style="font-size:0.75rem; color:#000; background:var(--p); padding:5px 12px; border-radius:50px; text-decoration:none; font-weight:bold;">MP3 SAVE</a>
                 </div>
-                <audio src="${audioUrl}" controls style="width:100%; height:30px; filter: invert(80%) hue-rotate(180deg);"></audio>
+                <audio src="${audioUrl}" controls style="width:100%; height:35px; filter: invert(85%) hue-rotate(150deg);"></audio>
             `;
             recordingsList.prepend(item);
-
             stream.getTracks().forEach(track => track.stop());
         };
 
         mediaRecorder.start();
-
         startBtn.style.display = 'none';
         stopBtn.style.display = 'flex';
         startBtn.classList.add('recording');
@@ -65,9 +61,7 @@ const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const s = String(elapsed % 60).padStart(2, '0');
             timerDisplay.innerText = `${m}:${s}`;
         }, 1000);
-
     } catch (err) {
-        console.error('Recording Error:', err);
         alert("録音を開始できません。マイクの許可とHTTPS接続を確認してください。");
     }
 });
@@ -84,6 +78,25 @@ stopBtn.style.display = 'none';
 startBtn.classList.remove('recording');
 }
 });
+}
+
+// メモのテキスト保存機能
+function downloadMemo() {
+const text = memoArea.value;
+if (!text) {
+alert("メモが空です。");
+return;
+}
+const blob = new Blob([text], { type: 'text/plain' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+const now = new Date();
+const filename = memo_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.txt;
+
+a.href = url;
+a.download = filename;
+a.click();
+URL.revokeObjectURL(url);
 }
 
 function autoSave() {
