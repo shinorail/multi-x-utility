@@ -2,53 +2,132 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Alarm | Multi-X Utility</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc}
-body{font-family:sans-serif;background:var(--bg);color:var(--txt);margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box;transition: background 0.3s}
-@keyframes alarm-flash { 0% { background: #0f172a; } 50% { background: #7f1d1d; } 100% { background: #0f172a; } }
+:root {
+    --p: #d4af37;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --txt: #f8fafc;
+    --red: #ef4444;
+}
+body {
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", sans-serif;
+    background: var(--bg);
+    color: var(--txt);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+    box-sizing: border-box;
+    transition: background 0.3s;
+}
+@keyframes alarm-flash { 0% { background: var(--bg); } 50% { background: #7f1d1d; } 100% { background: var(--bg); } }
 .flashing { animation: alarm-flash 0.5s infinite; }
-.credit{color:var(--p);font-weight:bold;letter-spacing:2px;margin-top:40px;margin-bottom:10px}
-.clock{font-size:3.8rem;font-family:monospace;margin:20px 0;color:var(--p);text-shadow:0 0 20px rgba(212,175,55,0.3)}
-.setup-area{width:100%;max-width:350px;background:var(--card);padding:30px;border-radius:25px;box-shadow:0 10px 30px rgba(0,0,0,0.5);text-align:center;border:1px solid rgba(212,175,55,0.2)}
-input[type="time"]{width:100%;background:rgba(0,0,0,0.5);border:2px solid var(--p);color:white;padding:15px;font-size:1.8rem;border-radius:15px;margin-bottom:20px;box-sizing:border-box;outline:none;font-family:monospace}
-.btn{width:100%;padding:20px;border-radius:15px;border:none;background:var(--p);color:#000;font-weight:bold;font-size:1.2rem;cursor:pointer;transition:0.3s}
-.btn-stop{background:#ef4444;color:white;display:none;margin-top:15px}
-#status{margin-top:20px;font-size:0.9rem;color:#94a3b8}
-.back-btn{margin-top:30px;color:var(--p);text-decoration:none;font-weight:bold}
-.sound-credit{margin-top:50px;font-size:0.7rem;color:#64748b;letter-spacing:1px}
-.sound-credit a{color:#64748b;text-decoration:none}
+
+.credit { color: var(--p); font-weight: bold; letter-spacing: 2px; margin-top: 40px; margin-bottom: 10px; font-size: 0.9rem; }
+.clock { font-size: 3.5rem; font-family: "Courier New", monospace; margin: 20px 0; color: var(--p); text-shadow: 0 0 20px rgba(212,175,55,0.3); }
+
+.setup-area {
+    width: 100%;
+    max-width: 350px;
+    background: var(--card);
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+    border: 1px solid rgba(212,175,55,0.2);
+    box-sizing: border-box;
+}
+input[type="time"] {
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid var(--p);
+    color: white;
+    padding: 15px;
+    font-size: 1.8rem;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    outline: none;
+    font-family: monospace;
+}
+.btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 50px;
+    border: none;
+    background: var(--p);
+    color: #000;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-stop { background: var(--red); color: white; display: none; margin-top: 15px; }
+#status { margin-top: 20px; font-size: 0.85rem; color: #94a3b8; font-weight: bold; }
+
+.notes-area {
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    width: 100%;
+    max-width: 350px;
+    box-sizing: border-box;
+}
+.notes-title { color: var(--p); font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; }
+.notes-content { font-size: 0.75rem; color: #94a3b8; line-height: 1.6; text-align: left; }
+.notes-content ul { margin: 5px 0; padding-left: 18px; }
+
+.back-btn { margin-top: 30px; color: var(--p); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 
 /* 許可ダイアログ */
-#permission-dialog{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--p);padding:25px;border-radius:20px;z-index:1000;text-align:center;width:80%;max-width:300px}
-#overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:999}
+#permission-dialog { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:2px solid var(--p); padding:25px; border-radius:20px; z-index:1000; text-align:center; width:85%; max-width:300px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+#overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; }
 </style>
 </head>
 <body>
 
 <div id="overlay"></div>
 <div id="permission-dialog">
-    <p style="font-weight:bold">アラームを有効にしますか？</p>
-    <p style="font-size:0.8rem">音を鳴らすためにブラウザの許可が必要です。</p>
-    <button class="btn" onclick="grantAudio()" style="padding:10px">許可する / ALLOW</button>
+    <p style="font-weight:bold; margin-top:0;">アラームを有効にしますか？</p>
+    <p style="font-size:0.8rem; margin-bottom:20px;">音を鳴らすためにブラウザの許可が必要です。</p>
+    <button class="btn" onclick="grantAudio()" style="padding:12px">許可してセットする</button>
 </div>
 
-<div class="credit">制作：篠ノ井乗務区</div>
+<div class="credit">制作：篠ノ井業務区</div>
 <div id="clock" class="clock">00:00:00</div>
 
 <div class="setup-area">
     <input type="time" id="alarmTime">
     <button id="setBtn" class="btn" onclick="askPermission()">SET ALARM</button>
     <button id="stopBtn" class="btn btn-stop" onclick="stopAlarm()">STOP ALARM</button>
-    <div id="status">アラーム未設定</div>
+    <div id="status">WAITING / 未設定</div>
 </div>
 
-<a href="menu.html" class="back-btn">← MENU / 戻る</a>
-
-<div class="sound-credit">
-    Sound by <a href="https://otologic.jp" target="_blank">OtoLogic</a>
+<div class="notes-area">
+    <div class="notes-title">⚠️ 運用上の注意 (Important Notes)</div>
+    <div class="notes-content">
+        Webアプリの性質上、以下の環境では作動しません。
+        <ul>
+            <li>タブを閉じた、またはブラウザ終了時</li>
+            <li>端末が深いスリープに入った場合</li>
+            <li>消音（マナー）モード設定時</li>
+        </ul>
+        <p style="margin-top:8px; border-top:1px dashed #334155; padding-top:8px;">
+            確実に作動させるため、<b>「画面自動ロック」を解除</b>し、本画面を表示したままにしてください。
+        </p>
+    </div>
 </div>
+
+<a href="index.html" class="back-btn">← DASHBOARD / 戻る</a>
 
 <audio id="alarmSound" loop preload="auto">
     <source src="https://otologic.jp/free/se/mp3/clock01/alarm05.mp3" type="audio/mpeg">
