@@ -91,9 +91,26 @@ input[type="time"] {
 /* 許可ダイアログ */
 #permission-dialog { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:2px solid var(--p); padding:25px; border-radius:20px; z-index:1000; text-align:center; width:85%; max-width:300px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; }
+
+/* メンテナンス追加スタイル */
+#m-bar { display:none; background:#b91c1c; color:#fff; font-size:11px; font-weight:bold; text-align:center; padding:10px; width:100%; position:fixed; top:0; left:0; z-index:10001; border-bottom:1px solid #ff4b4b; }
+#m-full-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.98); z-index:10002; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
 </style>
 </head>
 <body>
+
+<div id="m-bar">【お知らせ】システム調整のためサービスを一時中止しています</div>
+<div id="m-full-screen">
+    <div style="border:1px solid var(--p); padding:35px; border-radius:20px; background:var(--card); max-width:340px; text-align:center; box-shadow:0 0 40px rgba(0,0,0,0.5);">
+        <div style="font-size:2.5rem; margin-bottom:15px;">⚙</div>
+        <div style="color:var(--p); font-weight:bold; letter-spacing:2px; margin-bottom:15px; font-size:1.1rem;">システム調整のお知らせ</div>
+        <div id="m-reason-text" style="font-size:13.5px; color:var(--txt); margin-bottom:20px; padding:15px; background:rgba(212,175,55,0.05); border-radius:10px; text-align:left; line-height:1.6; border:1px solid rgba(212,175,55,0.2);"></div>
+        <div style="font-size:11px; color:var(--p); margin-bottom:25px; border:1px solid rgba(212,175,55,0.3); padding:10px; border-radius:8px; background:rgba(0,0,0,0.2);">
+            再開予定：<span id="m-date-text" style="font-weight:bold; font-size:13px;"></span>
+        </div>
+        <a href="menu.html" class="btn" style="text-decoration:none; display:inline-block; width:auto; padding:14px 40px;">メニューに戻る</a>
+    </div>
+</div>
 
 <div id="overlay"></div>
 <div id="permission-dialog">
@@ -132,6 +149,47 @@ input[type="time"] {
 <audio id="alarmSound" loop preload="auto">
     <source src="https://otologic.jp/free/se/mp3/clock01/alarm05.mp3" type="audio/mpeg">
 </audio>
+
+<script>
+/**
+ * 🛠 メンテナンス管理
+ * 0=通常, 1=警告, 2=中止
+ */
+const M_MODE = 2; 
+
+const M_CONFIG = {
+    reason: "「セットボタンが反応しない」「音が鳴らない」といったシステム上の不具合を調整するため、現在サービスを一時中止しております。より確実な動作を目指して改善作業中です。",
+    date: "3月中には再開予定（状況により前後します）"
+};
+
+function checkMaintenance() {
+    const bar = document.getElementById('m-bar');
+    const full = document.getElementById('m-full-screen');
+    const rText = document.getElementById('m-reason-text');
+    const dText = document.getElementById('m-date-text');
+
+    if (M_MODE === 1) {
+        bar.style.display = 'block';
+    } else if (M_MODE === 2) {
+        full.style.display = 'flex';
+        rText.innerText = M_CONFIG.reason;
+        dText.innerText = M_CONFIG.date;
+    }
+}
+
+// 起動時に実行
+window.onload = checkMaintenance;
+
+// 時計の更新処理（基本機能）
+setInterval(() => {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    const clock = document.getElementById('clock');
+    if(clock) clock.innerText = `${h}:${m}:${s}`;
+}, 1000);
+</script>
 
 <script src="alarm-core.js"></script>
 
