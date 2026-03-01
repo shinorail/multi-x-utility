@@ -16,6 +16,7 @@
     --card: #1e293b;
     --txt: #f8fafc;
     --red: #ef4444;
+    --sub: #94a3b8;
 }
 body {
     font-family: -apple-system, "Hiragino Kaku Gothic ProN", sans-serif;
@@ -28,80 +29,34 @@ body {
     min-height: 100vh;
     padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
     box-sizing: border-box;
-    transition: background 0.3s;
 }
-@keyframes alarm-flash { 0% { background: var(--bg); } 50% { background: #7f1d1d; } 100% { background: var(--bg); } }
-.flashing { animation: alarm-flash 0.5s infinite; }
 
+/* メンテナンスUI */
+#m-bar { display:none; background:#b91c1c; color:#fff; font-size:11px; font-weight:bold; text-align:center; padding:10px; width:100%; position:fixed; top:0; left:0; z-index:10001; border-bottom:1px solid #ff4b4b; }
+#m-full-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.98); z-index:10000; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
+
+/* メインデザイン */
 .credit { color: var(--p); font-weight: bold; letter-spacing: 2px; margin-top: 40px; margin-bottom: 10px; font-size: 0.9rem; }
 .clock { font-size: 3.5rem; font-family: "Courier New", monospace; margin: 20px 0; color: var(--p); text-shadow: 0 0 20px rgba(212,175,55,0.3); }
-
-.setup-area {
-    width: 100%;
-    max-width: 350px;
-    background: var(--card);
-    padding: 30px;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center;
-    border: 1px solid rgba(212,175,55,0.2);
-    box-sizing: border-box;
-}
-input[type="time"] {
-    width: 100%;
-    background: rgba(0,0,0,0.5);
-    border: 2px solid var(--p);
-    color: white;
-    padding: 15px;
-    font-size: 1.8rem;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-    outline: none;
-    font-family: monospace;
-}
-.btn {
-    width: 100%;
-    padding: 18px;
-    border-radius: 50px;
-    border: none;
-    background: var(--p);
-    color: #000;
-    font-weight: bold;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-}
+.setup-area { width: 100%; max-width: 350px; background: var(--card); padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid rgba(212,175,55,0.2); box-sizing: border-box; }
+input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--p); color: white; padding: 15px; font-size: 1.8rem; border-radius: 15px; margin-bottom: 20px; box-sizing: border-box; outline: none; font-family: monospace; }
+.btn { width: 100%; padding: 18px; border-radius: 50px; border: none; background: var(--p); color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
 .btn-stop { background: var(--red); color: white; display: none; margin-top: 15px; }
 #status { margin-top: 20px; font-size: 0.85rem; color: #94a3b8; font-weight: bold; }
 
-.notes-area {
-    margin-top: 30px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 15px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    width: 100%;
-    max-width: 350px;
-    box-sizing: border-box;
-}
+.notes-area { margin-top: 30px; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.1); width: 100%; max-width: 350px; box-sizing: border-box; }
 .notes-title { color: var(--p); font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; }
 .notes-content { font-size: 0.75rem; color: #94a3b8; line-height: 1.6; text-align: left; }
-.notes-content ul { margin: 5px 0; padding-left: 18px; }
-
 .back-btn { margin-top: 30px; color: var(--p); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 
 #permission-dialog { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:2px solid var(--p); padding:25px; border-radius:20px; z-index:1000; text-align:center; width:85%; max-width:300px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; }
-
-/* メンテナンスUI */
-#m-bar { display:none; background:#b91c1c; color:#fff; font-size:11px; font-weight:bold; text-align:center; padding:10px; width:100%; position:fixed; top:0; left:0; z-index:10001; border-bottom:1px solid #ff4b4b; }
-#m-full-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.98); z-index:10002; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
 </style>
 </head>
 <body>
 
-<div id="m-bar">【お知らせ】システム調整のためサービスを一時中止しています</div>
+<div id="m-bar">SYSTEM STATUS: メンテナンスのため一時中止中</div>
+
 <div id="m-full-screen">
     <div style="border:1px solid var(--p); padding:35px; border-radius:20px; background:var(--card); max-width:340px; text-align:center; box-shadow:0 0 40px rgba(0,0,0,0.5);">
         <div style="font-size:2.5rem; margin-bottom:15px;">⚙</div>
@@ -126,27 +81,24 @@ input[type="time"] {
 
 <div class="setup-area">
     <input type="time" id="alarmTime">
-    <button id="setBtn" class="btn" onclick="askPermission()">SET ALARM</button>
+    <button id="setBtn" class="btn" onclick="debugAskPermission()">SET ALARM</button>
     <button id="stopBtn" class="btn btn-stop" onclick="stopAlarm()">STOP ALARM</button>
     <div id="status">WAITING / 未設定</div>
 </div>
 
 <div class="notes-area">
     <div class="notes-title">⚠️ 運用上の注意 (Important Notes)</div>
-    <div class="notes-content">
+    <div class="notes-content" style="font-size: 0.75rem; color: #94a3b8; line-height: 1.6; text-align: left;">
         Webアプリの性質上、以下の環境では作動しません。
-        <ul>
+        <ul style="margin: 5px 0; padding-left: 18px;">
             <li>タブを閉じた、またはブラウザ終了時</li>
             <li>端末が深いスリープに入った場合</li>
             <li>消音（マナー）モード設定時</li>
         </ul>
-        <p style="margin-top:8px; border-top:1px dashed #334155; padding-top:8px;">
-            確実に作動させるため、<b>「画面自動ロック」を解除</b>し、本画面を表示したままにしてください。
-        </p>
     </div>
 </div>
 
-<a href="index.html" class="back-btn">← DASHBOARD / 戻る</a>
+<a href="menu.html" class="back-btn">← MENU / 戻る</a>
 
 <audio id="alarmSound" loop preload="auto">
     <source src="https://otologic.jp/free/se/mp3/clock01/alarm05.mp3" type="audio/mpeg">
@@ -154,47 +106,70 @@ input[type="time"] {
 
 <script>
 /**
- * 🛠 自動更新 & メンテナンス管理システム
+ * 🛠 システム管理 & 管理者デバッグ
  */
 const CONFIG = {
     mode: 2, // 0=通常, 1=警告, 2=中止
-    reason: "「セットボタンが反応しない」「音が鳴らない」不具合の調整、および実行エンジンの最適化のため、現在サービスを一時中止しております。",
-    date: "3月中には再開予定（状況により前後します）",
-    version: "1.0.2" // バージョンを変えることで更新を検知
+    reason: "「セットボタンが反応しない」不具合の調整、および実行エンジンの最適化のため、現在サービスを一時中止しております。",
+    date: "3月中には再開予定",
+    version: "1.0.4"
 };
 
-function checkStatus() {
+function initSystem() {
+    const params = new URLSearchParams(window.location.search);
+    const isAdmin = params.get('admin') === '1';
+
     const bar = document.getElementById('m-bar');
     const full = document.getElementById('m-full-screen');
-    const rText = document.getElementById('m-reason-text');
-    const dText = document.getElementById('m-date-text');
 
-    // 初期化
-    bar.style.display = 'none';
-    full.style.display = 'none';
+    if (isAdmin) {
+        console.log("--- DEBUG MODE ENABLED ---");
+        if (bar) {
+            bar.style.display = 'block';
+            bar.style.background = '#059669';
+            bar.innerText = "【管理者モード】動作確認中 - 一般には中止画面が表示中";
+        }
+        return;
+    }
 
     if (CONFIG.mode === 1) {
-        bar.style.display = 'block';
+        if (bar) bar.style.display = 'block';
     } else if (CONFIG.mode === 2) {
-        full.style.display = 'flex';
-        rText.innerText = CONFIG.reason;
-        dText.innerText = CONFIG.date;
+        if (bar) bar.style.display = 'block';
+        if (full) {
+            full.style.display = 'flex';
+            document.getElementById('m-reason-text').innerText = CONFIG.reason;
+            document.getElementById('m-date-text').innerText = CONFIG.date;
+        }
     }
 }
 
-// ⏱ 自動更新チェック (5分ごとにページをリロードして最新設定を反映)
-function enableAutoRefresh(minutes) {
+// ボタンが反応しない原因を調べるためのログ関数
+function debugAskPermission() {
+    console.log("Button Clicked: SET ALARM");
+    
+    // 外部JS(alarm-core.js)の関数が存在するかチェック
+    if (typeof askPermission === 'function') {
+        console.log("Success: askPermission function found. Executing...");
+        askPermission();
+    } else {
+        console.error("Error: askPermission function is NOT defined in alarm-core.js");
+        alert("システムエラー: 実行エンジン(alarm-core.js)が読み込めていないか、関数が見つかりません。");
+    }
+}
+
+// 5分おきの自動リロード（中止中のみ）
+function autoRefresh() {
     setTimeout(() => {
-        // ユーザーが入力中でない場合のみリロード
         if (document.getElementById('m-full-screen').style.display === 'flex') {
             location.reload();
         }
-    }, minutes * 60 * 1000);
+    }, 5 * 60 * 1000);
 }
 
 window.onload = () => {
-    checkStatus();
-    enableAutoRefresh(5); // 5分おきに最新状態を確認
+    initSystem();
+    autoRefresh();
 };
 
 // 時計更新
