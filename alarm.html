@@ -2,6 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Alarm | Multi-X Utility</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -88,11 +91,10 @@ input[type="time"] {
 
 .back-btn { margin-top: 30px; color: var(--p); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 
-/* 許可ダイアログ */
 #permission-dialog { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:2px solid var(--p); padding:25px; border-radius:20px; z-index:1000; text-align:center; width:85%; max-width:300px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; }
 
-/* メンテナンス追加スタイル */
+/* メンテナンスUI */
 #m-bar { display:none; background:#b91c1c; color:#fff; font-size:11px; font-weight:bold; text-align:center; padding:10px; width:100%; position:fixed; top:0; left:0; z-index:10001; border-bottom:1px solid #ff4b4b; }
 #m-full-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.98); z-index:10002; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
 </style>
@@ -152,45 +154,56 @@ input[type="time"] {
 
 <script>
 /**
- * 🛠 メンテナンス管理
- * 0=通常, 1=警告, 2=中止
+ * 🛠 自動更新 & メンテナンス管理システム
  */
-const M_MODE = 2; 
-
-const M_CONFIG = {
-    reason: "「セットボタンが反応しない」「音が鳴らない」といったシステム上の不具合を調整するため、現在サービスを一時中止しております。より確実な動作を目指して改善作業中です。",
-    date: "3月中には再開予定（状況により前後します）"
+const CONFIG = {
+    mode: 2, // 0=通常, 1=警告, 2=中止
+    reason: "「セットボタンが反応しない」「音が鳴らない」不具合の調整、および実行エンジンの最適化のため、現在サービスを一時中止しております。",
+    date: "3月中には再開予定（状況により前後します）",
+    version: "1.0.2" // バージョンを変えることで更新を検知
 };
 
-function checkMaintenance() {
+function checkStatus() {
     const bar = document.getElementById('m-bar');
     const full = document.getElementById('m-full-screen');
     const rText = document.getElementById('m-reason-text');
     const dText = document.getElementById('m-date-text');
 
-    if (M_MODE === 1) {
+    // 初期化
+    bar.style.display = 'none';
+    full.style.display = 'none';
+
+    if (CONFIG.mode === 1) {
         bar.style.display = 'block';
-    } else if (M_MODE === 2) {
+    } else if (CONFIG.mode === 2) {
         full.style.display = 'flex';
-        rText.innerText = M_CONFIG.reason;
-        dText.innerText = M_CONFIG.date;
+        rText.innerText = CONFIG.reason;
+        dText.innerText = CONFIG.date;
     }
 }
 
-// 起動時に実行
-window.onload = checkMaintenance;
+// ⏱ 自動更新チェック (5分ごとにページをリロードして最新設定を反映)
+function enableAutoRefresh(minutes) {
+    setTimeout(() => {
+        // ユーザーが入力中でない場合のみリロード
+        if (document.getElementById('m-full-screen').style.display === 'flex') {
+            location.reload();
+        }
+    }, minutes * 60 * 1000);
+}
 
-// 時計の更新処理（基本機能）
+window.onload = () => {
+    checkStatus();
+    enableAutoRefresh(5); // 5分おきに最新状態を確認
+};
+
+// 時計更新
 setInterval(() => {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
     const clock = document.getElementById('clock');
-    if(clock) clock.innerText = `${h}:${m}:${s}`;
+    if(clock) clock.innerText = now.toTimeString().split(' ')[0];
 }, 1000);
 </script>
-
 <script src="alarm-core.js"></script>
 
 </body>
