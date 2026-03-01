@@ -30,6 +30,8 @@ body {
     padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
     box-sizing: border-box;
 }
+@keyframes alarm-flash { 0% { background: var(--bg); } 50% { background: #7f1d1d; } 100% { background: var(--bg); } }
+.flashing { animation: alarm-flash 0.5s infinite; }
 
 /* メンテナンスUI */
 #m-bar { display:none; background:#b91c1c; color:#fff; font-size:11px; font-weight:bold; text-align:center; padding:10px; width:100%; position:fixed; top:0; left:0; z-index:10001; border-bottom:1px solid #ff4b4b; }
@@ -49,6 +51,7 @@ input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid
 .notes-content { font-size: 0.75rem; color: #94a3b8; line-height: 1.6; text-align: left; }
 .back-btn { margin-top: 30px; color: var(--p); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 
+/* 許可ダイアログ */
 #permission-dialog { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:2px solid var(--p); padding:25px; border-radius:20px; z-index:1000; text-align:center; width:85%; max-width:300px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; }
 </style>
@@ -56,7 +59,6 @@ input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid
 <body>
 
 <div id="m-bar">SYSTEM STATUS: メンテナンスのため一時中止中</div>
-
 <div id="m-full-screen">
     <div style="border:1px solid var(--p); padding:35px; border-radius:20px; background:var(--card); max-width:340px; text-align:center; box-shadow:0 0 40px rgba(0,0,0,0.5);">
         <div style="font-size:2.5rem; margin-bottom:15px;">⚙</div>
@@ -73,7 +75,7 @@ input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid
 <div id="permission-dialog">
     <p style="font-weight:bold; margin-top:0;">アラームを有効にしますか？</p>
     <p style="font-size:0.8rem; margin-bottom:20px;">音を鳴らすためにブラウザの許可が必要です。</p>
-    <button class="btn" onclick="grantAudio()" style="padding:12px">許可してセットする</button>
+    <button id="grantBtn" class="btn" onclick="grantAudio()" style="padding:12px">許可してセットする</button>
 </div>
 
 <div class="credit">制作：篠ノ井業務区</div>
@@ -81,14 +83,14 @@ input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid
 
 <div class="setup-area">
     <input type="time" id="alarmTime">
-    <button id="setBtn" class="btn" onclick="debugAskPermission()">SET ALARM</button>
+    <button id="setBtn" class="btn" onclick="askPermission()">SET ALARM</button>
     <button id="stopBtn" class="btn btn-stop" onclick="stopAlarm()">STOP ALARM</button>
     <div id="status">WAITING / 未設定</div>
 </div>
 
 <div class="notes-area">
     <div class="notes-title">⚠️ 運用上の注意 (Important Notes)</div>
-    <div class="notes-content" style="font-size: 0.75rem; color: #94a3b8; line-height: 1.6; text-align: left;">
+    <div class="notes-content">
         Webアプリの性質上、以下の環境では作動しません。
         <ul style="margin: 5px 0; padding-left: 18px;">
             <li>タブを閉じた、またはブラウザ終了時</li>
@@ -105,36 +107,29 @@ input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid
 </audio>
 
 <script>
-/**
- * 🛠 システム管理 & 管理者デバッグ
- */
 const CONFIG = {
-    mode: 2, // 0=通常, 1=警告, 2=中止
-    reason: "「セットボタンが反応しない」不具合の調整、および実行エンジンの最適化のため、現在サービスを一時中止しております。",
+    mode: 2, // 2=中止中
+    reason: "「セットボタンが反応しない」「音が鳴らない」不具合の調整、および実行エンジンの最適化のため、現在サービスを一時中止しております。",
     date: "3月中には再開予定",
-    version: "1.0.4"
+    version: "1.0.5"
 };
 
 function initSystem() {
     const params = new URLSearchParams(window.location.search);
     const isAdmin = params.get('admin') === '1';
-
     const bar = document.getElementById('m-bar');
     const full = document.getElementById('m-full-screen');
 
     if (isAdmin) {
-        console.log("--- DEBUG MODE ENABLED ---");
         if (bar) {
             bar.style.display = 'block';
             bar.style.background = '#059669';
-            bar.innerText = "【管理者モード】動作確認中 - 一般には中止画面が表示中";
+            bar.innerText = "【管理者モード】動作確認中";
         }
         return;
     }
 
-    if (CONFIG.mode === 1) {
-        if (bar) bar.style.display = 'block';
-    } else if (CONFIG.mode === 2) {
+    if (CONFIG.mode === 2) {
         if (bar) bar.style.display = 'block';
         if (full) {
             full.style.display = 'flex';
@@ -144,42 +139,21 @@ function initSystem() {
     }
 }
 
-// ボタンが反応しない原因を調べるためのログ関数
-function debugAskPermission() {
-    console.log("Button Clicked: SET ALARM");
-    
-    // 外部JS(alarm-core.js)の関数が存在するかチェック
-    if (typeof askPermission === 'function') {
-        console.log("Success: askPermission function found. Executing...");
-        askPermission();
-    } else {
-        console.error("Error: askPermission function is NOT defined in alarm-core.js");
-        alert("システムエラー: 実行エンジン(alarm-core.js)が読み込めていないか、関数が見つかりません。");
+// 5分おきに自動更新
+setInterval(() => {
+    if (document.getElementById('m-full-screen').style.display === 'flex') {
+        location.reload();
     }
-}
+}, 300000);
 
-// 5分おきの自動リロード（中止中のみ）
-function autoRefresh() {
-    setTimeout(() => {
-        if (document.getElementById('m-full-screen').style.display === 'flex') {
-            location.reload();
-        }
-    }, 5 * 60 * 1000);
-}
+window.onload = initSystem;
 
-window.onload = () => {
-    initSystem();
-    autoRefresh();
-};
-
-// 時計更新
+// 時計表示
 setInterval(() => {
     const now = new Date();
-    const clock = document.getElementById('clock');
-    if(clock) clock.innerText = now.toTimeString().split(' ')[0];
+    document.getElementById('clock').innerText = now.toTimeString().split(' ')[0];
 }, 1000);
 </script>
 <script src="alarm-core.js"></script>
-
 </body>
 </html>
