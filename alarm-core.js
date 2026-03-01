@@ -1,91 +1,83 @@
 /**
- * Multi-X Alarm Core Logic
- * 篠ノ井業務区 二周年記念モデル
+ * alarm-core.js - 実行エンジン
+ * 「許可してセット」が反応しない問題を解消
  */
 
-let alarmTarget = null;
-let isRinging = false;
-let isAudioUnlocked = false;
-
-const sound = document.getElementById('alarmSound');
-const statusText = document.getElementById('status');
+let alarmTimer = null;
+const alarmSound = document.getElementById('alarmSound');
+const statusDiv = document.getElementById('status');
 const stopBtn = document.getElementById('stopBtn');
 const setBtn = document.getElementById('setBtn');
-const dialog = document.getElementById('permission-dialog');
-const overlay = document.getElementById('overlay');
 
-// 時計更新 & アラーム判定
-function updateClock() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    const currentTimeStr = `${h}:${m}`;
-    
-    document.getElementById('clock').innerText = `${h}:${m}:${s}`;
-
-    // 判定：時刻一致かつ未鳴動かつ音声解放済み
-    if (alarmTarget === currentTimeStr && !isRinging && isAudioUnlocked) {
-        ring();
-    }
-}
-setInterval(updateClock, 1000);
-
-// 設定ボタン：まずは許可ダイアログを表示
+// 1. セットボタン押下時
 function askPermission() {
-    const timeVal = document.getElementById('alarmTime').value;
-    if (!timeVal) {
+    const alarmTime = document.getElementById('alarmTime').value;
+    if (!alarmTime) {
         alert("時刻を入力してください。");
         return;
     }
-    
-    overlay.style.display = 'block';
-    dialog.style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('permission-dialog').style.display = 'block';
 }
 
-// 音声の解放（ユーザー操作を起点にする必要がある）
+// 2. 「許可してセットする」ボタン押下時（ここが反応しない原因の修正箇所）
 function grantAudio() {
-    sound.play().then(() => {
-        // 一瞬鳴らしてすぐに止めることで、ブラウザに再生許可を覚えさせる
-        sound.pause();
-        sound.currentTime = 0;
-        isAudioUnlocked = true;
+    // ユーザー操作の直後でplayを呼び出し、ブラウザのロックを解除する
+    alarmSound.play().then(() => {
+        // 成功したらすぐ止める（これで音出しの許可が確定する）
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
         
-        dialog.style.display = 'none';
-        overlay.style.display = 'none';
+        // UIを閉じる
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('permission-dialog').style.display = 'none';
         
-        alarmTarget = document.getElementById('alarmTime').value;
-        statusText.innerText = "SET COMPLETE: " + alarmTarget;
-        statusText.style.color = "var(--p)";
+        // タイマー開始
+        startAlarmTimer();
     }).catch(err => {
-        console.error("Audio unlock failed:", err);
-        alert("音声の許可に失敗しました。ブラウザの設定を確認してください。");
+        console.error("Audio block error:", err);
+        alert("音声の再生許可が取れませんでした。ブラウザの設定を確認してください。");
     });
 }
 
-function ring() {
-    isRinging = true;
-    sound.volume = 1.0;
-    sound.play();
+// 3. タイマーの監視開始
+function startAlarmTimer() {
+    const alarmTime = document.getElementById('alarmTime').value;
+    statusDiv.innerText = "SET: " + alarmTime + " (監視中)";
+    statusDiv.style.color = "var(--p)";
 
-    document.body.classList.add('flashing');
-    stopBtn.style.display = 'block';
+    if (alarmTimer) clearInterval(alarmTimer);
+
+    alarmTimer = setInterval(() => {
+        const now = new Date();
+        const currentTime = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+        if (currentTime === alarmTime) {
+            triggerAlarm();
+        }
+    }, 1000);
+
     setBtn.style.display = 'none';
-    statusText.innerText = "⏰ TIME UP!!";
-    
-    if (navigator.vibrate) {
-        navigator.vibrate([500, 200, 500, 200, 500]);
-    }
+    stopBtn.style.display = 'inline-block';
 }
 
+// 4. アラーム発動
+function triggerAlarm() {
+    clearInterval(alarmTimer);
+    alarmSound.play();
+    document.body.classList.add('flashing');
+    statusDiv.innerText = "TIME UP!";
+    statusDiv.style.color = "var(--red)";
+}
+
+// 5. アラーム停止
 function stopAlarm() {
-    sound.pause();
-    sound.currentTime = 0;
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
     document.body.classList.remove('flashing');
+    statusDiv.innerText = "WAITING / 未設定";
+    statusDiv.style.color = "var(--sub)";
+    setBtn.style.display = 'inline-block';
     stopBtn.style.display = 'none';
-    setBtn.style.display = 'block';
-    alarmTarget = null;
-    isRinging = false;
-    statusText.innerText = "STOPPED / 待機中";
-    statusText.style.color = "#94a3b8";
+    if (alarmTimer) clearInterval(alarmTimer);
 }
