@@ -3,155 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Alarm | Multi-X Utility</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-:root {
-    --p: #d4af37;
-    --bg: #0f172a;
-    --card: #1e293b;
-    --txt: #f8fafc;
-    --red: #ef4444;
-    --sub: #94a3b8;
-}
-body {
-    font-family: -apple-system, "Hiragino Kaku Gothic ProN", sans-serif;
-    background: var(--bg);
-    color: var(--txt);
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
-    box-sizing: border-box;
-}
+:root { --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --red: #ef4444; --sub: #94a3b8; --blue: #3b82f6; }
+body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom); box-sizing: border-box; }
 @keyframes alarm-flash { 0% { background: var(--bg); } 50% { background: #7f1d1d; } 100% { background: var(--bg); } }
 .flashing { animation: alarm-flash 0.5s infinite; }
-
-/* メンテナンスUI */
-#m-bar { display:none; background:#b91c1c; color:#fff; font-size:11px; font-weight:bold; text-align:center; padding:10px; width:100%; position:fixed; top:0; left:0; z-index:10001; border-bottom:1px solid #ff4b4b; }
-#m-full-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.98); z-index:10000; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
-
-/* メインデザイン */
-.credit { color: var(--p); font-weight: bold; letter-spacing: 2px; margin-top: 40px; margin-bottom: 10px; font-size: 0.9rem; }
 .clock { font-size: 3.5rem; font-family: "Courier New", monospace; margin: 20px 0; color: var(--p); text-shadow: 0 0 20px rgba(212,175,55,0.3); }
-.setup-area { width: 100%; max-width: 350px; background: var(--card); padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid rgba(212,175,55,0.2); box-sizing: border-box; }
-input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--p); color: white; padding: 15px; font-size: 1.8rem; border-radius: 15px; margin-bottom: 20px; box-sizing: border-box; outline: none; font-family: monospace; }
-.btn { width: 100%; padding: 18px; border-radius: 50px; border: none; background: var(--p); color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
-.btn-stop { background: var(--red); color: white; display: none; margin-top: 15px; }
-#status { margin-top: 20px; font-size: 0.85rem; color: #94a3b8; font-weight: bold; }
+.setup-area { width: 100%; max-width: 350px; background: var(--card); padding: 30px; border-radius: 25px; text-align: center; border: 1px solid rgba(212,175,55,0.2); box-sizing: border-box; }
+input[type="time"] { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--p); color: white; padding: 15px; font-size: 1.8rem; border-radius: 15px; margin-bottom: 20px; box-sizing: border-box; outline:none; }
+.btn { width: 100%; padding: 18px; border-radius: 50px; border: none; background: var(--p); color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+.btn-blue { background: var(--blue); color: white; font-size: 0.9rem; padding: 12px; }
+.btn-disabled { background: #475569 !important; color: #94a3b8 !important; cursor: not-allowed !important; opacity: 0.6; }
+.btn-stop { background: var(--red); color: white; display: none; }
+#status { margin-top: 20px; font-size: 0.85rem; color: var(--sub); font-weight: bold; }
 
-.notes-area { margin-top: 30px; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.1); width: 100%; max-width: 350px; box-sizing: border-box; }
-.notes-title { color: var(--p); font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; }
-.notes-content { font-size: 0.75rem; color: #94a3b8; line-height: 1.6; text-align: left; }
-.back-btn { margin-top: 30px; color: var(--p); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
-
-/* 許可ダイアログ */
-#permission-dialog { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--card); border:2px solid var(--p); padding:25px; border-radius:20px; z-index:1000; text-align:center; width:85%; max-width:300px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
-#overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; }
+#consent-dialog { display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
+.consent-card { background:var(--card); border:2px solid var(--p); padding:30px; border-radius:25px; max-width:350px; text-align:center; }
 </style>
 </head>
-<body>
+<body onclick="unlockAudio()">
 
-<div id="m-bar">SYSTEM STATUS: メンテナンスのため一時中止中</div>
-<div id="m-full-screen">
-    <div style="border:1px solid var(--p); padding:35px; border-radius:20px; background:var(--card); max-width:340px; text-align:center; box-shadow:0 0 40px rgba(0,0,0,0.5);">
-        <div style="font-size:2.5rem; margin-bottom:15px;">⚙</div>
-        <div style="color:var(--p); font-weight:bold; letter-spacing:2px; margin-bottom:15px; font-size:1.1rem;">システム調整のお知らせ</div>
-        <div id="m-reason-text" style="font-size:13.5px; color:var(--txt); margin-bottom:20px; padding:15px; background:rgba(212,175,55,0.05); border-radius:10px; text-align:left; line-height:1.6; border:1px solid rgba(212,175,55,0.2);"></div>
-        <div style="font-size:11px; color:var(--p); margin-bottom:25px; border:1px solid rgba(212,175,55,0.3); padding:10px; border-radius:8px; background:rgba(0,0,0,0.2);">
-            再開予定：<span id="m-date-text" style="font-weight:bold; font-size:13px;"></span>
-        </div>
-        <a href="menu.html" class="btn" style="text-decoration:none; display:inline-block; width:auto; padding:14px 40px;">メニューに戻る</a>
+<div id="consent-dialog">
+    <div class="consent-card">
+        <h2 style="color:var(--p); margin-top:0;">利用同意</h2>
+        <p style="font-size:0.85rem; text-align:left; line-height:1.6; color:var(--txt);">
+            本アプリを確実に動作させるため、以下の機能を有効にします：<br><br>
+            1. <b>スリープ防止</b>：アラーム作動まで画面を消灯しません。<br>
+            2. <b>音出し許可</b>：ブラウザの制限を解除します。<br>
+            3. <b>BT監視</b>：接続切れを検知します（対応機種のみ）。
+        </p>
+        <button class="btn" onclick="acceptConsent()">同意して開始する</button>
     </div>
 </div>
 
-<div id="overlay"></div>
-<div id="permission-dialog">
-    <p style="font-weight:bold; margin-top:0;">アラームを有効にしますか？</p>
-    <p style="font-size:0.8rem; margin-bottom:20px;">音を鳴らすためにブラウザの許可が必要です。</p>
-    <button id="grantBtn" class="btn" onclick="grantAudio()" style="padding:12px">許可してセットする</button>
-</div>
-
-<div class="credit">制作：篠ノ井業務区</div>
-<div id="clock" class="clock">00:00:00</div>
+<div class="clock" id="clock">00:00:00</div>
 
 <div class="setup-area">
     <input type="time" id="alarmTime">
+    <button id="btWatchBtn" class="btn btn-blue" onclick="watchBluetooth()">🔗 Bluetooth切断を監視</button>
     <button id="setBtn" class="btn" onclick="askPermission()">SET ALARM</button>
     <button id="stopBtn" class="btn btn-stop" onclick="stopAlarm()">STOP ALARM</button>
-    <div id="status">WAITING / 未設定</div>
+    <div id="status">WAKE LOCK: OFF</div>
 </div>
-
-<div class="notes-area">
-    <div class="notes-title">⚠️ 運用上の注意 (Important Notes)</div>
-    <div class="notes-content">
-        Webアプリの性質上、以下の環境では作動しません。
-        <ul style="margin: 5px 0; padding-left: 18px;">
-            <li>タブを閉じた、またはブラウザ終了時</li>
-            <li>端末が深いスリープに入った場合</li>
-            <li>消音（マナー）モード設定時</li>
-        </ul>
-    </div>
-</div>
-
-<a href="menu.html" class="back-btn">← MENU / 戻る</a>
 
 <audio id="alarmSound" loop preload="auto">
-    <source src="https://otologic.jp/free/se/mp3/clock01/alarm05.mp3" type="audio/mpeg">
+    <source src="alarm.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-const CONFIG = {
-    mode: 2, // 2=中止中
-    reason: "「セットボタンが反応しない」「音が鳴らない」不具合の調整、および実行エンジンの最適化のため、現在サービスを一時中止しております。",
-    date: "3月中には再開予定",
-    version: "1.0.5"
-};
+let wakeLock = null;
+let isAudioUnlocked = false;
 
-function initSystem() {
-    const params = new URLSearchParams(window.location.search);
-    const isAdmin = params.get('admin') === '1';
-    const bar = document.getElementById('m-bar');
-    const full = document.getElementById('m-full-screen');
-
-    if (isAdmin) {
-        if (bar) {
-            bar.style.display = 'block';
-            bar.style.background = '#059669';
-            bar.innerText = "【管理者モード】動作確認中";
-        }
-        return;
-    }
-
-    if (CONFIG.mode === 2) {
-        if (bar) bar.style.display = 'block';
-        if (full) {
-            full.style.display = 'flex';
-            document.getElementById('m-reason-text').innerText = CONFIG.reason;
-            document.getElementById('m-date-text').innerText = CONFIG.date;
-        }
+function checkBTSupport() {
+    const btn = document.getElementById('btWatchBtn');
+    if (!navigator.bluetooth) {
+        btn.classList.add('btn-disabled');
+        btn.innerHTML = "🚫 Bluetooth監視非対応(Safari等)";
+        btn.onclick = () => alert("お使いのブラウザはBluetooth監視に対応していません。通常のアラームとしてご利用ください。");
     }
 }
 
-// 5分おきに自動更新
-setInterval(() => {
-    if (document.getElementById('m-full-screen').style.display === 'flex') {
-        location.reload();
+async function acceptConsent() {
+    document.getElementById('consent-dialog').style.display = 'none';
+    unlockAudio();
+    requestWakeLock();
+    checkBTSupport();
+}
+
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            document.getElementById('status').innerText = "WAKE LOCK: ON (常時点灯)";
+        }
+    } catch (err) {
+        document.getElementById('status').innerText = "WAKE LOCK: ERROR";
     }
-}, 300000);
+}
 
-window.onload = initSystem;
+function unlockAudio() {
+    if (isAudioUnlocked) return;
+    const audio = document.getElementById('alarmSound');
+    audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        isAudioUnlocked = true;
+    }).catch(e => {});
+}
 
-// 時計表示
 setInterval(() => {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.toTimeString().split(' ')[0];
+    const clock = document.getElementById('clock');
+    if(clock) clock.innerText = new Date().toTimeString().split(' ')[0];
 }, 1000);
 </script>
 <script src="alarm-core.js"></script>
