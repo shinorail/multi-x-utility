@@ -51,9 +51,8 @@ main {
     letter-spacing: 1px;
     height: 1.5rem;
 }
-textarea {
+textarea, .filename-input {
     width: 100%;
-    height: 150px;
     background: var(--card);
     border: 1px solid rgba(212,175,55,0.2);
     border-radius: 15px;
@@ -63,8 +62,10 @@ textarea {
     font-size: 16px;
     outline: none;
     resize: none;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
+textarea { height: 120px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+.filename-input { height: 50px; margin-bottom: 5px; border-style: dashed; }
+
 .controls {
     display: flex;
     flex-direction: column;
@@ -80,20 +81,24 @@ textarea {
     cursor: pointer;
     transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    text-align: center;
+    text-decoration: none;
 }
-.btn-rec {
-    background: var(--red);
-    color: #fff;
+.btn-rec { background: var(--red); color: #fff; }
+.btn-stop { background: var(--p); color: #000; display: none; }
+.btn-dl {
+    background: transparent;
+    border: 1px solid var(--p);
+    color: var(--p);
+    font-size: 12px;
+    padding: 8px 15px;
+    margin-top: 10px;
+    display: inline-block;
+    width: auto;
+    border-radius: 8px;
 }
-.btn-stop {
-    background: var(--p);
-    color: #000;
-    display: none;
-}
-.btn:active {
-    transform: scale(0.96);
-    filter: brightness(0.8);
-}
+.btn:active { transform: scale(0.96); filter: brightness(0.8); }
+
 #list {
     margin-top: 20px;
     display: flex;
@@ -102,14 +107,20 @@ textarea {
 }
 .audio-item {
     background: var(--card);
-    padding: 12px;
+    padding: 15px;
     border-radius: 12px;
     border-left: 3px solid var(--p);
+    display: flex;
+    flex-direction: column;
 }
-audio {
-    width: 100%;
-    height: 35px;
+.audio-info {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
 }
+audio { width: 100%; height: 35px; }
 .back-link {
     display: block;
     text-align: center;
@@ -132,9 +143,11 @@ audio {
     <div id="status">READY</div>
     <textarea id="memo" placeholder="現場の記録、アイディアをここに..."></textarea>
     
+    <input type="text" id="fileNameInput" class="filename-input" placeholder="保存ファイル名（空欄で日時）">
+
     <div class="controls">
         <button id="recBtn" class="btn btn-rec">RECORDING START</button>
-        <button id="stopBtn" class="btn btn-stop">SHAKE TO STOP</button>
+        <button id="stopBtn" class="btn btn-stop">STOP RECORDING</button>
     </div>
 
     <div id="list"></div>
@@ -142,6 +155,71 @@ audio {
 
 <a href="index.html" class="back-link">← DASHBOARD</a>
 
-<script src="recmemo.js"></script>
+<script>
+let mediaRecorder;
+let audioChunks = [];
+
+const recBtn = document.getElementById('recBtn');
+const stopBtn = document.getElementById('stopBtn');
+const status = document.getElementById('status');
+const list = document.getElementById('list');
+const fileNameInput = document.getElementById('fileNameInput');
+
+recBtn.onclick = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const now = new Date();
+            const timestamp = now.toLocaleString();
+            
+            // ファイル名の決定処理
+            let baseName = fileNameInput.value.trim();
+            if (!baseName) {
+                baseName = `Rec-${now.getFullYear()}${now.getMonth()+1}${now.getDate()}-${now.getHours()}${now.getMinutes()}`;
+            }
+            const finalFileName = `${baseName}.mp3`;
+
+            const item = document.createElement('div');
+            item.className = 'audio-item';
+            item.innerHTML = `
+                <div class="audio-info">
+                    <span>${timestamp}</span>
+                    <span style="color:var(--p)">${finalFileName}</span>
+                </div>
+                <audio src="${audioUrl}" controls></audio>
+                <div style="text-align: right;">
+                    <a href="${audioUrl}" download="${finalFileName}" class="btn btn-dl">DOWNLOAD MP3</a>
+                </div>
+            `;
+            list.prepend(item);
+            
+            // 次の録音のためにファイル名をクリア
+            fileNameInput.value = "";
+        };
+
+        mediaRecorder.start();
+        recBtn.style.display = 'none';
+        stopBtn.style.display = 'block';
+        status.innerText = 'RECORDING...';
+    } catch (err) {
+        alert("マイクの使用が許可されていないか、非対応です。");
+        status.innerText = 'ERROR';
+    }
+};
+
+stopBtn.onclick = () => {
+    mediaRecorder.stop();
+    recBtn.style.display = 'block';
+    stopBtn.style.display = 'none';
+    status.innerText = 'SAVED';
+    setTimeout(() => { status.innerText = 'READY'; }, 2000);
+};
+</script>
 </body>
 </html>
