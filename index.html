@@ -223,21 +223,30 @@
     <p style="color:#94a3b8; margin-top:25px">&copy; 2026 SHINONOI DEPOT.</p>
 </section>
 
-<script type="text/javascript">
+<script>
+    // 1. Google翻訳の初期化
     function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        new google.translate.TranslateElement({
+            pageLanguage: 'ja', 
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
     }
-    <script>
+
+    // 2. SNSブラウザ判定（bridge.html転送）
     (function() {
         const ua = navigator.userAgent.toLowerCase();
-        // スマホかつSNSブラウザ（インスタ、LINE、FB、Twitter）を判定
         const isMobileSNS = /iphone|ipad|ipod|android/.test(ua) && /instagram|fbav|line|twitter|twttr/.test(ua);
         
         if (isMobileSNS) {
-            // bridge.html へ転送
             window.location.href = 'bridge.html';
         }
     })();
+</script>
+
+<script src="js/menu.js"></script>
+<script src="js/main.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script src="app.js"></script>
 </script>
 
 <script src="js/menu.js"></script>
