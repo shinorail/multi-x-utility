@@ -5,32 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy | Multi-X Utility</title>
 <style>
-:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc}
+:root{--p:#d4af37;--bg:#0f172a;--card:#1e293b;--txt:#f8fafc;--sub:#94a3b8}
 body{font-family:sans-serif;background:var(--bg);color:var(--txt);line-height:1.6;margin:0;padding:20px}
-.cont{max-width:600px;margin:0 auto;background:var(--card);padding:30px;border-radius:20px}
-h1{color:var(--p);border-bottom:2px solid var(--p);padding-bottom:10px;font-size:1.5rem}
-h2{font-size:1.1rem;color:var(--p);margin-top:25px}
-.en{color:#94a3b8;font-size:0.85rem}
-.btn{display:inline-block;margin-top:30px;padding:12px 25px;background:var(--p);color:#000;text-decoration:none;border-radius:10px;font-weight:bold}
+.cont{max-width:600px;margin:20px auto;background:var(--card);padding:30px;border-radius:20px;border:1px solid rgba(212,175,55,0.1)}
+h1{color:var(--p);border-bottom:2px solid var(--p);padding-bottom:10px;font-size:1.5rem;text-align:center}
+h2{font-size:1.1rem;color:var(--p);margin-top:25px;margin-bottom:10px}
+p{margin:10px 0}
+.en{color:var(--sub);font-size:0.85rem;display:block;margin-top:4px}
+.btn{display:inline-block;margin-top:30px;padding:12px 35px;background:var(--p);color:#000;text-decoration:none;border-radius:50px;font-weight:bold;transition:0.3s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+
+/* 広告エリアのデザイン向上 */
+.ad-box{margin-top:30px;padding:15px;background:rgba(255,255,255,0.03);border-radius:12px;text-align:center;border:1px dashed rgba(148,163,184,0.2)}
+.ad-label{font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:1px}
 </style>
 </head>
 <body>
 <div class="cont">
     <h1>プライバシーポリシー / Privacy Policy</h1>
 
-    <h2>1. データの収集 / Data Collection</h2>
-    <p>本アプリは、ユーザーの個人情報をサーバーに送信・収集することはありません。タイマー等の設定値は、お使いの端末内（Local Storage）にのみ保存されます。</p>
-    <p class="en">This app does not send or collect personal information. Data like timer settings are saved only on your device (Local Storage).</p>
+    <h2>1. データの収集</h2>
+    <p>本アプリは、ユーザーの個人情報をサーバーに送信・収集することはありません。設定値や録音データは、お使いの端末内（Local Storage）にのみ保存されます。</p>
+    <p class="en">This app does not collect personal information. Data is saved only on your device.</p>
 
-    <h2>2. Google翻訳の使用 / Use of Google Translate</h2>
-    <p>翻訳機能のためGoogleのサービスを利用しています。これに伴い、匿名のクッキー情報が利用される場合があります。</p>
-    <p class="en">We use Google services for translation. Anonymous cookie information may be used in this process.</p>
+    <h2>2. Google翻訳の使用</h2>
+    <p>翻訳機能のためGoogleのサービスを利用しています。これに伴い、各サービスの規約に基づいた匿名のクッキー情報が利用される場合があります。</p>
+    <p class="en">We use Google services for translation. Anonymous cookie information may be used.</p>
 
-    <h2>3. 広告・分析 / Ads & Analytics</h2>
-    <p>本アプリには、ユーザーを追跡する広告や分析ツールは含まれていません。</p>
-    <p class="en">This app does not include tracking ads or analytics tools.</p>
+    <h2>3. 広告の配信について</h2>
+    <p>運営維持のため、第三者配信の広告サービス（忍者アドマックス）を利用しています。これにより、クッキーを通じて匿名のデータが利用される場合があります。</p>
+    <p class="en">We use AdMax for advertising. Anonymous cookies may be used to deliver ads.</p>
 
-    <a href="menu.html" class="btn">戻る / Back</a>
+    <div class="ad-box">
+        <div class="ad-label">ADVERTISEMENT</div>
+        <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
+        </div>
+
+    <div style="text-align: center;">
+        <a href="index.html" class="btn">戻る / Back to Home</a>
+    </div>
 </div>
 </body>
 </html>
