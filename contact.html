@@ -7,147 +7,110 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --p: #d4af37;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --txt: #f8fafc;
-            --sub: #94a3b8;
+            --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --sub: #94a3b8;
         }
         body {
             font-family: -apple-system, "BIZ UDPGothic", sans-serif;
-            background-color: var(--bg);
-            color: var(--txt);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--bg); color: var(--txt);
+            margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
-        .container { width: 100%; max-width: 500px; animation: fadeIn 0.6s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: var(--p); font-size: 1.8rem; margin: 0; letter-spacing: 2px; }
+        .container { width: 100%; max-width: 500px; padding-bottom: 40px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--p); font-size: 1.8rem; letter-spacing: 2px; margin: 0; }
         
         .form-card {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 24px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: var(--card); padding: 25px; border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
 
-        .form-group { margin-bottom: 25px; }
-        label {
-            display: block;
-            color: var(--p);
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; color: var(--p); font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; }
 
         input, textarea {
-            width: 100%;
-            padding: 14px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1.5px solid #334155;
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--p);
-            background: rgba(15, 23, 42, 0.9);
+            width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.7);
+            border: 1.5px solid #334155; border-radius: 10px; color: white; font-size: 1rem; box-sizing: border-box;
         }
 
         .btn-submit {
-            width: 100%;
-            background: var(--p);
-            color: #000;
-            border: none;
-            padding: 16px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            width: 100%; background: var(--p); color: #000; border: none; padding: 16px;
+            border-radius: 50px; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
-        .btn-submit:hover {
-            filter: brightness(1.1);
-            transform: translateY(-2px);
-        }
+        .btn-submit:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none !important; }
 
-        /* 広告エリアのスタイル */
-        .ad-area {
-            margin-top: 35px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(148, 163, 184, 0.1);
-            text-align: center;
-        }
-        .ad-label {
-            font-size: 10px;
-            color: var(--sub);
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
+        .ad-area { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(148, 163, 184, 0.1); text-align: center; }
+        .back-link { display: block; text-align: center; margin-top: 25px; color: var(--sub); text-decoration: none; font-size: 0.9rem; }
 
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            color: var(--sub);
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .back-link:hover { color: var(--p); }
+        @media (min-width: 768px) { .form-card { padding: 40px; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>Contact</h1>
-        <p style="color:var(--sub); font-size:0.9rem;">お問い合わせを受け付けます</p>
+        <h1 id="t-title">Contact</h1>
+        <p id="t-desc" style="color:var(--sub); font-size:0.85rem;">お問い合わせ窓口</p>
     </div>
 
     <div class="form-card">
-        <form action="https://formspree.io/f/mdawoqqg" method="POST">
-            
+        <form id="contact-form" action="https://formspree.io/f/mdawoqqg" method="POST">
             <div class="form-group">
-                <label>Your email:</label>
+                <label id="t-email">メールアドレス</label>
                 <input type="email" name="email" placeholder="example@mail.com" required>
             </div>
 
             <div class="form-group">
-                <label>Your message:</label>
-                <textarea name="message" rows="5" placeholder="ご自由に入力してください" required></textarea>
+                <label id="t-msg">お問い合わせ内容</label>
+                <textarea name="message" rows="5" placeholder="内容を入力してください" required></textarea>
             </div>
 
-            <input type="hidden" name="_next" value="https://shinorail.github.io/main/links.html">
+            <input type="hidden" name="_next" value="https://shinorail.github.io/main/thanks.html">
 
-            <button type="submit" class="btn-submit">
-                <i class="fa-solid fa-paper-plane"></i> Send
+            <button type="submit" id="btn-text" class="btn-submit">
+                <i class="fa-solid fa-paper-plane"></i> <span id="btn-label">送信する</span>
             </button>
         </form>
 
         <div class="ad-area">
-            <div class="ad-label">ADVERTISEMENT</div>
+            <div style="font-size: 10px; color: var(--sub); margin-bottom: 10px;">ADVERTISEMENT</div>
             <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
         </div>
     </div>
-
-    <a href="links.html" class="back-link">← 戻る</a>
+    <a href="links.html" id="t-back" class="back-link">← 戻る</a>
 </div>
+
+<script>
+    // 1. 言語自動切り替え
+    const lang = navigator.language || navigator.userLanguage;
+    const isJP = lang.includes('ja');
+
+    const texts = {
+        title: isJP ? "Contact" : "Contact",
+        desc: isJP ? "お問い合わせ窓口" : "Contact Desk",
+        email: isJP ? "メールアドレス" : "Email Address",
+        msg: isJP ? "お問い合わせ内容" : "Message",
+        btn: isJP ? "送信する" : "Send",
+        sending: isJP ? "送信中..." : "Sending...",
+        back: isJP ? "← 戻る" : "← Back"
+    };
+
+    document.getElementById('t-desc').innerText = texts.desc;
+    document.getElementById('t-email').innerText = texts.email;
+    document.getElementById('t-msg').innerText = texts.msg;
+    document.getElementById('btn-label').innerText = texts.btn;
+    document.getElementById('t-back').innerText = texts.back;
+
+    // 2. 送信中の連打防止
+    const form = document.getElementById('contact-form');
+    const btn = document.getElementById('btn-text');
+    const btnLabel = document.getElementById('btn-label');
+
+    form.onsubmit = function() {
+        btn.disabled = true; // ボタンを無効化
+        btnLabel.innerText = texts.sending; // テキストを「送信中...」に変更
+    };
+</script>
 
 </body>
 </html>
