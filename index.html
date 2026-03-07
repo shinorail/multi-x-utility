@@ -227,6 +227,21 @@
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({pageLanguage: 'ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
     }
+    <script>
+    (function() {
+        const ua = navigator.userAgent.toLowerCase();
+        // スマホかつSNSブラウザ（インスタ、LINE、FB、Twitter）を判定
+        const isMobileSNS = /iphone|ipad|ipod|android/.test(ua) && /instagram|fbav|line|twitter|twttr/.test(ua);
+        
+        if (isMobileSNS) {
+            // bridge.html へ転送
+            window.location.href = 'bridge.html';
+        }
+    })();
+</script>
+
+<script src="js/menu.js"></script>
+<script src="js/main.js"></script>
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script src="app.js"></script>
