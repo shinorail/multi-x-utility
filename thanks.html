@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You | Shinorail-Group</title>
+    <style>
+        :root {
+            --p: #d4af37;
+            --bg: #0f172a;
+            --txt: #f8fafc;
+            --sub: #94a3b8;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--txt);
+            font-family: -apple-system, "BIZ UDPGothic", sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .message-box {
+            text-align: center;
+            background: #1e293b;
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 1px solid var(--p);
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        h1 { color: var(--p); font-size: 1.5rem; margin-bottom: 15px; }
+        p { line-height: 1.6; font-size: 0.95rem; color: var(--sub); }
+        
+        .btn-home {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 35px;
+            background: var(--p);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-home:hover { opacity: 0.8; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="message-box">
+    <h1 id="t-h1">送信完了</h1>
+    <p id="t-p">お問い合わせありがとうございます。<br>内容を確認次第、返信いたします。</p>
+    <a href="links.html" id="t-btn" class="btn-home">ホームへ戻る</a>
+</div>
+
+<script>
+    // ブラウザの言語判定
+    const lang = navigator.language || navigator.userLanguage;
+    const isJP = lang.includes('ja');
+
+    const texts = {
+        h1: isJP ? "送信が完了しました" : "Submission Complete",
+        p: isJP ? "お問い合わせいただきありがとうございます。<br>内容を確認し、順次返信させていただきます。" : "Thank you for reaching out.<br>We will review your message and get back to you soon.",
+        btn: isJP ? "ホームへ戻る" : "Back to Home"
+    };
+
+    document.getElementById('t-h1').innerText = texts.h1;
+    document.getElementById('t-p').innerHTML = texts.p;
+    document.getElementById('t-btn').innerText = texts.btn;
+</script>
+
+</body>
+</html>
