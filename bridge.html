@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Browser Guide | Multi-X</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --p: #d4af37;
+            --txt: #f8fafc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--txt);
+            margin: 0;
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 20px; }
+        .ios-guide {
+            position: relative;
+            background: var(--card);
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--p);
+            text-align: center;
+        }
+        .corner-icon {
+            position: absolute;
+            font-size: 1.4rem;
+            color: var(--p);
+            animation: pulse 1.5s infinite;
+            background: var(--bg);
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; border: 1px solid var(--p);
+        }
+        .top-right { top: -15px; right: -10px; }
+        .bottom-right { bottom: -15px; right: -10px; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        .btn-open {
+            display: block;
+            background: var(--p);
+            color: #000;
+            text-decoration: none;
+            padding: 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+        }
+        .ad-container { margin-top: 10px; text-align: center; min-height: 100px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="color:var(--p); font-weight:bold; text-align:center;">⚠️ ブラウザ制限を解除</div>
+
+    <div class="ios-guide">
+        <div class="corner-icon top-right">•••</div>
+        <div class="corner-icon bottom-right">🧭</div>
+        <p style="font-size:0.9rem; line-height:1.6; text-align:left;">
+            SNSアプリ内では録音や保存ができません。右上のメニュー等から<strong>「ブラウザ（Safari/Chrome）で開く」</strong>を選択してください。
+        </p>
+    </div>
+
+    <a href="intent://shinorail.github.io/multi-x-utility/#Intent;scheme=https;package=com.android.chrome;end" id="mainBtn" class="btn-open">Multi-X を開く</a>
+
+    <div class="ad-container">
+        <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
+        </div>
+</div>
+
+<script>
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isIOS) {
+        document.getElementById('mainBtn').href = "index.html";
+    }
+</script>
+
+</body>
+</html>
