@@ -35,20 +35,16 @@
         
         .sub-btn { background: rgba(255,255,255,0.05); color: var(--p); border: 1px solid var(--p); padding: 12px; margin-top: 10px; }
         
-        /* 広告モーダル */
+        /* 戻るボタンのスタイル */
+        .back-link { display: block; text-align: center; margin-top: 25px; color: var(--sub); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        .back-link:hover { color: var(--p); }
+
         #adModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center;
         }
-        .ad-content {
-            background: var(--card); border: 1px solid var(--p); border-radius: 24px;
-            padding: 25px; width: 90%; max-width: 400px; text-align: center;
-        }
-
-        .timer-badge {
-            background: rgba(212,175,55,0.1); color: var(--p); padding: 5px 12px;
-            border-radius: 20px; font-size: 0.7rem; margin-bottom: 15px; display: inline-block;
-        }
+        .ad-content { background: var(--card); border: 1px solid var(--p); border-radius: 24px; padding: 25px; width: 90%; max-width: 400px; text-align: center; }
+        .timer-badge { background: rgba(212,175,55,0.1); color: var(--p); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; margin-bottom: 15px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -87,6 +83,10 @@
         <button class="sub-btn" onclick="saveAsImage()"><i class="fa-solid fa-camera"></i> 結果を画像で保存</button>
         <button class="sub-btn" onclick="copyShareUrl()"><i class="fa-solid fa-link"></i> 共有URLをコピー</button>
     </div>
+
+    <a href="https://shinorail.github.io/multi-x-utility/menu.html" class="back-link">
+        <i class="fa-solid fa-chevron-left"></i> メニューに戻る
+    </a>
 </div>
 
 <div id="adModal">
@@ -95,10 +95,7 @@
         <div style="min-height:250px; background:rgba(0,0,0,0.3); border-radius:15px; margin-bottom:20px; display:flex; align-items:center; justify-content:center;">
             <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
         </div>
-        <p style="font-size:0.7rem; color:var(--sub); margin-bottom:15px;">
-            広告を確認しました。閉じるボタンを押すと<br><b>24時間は広告が表示されなくなります。</b>
-        </p>
-        <button onclick="closeAdAndLock()">広告を閉じる</button>
+        <button onclick="closeAdAndLock()">広告を閉じて24h非表示</button>
     </div>
 </div>
 
@@ -142,10 +139,8 @@
         const lastTime = localStorage.getItem(AD_LOCK_KEY);
         const badge = document.getElementById('adTimerBadge');
         if (!lastTime) { badge.style.display = 'none'; return; }
-
         const now = new Date().getTime();
         const diff = parseInt(lastTime) + LOCK_TIME - now;
-
         if (diff <= 0) {
             localStorage.removeItem(AD_LOCK_KEY);
             badge.style.display = 'none';
@@ -165,29 +160,33 @@
         const bar = document.getElementById('bar');
         bar.style.width = "0%";
         
+        // CORSエラー対策：信頼性の高い画像を使用
+        const testUrl = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png?n=" + Math.random();
         const startTime = performance.now();
-        const testUrl = "https://speed.cloudflare.com/__down?bytes=5242880";
         
         try {
-            const response = await fetch(testUrl);
+            const response = await fetch(testUrl, { mode: 'cors' });
+            if (!response.ok) throw new Error();
             const reader = response.body.getReader();
             let received = 0;
             while(true) {
                 const {done, value} = await reader.read();
                 if (done) break;
                 received += value.length;
-                bar.style.width = (received/5242880*100) + "%";
+                bar.style.width = Math.min((received / 800000 * 100), 100) + "%";
                 const dur = (performance.now() - startTime) / 1000;
-                document.getElementById('speed').innerText = ((received*8)/(dur*1024*1024)).toFixed(1);
+                document.getElementById('speed').innerText = ((received * 8) / (dur * 1024 * 1024)).toFixed(1);
             }
             document.getElementById('ping').innerText = Math.round(performance.now() - startTime - (dur*1000)) + " ms";
             document.getElementById('status').innerText = "COMPLETE";
             document.getElementById('resultBtns').style.display = "block";
-
             if (!localStorage.getItem(AD_LOCK_KEY)) {
-                setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 1000);
+                setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 800);
             }
-        } catch(e) { alert("Error!"); }
+        } catch(e) {
+            document.getElementById('status').innerText = "ERROR!";
+            alert("通信エラーが発生しました。");
+        }
         btn.disabled = false;
     }
 
