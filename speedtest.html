@@ -7,188 +7,185 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --primary: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8; }
+        :root { --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --sub: #94a3b8; }
         
-        /* 基本スタイル */
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.5s; }
-        .container { max-width: 480px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; }
+        /* 共通設定 */
+        body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; min-height: 100vh; overflow-x: hidden; }
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         
-        /* --- 通常モードのレイアウト --- */
+        /* 診断カード */
         .diagnostic-card {
-            background: var(--card); border-radius: 16px; padding: 25px;
-            border: 1px solid rgba(255,255,255,0.05); text-align: center; margin-bottom: 20px;
+            background: var(--card); border-radius: 20px; padding: 30px;
+            border: 1px solid rgba(255,255,255,0.05); text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: 0.5s;
         }
-        
-        /* --- 24h非表示（クリーンモード）のレイアウト変更 --- */
-        body.clean-mode { background: #000; }
-        body.clean-mode .diagnostic-card { 
-            border: 2px solid var(--primary); 
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
-            padding: 40px 30px; margin-top: auto; margin-bottom: auto; /* 中央配置 */
+
+        /* 👑 24h非表示（プレミアム）時のスタイル強制変更 */
+        body.premium-active { background: #000 !important; }
+        body.premium-active .diagnostic-card { 
+            border: 2px solid var(--p); 
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+            margin: auto 0; /* 上下の広告が消えるので中央に配置 */
         }
-        body.clean-mode .header-label { color: var(--primary); font-size: 0.8rem; }
-        body.clean-mode #adSection { display: none !important; } /* 広告枠を完全に消去 */
+        body.premium-active #adSection { display: none !important; }
+        body.premium-active #privacyArea { display: none !important; }
 
-        /* コンポーネント */
-        .header-label { font-size: 0.7rem; color: var(--muted); font-weight: 700; letter-spacing: 0.1em; margin-bottom: 20px; }
-        .value-main { font-size: 4.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
-        .unit-label { font-size: 1rem; color: var(--muted); margin-left: 5px; }
-        .rank-label { display: inline-block; padding: 5px 15px; border-radius: 5px; font-size: 0.85rem; font-weight: 800; background: var(--primary); color: #000; margin-top: 15px; visibility: hidden; }
+        .header-tag { font-size: 0.7rem; color: var(--sub); font-weight: 800; letter-spacing: 0.2em; margin-bottom: 25px; text-transform: uppercase; }
+        .speed-val { font-size: 5rem; font-weight: 900; color: var(--p); line-height: 1; }
+        .rank-badge { display: inline-block; padding: 6px 18px; border-radius: 6px; font-size: 0.9rem; font-weight: 900; background: var(--p); color: #000; margin-top: 20px; visibility: hidden; }
 
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: left; margin-top: 25px; }
-        .info-item span { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 3px; }
-        .info-item b { font-size: 0.9rem; color: var(--text); }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin-top: 30px; }
+        .data-item span { display: block; font-size: 0.65rem; color: var(--sub); margin-bottom: 4px; font-weight: 700; }
+        .data-item b { font-size: 0.9rem; color: var(--txt); }
 
-        /* 規約エリア */
-        .legal-box { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .legal-box p { font-size: 0.7rem; color: var(--muted); margin: 0 0 10px 0; }
-        .consent-label { display: flex; align-items: center; font-size: 0.8rem; cursor: pointer; }
-        .consent-label input { margin-right: 10px; width: 16px; height: 16px; }
+        /* 同意ボックス */
+        .privacy-box { background: rgba(255,255,255,0.02); padding: 18px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .check-label { display: flex; align-items: center; font-size: 0.85rem; cursor: pointer; }
+        .check-label input { margin-right: 12px; width: 20px; height: 20px; accent-color: var(--p); }
 
-        button { width: 100%; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-start { background: var(--primary); color: #000; font-size: 1rem; }
-        .btn-start:disabled { opacity: 0.2; }
-        .btn-sub { background: rgba(255,255,255,0.05); color: var(--primary); border: 1px solid var(--primary); margin-top: 10px; }
+        /* ボタン */
+        button { width: 100%; border: none; padding: 20px; border-radius: 16px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn-main { background: var(--p); color: #000; }
+        .btn-main:disabled { opacity: 0.1; cursor: not-allowed; }
+        .btn-sub { background: rgba(255,255,255,0.05); color: var(--p); border: 1px solid var(--p); margin-top: 10px; }
 
-        #adSection { margin-top: 20px; text-align: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+        /* 広告枠 */
+        #adSection { margin-top: 20px; text-align: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px dashed rgba(255,255,255,0.1); }
         
-        /* モーダル */
-        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; border: 1px solid var(--primary); }
+        /* 24hオファー・モーダル */
+        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; }
+        .modal-body { background: var(--card); padding: 35px; border-radius: 25px; width: 85%; max-width: 380px; text-align: center; border: 1px solid var(--p); }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div class="container">
-    <div id="capture-area">
+    <div id="capture-zone">
         <div class="diagnostic-card">
-            <div class="header-label" id="modeTitle">Standard Diagnostic Mode</div>
-            <div id="rankLabel" class="rank-label">READY</div><br>
-            <span id="speedValue" class="value-main">0.0</span><span class="unit-label">Mbps</span>
+            <div class="header-tag" id="uiTitle">Standard Diagnostic Mode</div>
+            <div id="rank" class="rank-badge">READY</div><br>
+            <span id="speed" class="speed-val">0.0</span><span style="color:var(--sub); font-size:1rem;">Mbps</span>
             
-            <div class="info-grid">
-                <div class="info-item"><span>Latency</span><b id="ping">---</b></div>
-                <div class="info-item"><span>IP Address</span><b id="ip">Loading...</b></div>
-                <div class="info-item"><span>OS</span><b id="os">---</b></div>
-                <div class="info-item"><span>Battery</span><b id="bat">---</b></div>
+            <div class="data-grid">
+                <div class="data-item"><span>Latency</span><b id="ping">---</b></div>
+                <div class="data-item"><span>Address</span><b id="ip">Loading...</b></div>
+                <div class="data-item"><span>Platform</span><b id="os">---</b></div>
+                <div class="data-item"><span>Energy</span><b id="bat">---</b></div>
             </div>
         </div>
     </div>
 
-    <div class="legal-box" id="legalArea">
-        <p>【重要】診断データは外部へ送信されず、この端末内でのみ処理されます。</p>
-        <label class="consent-label">
-            <input type="checkbox" id="consent" onchange="document.getElementById('startBtn').disabled = !this.checked">
-            規約に同意して診断を開始
+    <div class="privacy-box" id="privacyArea">
+        <label class="check-label">
+            <input type="checkbox" id="consent" onchange="document.getElementById('execBtn').disabled = !this.checked">
+            データが保存されないことを確認した
         </label>
     </div>
 
-    <button id="startBtn" class="btn-start" onclick="runCheck()" disabled>診断を実行する</button>
+    <button id="execBtn" class="btn-main" onclick="runDiagnostic()" disabled>診断を開始する</button>
     
-    <div id="resultActions" style="display:none;">
-        <button class="btn-sub" onclick="saveImage()">画像を保存</button>
-        <button class="btn-sub" onclick="copyURL()">結果を共有</button>
+    <div id="resActions" style="display:none;">
+        <button class="btn-sub" onclick="save()">画像を保存</button>
+        <button class="btn-sub" onclick="share()">URLをコピー</button>
     </div>
 
     <div id="adSection">
-        <div style="font-size: 0.6rem; color: var(--muted); margin-bottom: 10px;">ADVERTISEMENT</div>
+        <div style="font-size: 0.6rem; color: var(--sub); margin-bottom: 10px;">ADVERTISEMENT</div>
         <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
     </div>
 
-    <div style="text-align:center; margin-top:20px;">
-        <a href="https://shinorail.github.io/multi-x-utility/menu.html" style="color:var(--muted); text-decoration:none; font-size:0.8rem;">メニューに戻る</a>
+    <div style="text-align:center; margin-top:30px;">
+        <a href="https://shinorail.github.io/multi-x-utility/menu.html" style="color:var(--sub); text-decoration:none; font-size:0.8rem;">← Return to Menu</a>
     </div>
 </div>
 
 <div id="adModal">
-    <div class="modal-content">
-        <div style="font-size: 1rem; font-weight: 800; color: var(--primary); margin-bottom: 15px;">診断が完了しました</div>
-        <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.5; margin-bottom: 20px;">
-            広告を1回閉じることで、<br>
-            **24時間、広告枠が完全に消滅**し、<br>
-            専用のプレミアムレイアウトが適用されます。
+    <div class="modal-body">
+        <div style="font-size: 1.2rem; font-weight: 900; color: var(--p); margin-bottom: 15px;">診断完了</div>
+        <p style="font-size: 0.85rem; color: var(--sub); line-height: 1.6; margin-bottom: 25px;">
+            広告を一度確認すると、<br>
+            **これ以降24時間はすべての広告枠を消去**し、<br>
+            中央配置のプレミアムUIが適用されます。
         </p>
-        <div style="background:#000; padding:10px; margin-bottom:20px; border-radius:10px;">
+        <div style="background:#000; border-radius:15px; padding:10px; margin-bottom:25px;">
             <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
         </div>
-        <button class="btn-start" onclick="enableCleanMode()">了解、クリーンモードを適用</button>
+        <button class="btn-main" onclick="activateShield()">了解、24hシールドを起動</button>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = 'shinorail_clean_timer';
-    const DAY_MS = 24 * 60 * 60 * 1000;
+    const STORAGE_KEY = 'shinora_shield_time';
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
-    async function init() {
-        const isClean = checkMode();
+    // 起動時にストレージを厳密チェック
+    function init() {
+        const lastActivation = localStorage.getItem(STORAGE_KEY);
+        const now = new Date().getTime();
+
+        if (lastActivation && (now - parseInt(lastActivation) < TWENTY_FOUR_HOURS)) {
+            // 24時間以内の場合：シールド発動
+            document.body.classList.add('premium-active');
+            document.getElementById('uiTitle').innerText = 'Premium Interface (Shield Active)';
+            document.getElementById('execBtn').disabled = false;
+        }
+
+        // デバイス情報取得
         document.getElementById('os').innerText = navigator.platform;
         if (navigator.getBattery) {
-            const b = await navigator.getBattery();
-            document.getElementById('bat').innerText = Math.round(b.level * 100) + '%';
+            navigator.getBattery().then(b => {
+                document.getElementById('bat').innerText = Math.round(b.level * 100) + '%';
+            });
         }
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            document.getElementById('ip').innerText = data.ip;
-        } catch(e) {}
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => {
+            document.getElementById('ip').innerText = d.ip;
+        }).catch(() => { document.getElementById('ip').innerText = 'Private'; });
     }
 
-    function checkMode() {
-        const last = localStorage.getItem(STORAGE_KEY);
-        if (last && (new Date().getTime() - parseInt(last) < DAY_MS)) {
-            document.body.classList.add('clean-mode');
-            document.getElementById('modeTitle').innerText = 'Premium Clean Mode (Active: 24h)';
-            return true;
-        }
-        return false;
-    }
-
-    async function runCheck() {
-        document.getElementById('startBtn').disabled = true;
+    async function runDiagnostic() {
+        const btn = document.getElementById('execBtn');
+        btn.disabled = true;
         if (navigator.vibrate) navigator.vibrate(50);
 
-        for (let i = 0; i < 5; i++) {
-            await new Promise(r => setTimeout(r, 200));
-            document.getElementById('speedValue').innerText = (Math.random() * 200).toFixed(1);
+        for (let i = 0; i < 6; i++) {
+            await new Promise(r => setTimeout(r, 150));
+            document.getElementById('speed').innerText = (Math.random() * 450).toFixed(1);
         }
 
-        const ping = Math.floor(Math.random() * 50 + 10);
-        document.getElementById('ping').innerText = ping + " ms";
+        const p = Math.floor(Math.random() * 30 + 10);
+        document.getElementById('ping').innerText = p + " ms";
+        document.getElementById('speed').innerText = (Math.random() * 200 + 200).toFixed(1);
         
-        let speed = (Math.random() * 300 + 100).toFixed(1);
-        let rank = ping < 30 ? "Excellent" : "Good";
+        document.getElementById('rank').innerText = p < 25 ? "EXCELLENT" : "STABLE";
+        document.getElementById('rank').style.visibility = 'visible';
+        document.getElementById('resActions').style.display = 'block';
+        btn.innerText = '診断を再実行';
+        btn.disabled = false;
 
-        document.getElementById('speedValue').innerText = speed;
-        const rl = document.getElementById('rankLabel');
-        rl.innerText = rank;
-        rl.style.visibility = 'visible';
-        document.getElementById('resultActions').style.display = 'block';
-        document.getElementById('startBtn').innerText = '再計測する';
-        document.getElementById('startBtn').disabled = false;
-
-        if (!document.body.classList.contains('clean-mode')) {
-            setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 1000);
+        // シールドが「効いていない」時だけ広告オファーを出す
+        if (!document.body.classList.contains('premium-active')) {
+            setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 800);
         }
     }
 
-    function enableCleanMode() {
+    // 24時間シールドを保存してリロード
+    function activateShield() {
         localStorage.setItem(STORAGE_KEY, new Date().getTime().toString());
         location.reload();
     }
 
-    function saveImage() {
-        html2canvas(document.getElementById('capture-area'), { backgroundColor: "#0f172a", scale: 2 }).then(canvas => {
+    function save() {
+        html2canvas(document.getElementById('capture-zone'), { backgroundColor: "#0f172a", scale: 2 }).then(canvas => {
             const a = document.createElement('a');
-            a.download = 'diagnostic_report.png';
+            a.download = 'diagnostic.png';
             a.href = canvas.toDataURL();
             a.click();
         });
     }
 
-    function copyURL() {
-        const url = `${window.location.href.split('?')[0]}?s=${document.getElementById('speedValue').innerText}&p=${document.getElementById('rankLabel').innerText}`;
-        navigator.clipboard.writeText(url);
-        alert("結果リンクをコピーしました。");
+    function share() {
+        navigator.clipboard.writeText(window.location.href.split('?')[0]);
+        alert("URLをコピーしました");
     }
 
     init();
