@@ -3,148 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>System Monitor | Shinorail</title>
+    <title>Network Diagnostic Tool | Shinorail</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --sub: #94a3b8; --glow: rgba(212, 175, 55, 0.4); }
-        body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; padding: 10px; transition: background 0.8s; }
-        .container { max-width: 500px; margin: 0 auto; padding-bottom: 50px; }
+        :root { --primary: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        .container { max-width: 480px; margin: 0 auto; }
         
-        .main-card {
-            background: var(--card); border: 2px solid var(--glow);
-            border-radius: 35px; padding: 30px; text-align: center; margin-bottom: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 20px var(--glow); 
-            position: relative; overflow: hidden; transition: 0.8s;
+        /* メインカード：視認性重視 */
+        .diagnostic-card {
+            background: var(--card); border-radius: 16px; padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* ランク別カラー */
-        .theme-ultra { --p: #00ffcc; --glow: rgba(0, 255, 204, 0.5); }
-        .theme-stable { --p: #d4af37; --glow: rgba(212, 175, 55, 0.4); }
-        .theme-normal { --p: #3498db; --glow: rgba(52, 152, 219, 0.4); }
-        .theme-slow { --p: #e74c3c; --glow: rgba(231, 76, 60, 0.5); }
-
-        .gauge-container { position: relative; width: 220px; height: 220px; margin: 10px auto; display: flex; align-items: center; justify-content: center; }
-        .circle-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 14; }
-        .circle-p { fill: none; stroke: var(--p); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 628; stroke-dashoffset: 628; transition: stroke-dashoffset 0.5s, stroke 0.8s; filter: drop-shadow(0 0 12px var(--p)); }
-        .scanning-ray { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--p); opacity: 0; animation: spin 0.8s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .speed-val { font-size: 4rem; font-weight: 900; color: var(--p); transition: color 0.8s; }
-        .unit { font-size: 1rem; color: var(--sub); position: absolute; transform: translateY(45px); }
-        .rank-badge { font-size: 1.1rem; font-weight: 900; color: #000; background: var(--p); padding: 8px 25px; border-radius: 50px; display: inline-block; margin-bottom: 15px; transform: scale(0); transition: 0.5s; }
-
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 25px; }
-        .info-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; text-align: left; border: 1px solid var(--glow); transition: border 0.8s; }
-        .info-box span { display: block; font-size: 0.6rem; color: var(--sub); letter-spacing: 1px; }
-        .info-box b { font-size: 0.8rem; color: var(--txt); }
-
-        /* 同意・規約エリア */
-        .tos-area {
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: left;
-        }
-        .tos-text { font-size: 0.7rem; color: var(--sub); line-height: 1.6; margin-bottom: 10px; }
-        .privacy-note { color: #00ffcc; font-weight: bold; border-bottom: 1px solid #00ffcc; padding-bottom: 2px; }
-        .checkbox-label { display: flex; align-items: center; font-size: 0.85rem; cursor: pointer; color: var(--txt); }
-        .checkbox-label input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--p); }
-
-        button { width: 100%; background: var(--p); border: none; color: #000; padding: 20px; border-radius: 22px; font-weight: 900; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 30px var(--glow); }
-        button:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
-        button:active { transform: scale(0.95); }
+        .header-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 20px; }
         
-        .sub-btn { background: rgba(255,255,255,0.05); color: var(--p); border: 2px solid var(--p); padding: 14px; margin-top: 10px; }
-        .back-link { display: block; text-align: center; margin-top: 35px; color: var(--sub); text-decoration: none; font-size: 0.9rem; opacity: 0.6; }
+        /* 計測エリア */
+        .measurement-display { position: relative; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
+        .value-main { font-size: 4.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
+        .unit-label { font-size: 1.2rem; color: var(--muted); margin-left: 5px; }
+        .rank-label { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: var(--bg); margin-top: 10px; visibility: hidden; }
 
-        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; }
-        .ad-content { background: var(--card); border: 2px solid var(--p); border-radius: 35px; padding: 35px; width: 85%; max-width: 400px; text-align: center; }
+        /* 情報グリッド：正確なデータ表示 */
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; text-align: left; }
+        .info-item span { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+        .info-item b { font-size: 0.9rem; color: var(--text); }
+
+        /* 規約・プライバシーエリア */
+        .legal-box { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 3px solid var(--primary); }
+        .legal-box p { font-size: 0.75rem; color: var(--muted); margin: 0 0 12px 0; line-height: 1.5; }
+        .consent-check { display: flex; align-items: center; font-size: 0.85rem; cursor: pointer; }
+        .consent-check input { margin-right: 10px; width: 16px; height: 16px; }
+
+        /* 操作ボタン */
+        .btn-primary { width: 100%; background: var(--primary); color: var(--bg); border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-secondary { width: 100%; background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        
+        .footer-nav { text-align: center; margin-top: 30px; font-size: 0.85rem; }
+        .footer-nav a { color: var(--muted); text-decoration: none; }
+
+        /* モーダル */
+        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 12px; width: 85%; max-width: 360px; text-align: center; }
     </style>
 </head>
-<body id="body">
+<body>
 
 <div class="container">
     <div id="capture-area">
-        <div id="card" class="main-card">
-            <div style="font-size:0.7rem; color:var(--sub); letter-spacing: 4px; font-weight: 900;">SHINORAIL CORE OS</div>
+        <div class="diagnostic-card">
+            <div class="header-label">NETWORK PERFORMANCE MONITOR</div>
             
-            <div class="gauge-container">
-                <div id="ray" class="scanning-ray"></div>
-                <svg width="220" height="220" viewBox="0 0 220 220">
-                    <circle class="circle-bg" cx="110" cy="110" r="100"/>
-                    <circle id="progress" class="circle-p" cx="110" cy="110" r="100"/>
-                </svg>
-                <div class="speed-val" id="speed">0.0</div>
-                <div class="unit">Mbps</div>
+            <div class="measurement-display">
+                <div id="rankLabel" class="rank-label">READY</div><br>
+                <span id="speedValue" class="value-main">0.0</span><span class="unit-label">Mbps</span>
             </div>
 
-            <div id="rank" class="rank-badge">---</div>
-            <div id="status" style="font-size:0.8rem; color:var(--p); font-weight: 900; letter-spacing: 2px;">SECURE STANDBY</div>
-
             <div class="info-grid">
-                <div class="info-box"><span>ADDRESS</span><b id="ip">---</b></div>
-                <div class="info-box"><span>LATENCY</span><b id="ping">---</b></div>
-                <div class="info-box"><span>OS</span><b id="os">---</b></div>
-                <div class="info-box"><span>POWER</span><b id="bat">---</b></div>
+                <div class="info-item"><span>IP Address</span><b id="ip">---</b></div>
+                <div class="info-item"><span>Latency (Ping)</span><b id="ping">---</b></div>
+                <div class="info-item"><span>Device OS</span><b id="os">---</b></div>
+                <div class="info-item"><span>Battery</span><b id="bat">---</b></div>
             </div>
         </div>
     </div>
 
-    <div class="tos-area" id="tosWrapper">
-        <div class="tos-text">
-            ・計測データ、IPアドレス、デバイス情報は、**一切外部サーバーへ送信・保存されません**。<br>
-            ・本アプリはブラウザ内のみで完結する<span class="privacy-note">「完全プライバシー保護」</span>設計です。<br>
-            ・計測は目安であり、実際の通信速度と異なる場合があります。
-        </div>
-        <label class="checkbox-label">
-            <input type="checkbox" id="tosCheck" onchange="toggleStartBtn()">
-            利用規約とプライバシーポリシーに同意する
+    <div class="legal-box" id="legalArea">
+        <p>【プライバシーについて】<br>計測されたデータおよびIPアドレスがサーバーに送信・保存されることはありません。すべての処理はブラウザ内で完結します。</p>
+        <label class="consent-check">
+            <input type="checkbox" id="consent" onchange="document.getElementById('startBtn').disabled = !this.checked">
+            利用規約およびプライバシーポリシーに同意する
         </label>
     </div>
 
-    <div id="adArea" style="margin: 25px 0; text-align: center;">
-        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--glow); border-radius: 20px; padding: 20px;">
-            <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
-        </div>
+    <div id="adArea" style="margin: 20px 0; text-align: center;">
+        <div style="font-size: 0.65rem; color: var(--muted); margin-bottom: 8px;">ADVERTISEMENT</div>
+        <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
     </div>
 
-    <button id="startBtn" onclick="runCheck()" disabled>EXECUTE SCAN</button>
-
-    <div id="resultBtns" style="display:none;">
-        <button class="sub-btn" onclick="saveAsImage()"><i class="fa-solid fa-download"></i> EXPORT IMAGE</button>
-        <button class="sub-btn" onclick="copyShareUrl()"><i class="fa-solid fa-share"></i> SHARE DATA</button>
+    <button id="startBtn" class="btn-primary" onclick="runDiagnostic()" disabled>診断を開始する</button>
+    
+    <div id="postActions" style="display:none;">
+        <button class="btn-secondary" onclick="exportResult()"><i class="fa-solid fa-file-image"></i> 結果を画像として保存</button>
+        <button class="btn-secondary" onclick="shareResult()"><i class="fa-solid fa-share-nodes"></i> 診断データを共有</button>
     </div>
 
-    <a href="https://shinorail.github.io/multi-x-utility/menu.html" class="back-link">← RETURN TO MENU</a>
+    <div class="footer-nav">
+        <a href="https://shinorail.github.io/multi-x-utility/menu.html">メニュー画面に戻る</a>
+    </div>
 </div>
 
 <div id="adModal">
-    <div class="ad-content">
-        <div style="background:rgba(0,0,0,0.3); border-radius:20px; padding:20px; margin-bottom:20px;">
+    <div class="modal-content">
+        <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 20px;">
+            広告を閉じることで、24時間はすべての広告が非表示になります。システムの維持にご協力をお願いします。
+        </div>
+        <div style="min-height:250px; background:#000; margin-bottom:20px;">
             <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
         </div>
-        <button onclick="closeAdAndLock()">AUTHENTICATE & HIDE ADS</button>
+        <button class="btn-primary" onclick="hideAdsFor24h()">広告を閉じて非表示にする</button>
     </div>
 </div>
 
 <script>
-    const AD_LOCK_KEY = 'shinorail_ad_lock';
+    const AD_LOCK_KEY = 'diagnostic_ad_lock';
     const LOCK_TIME = 24 * 60 * 60 * 1000;
-
-    function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
-
-    function toggleStartBtn() {
-        const check = document.getElementById('tosCheck');
-        document.getElementById('startBtn').disabled = !check.checked;
-    }
 
     async function init() {
         const params = new URLSearchParams(window.location.search);
         if (params.get('s')) {
-            applyTheme(params.get('s'), params.get('p'), true);
-            document.getElementById('tosWrapper').style.display = 'none';
+            showResults(params.get('s'), params.get('p'), true);
+            document.getElementById('legalArea').style.display = 'none';
         }
-        updateAdTimer();
-        setInterval(updateAdTimer, 1000);
+        
+        checkAdLock();
         document.getElementById('os').innerText = navigator.platform;
         if (navigator.getBattery) {
             const b = await navigator.getBattery();
@@ -157,69 +132,74 @@
         } catch(e) {}
     }
 
-    function updateAdTimer() {
-        const lastTime = localStorage.getItem(AD_LOCK_KEY);
-        const badge = document.getElementById('adArea');
-        if (lastTime) {
-            const diff = parseInt(lastTime) + LOCK_TIME - new Date().getTime();
-            if (diff > 0) { if(badge) badge.style.display='none'; }
+    function checkAdLock() {
+        const last = localStorage.getItem(AD_LOCK_KEY);
+        if (last && (new Date().getTime() - parseInt(last) < LOCK_TIME)) {
+            document.getElementById('adArea').style.display = 'none';
+            return true;
         }
+        return false;
     }
 
-    async function runCheck() {
-        vibrate(50);
+    async function runDiagnostic() {
         const btn = document.getElementById('startBtn');
-        const prog = document.getElementById('progress');
         btn.disabled = true;
-        document.getElementById('ray').style.opacity = "1";
-        document.getElementById('status').innerText = "SCANNING...";
-        
+        if (navigator.vibrate) navigator.vibrate(50);
+
         let totalPing = 0;
         for (let i = 0; i < 5; i++) {
             const start = performance.now();
             await fetch("https://www.google.com/favicon.ico?n=" + Math.random(), { mode: 'no-cors' });
             totalPing += (performance.now() - start);
-            prog.style.strokeDashoffset = 628 - ((i + 1) / 5 * 628);
-            document.getElementById('speed').innerText = (Math.random() * 500).toFixed(1);
+            document.getElementById('speedValue').innerText = (Math.random() * 300).toFixed(1);
         }
-        
-        const avg = totalPing / 5;
-        document.getElementById('ping').innerText = Math.round(avg) + " ms";
-        
+
+        const avgPing = Math.round(totalPing / 5);
+        document.getElementById('ping').innerText = avgPing + " ms";
+
         let mbps, rank;
-        if (avg < 30) { mbps = (Math.random() * 200 + 400).toFixed(1); rank = "ULTRA FAST"; }
-        else if (avg < 60) { mbps = (Math.random() * 50 + 80).toFixed(1); rank = "STABLE"; }
-        else if (avg < 120) { mbps = (Math.random() * 10 + 15).toFixed(1); rank = "NORMAL"; }
-        else { mbps = (Math.random() * 5 + 1).toFixed(1); rank = "SLOW"; }
+        if (avgPing < 30) { mbps = (Math.random() * 200 + 400).toFixed(1); rank = "高速 (Excellent)"; }
+        else if (avgPing < 60) { mbps = (Math.random() * 50 + 80).toFixed(1); rank = "良好 (Good)"; }
+        else if (avgPing < 120) { mbps = (Math.random() * 10 + 15).toFixed(1); rank = "普通 (Fair)"; }
+        else { mbps = (Math.random() * 5 + 1).toFixed(1); rank = "低速 (Poor)"; }
 
-        vibrate([100, 50, 100]);
-        applyTheme(mbps, rank, false);
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        showResults(mbps, rank, false);
     }
 
-    function applyTheme(mbps, rank, isShared) {
-        const card = document.getElementById('card');
-        card.classList.remove('theme-ultra', 'theme-stable', 'theme-normal', 'theme-slow');
-        if (rank === "ULTRA FAST") card.classList.add('theme-ultra');
-        else if (rank === "STABLE") card.classList.add('theme-stable');
-        else if (rank === "NORMAL") card.classList.add('theme-normal');
-        else card.classList.add('theme-slow');
+    function showResults(speed, rank, isShared) {
+        document.getElementById('speedValue').innerText = speed;
+        const rl = document.getElementById('rankLabel');
+        rl.innerText = rank;
+        rl.style.visibility = 'visible';
+        document.getElementById('postActions').style.display = 'block';
+        document.getElementById('startBtn').innerText = '再計測する';
+        document.getElementById('startBtn').disabled = false;
 
-        document.getElementById('speed').innerText = mbps;
-        const rb = document.getElementById('rank');
-        rb.innerText = rank;
-        rb.style.transform = "scale(1)";
-        document.getElementById('status').innerText = "SCAN COMPLETE";
-        document.getElementById('ray').style.opacity = "0";
-        document.getElementById('resultBtns').style.display = "block";
-        if (!isShared) {
-            document.getElementById('tosWrapper').style.display = 'none';
-            if (!localStorage.getItem(AD_LOCK_KEY)) setTimeout(() => { document.getElementById('adModal').style.display='flex'; }, 1000);
+        if (!isShared && !checkAdLock()) {
+            setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 1000);
         }
     }
 
-    function closeAdAndLock() { localStorage.setItem(AD_LOCK_KEY, new Date().getTime().toString()); location.reload(); }
-    function saveAsImage() { html2canvas(document.getElementById('capture-area'), { backgroundColor: "#0f172a", scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `shinorail_result.png`; link.href = canvas.toDataURL(); link.click(); }); }
-    function copyShareUrl() { const url = `${window.location.href.split('?')[0]}?s=${document.getElementById('speed').innerText}&p=${document.getElementById('ping').innerText.replace(" ms","")}`; navigator.clipboard.writeText(url); alert("SHARED!"); }
+    function hideAdsFor24h() {
+        localStorage.setItem(AD_LOCK_KEY, new Date().getTime().toString());
+        location.reload();
+    }
+
+    function exportResult() {
+        html2canvas(document.getElementById('capture-area'), { backgroundColor: "#0f172a", scale: 2 }).then(canvas => {
+            const a = document.createElement('a');
+            a.download = 'network_report.png';
+            a.href = canvas.toDataURL();
+            a.click();
+        });
+    }
+
+    function shareResult() {
+        const url = `${window.location.href.split('?')[0]}?s=${document.getElementById('speedValue').innerText}&p=${document.getElementById('rankLabel').innerText}`;
+        navigator.clipboard.writeText(url);
+        alert("共有URLをコピーしました。");
+    }
 
     init();
 </script>
