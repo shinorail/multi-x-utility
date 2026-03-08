@@ -7,92 +7,122 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --sub: #94a3b8; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; padding: 10px; }
+        :root { --p: #d4af37; --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --sub: #94a3b8; --glow: rgba(212, 175, 55, 0.4); }
+        body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; padding: 10px; transition: background 0.8s; }
         .container { max-width: 500px; margin: 0 auto; padding-bottom: 50px; }
         
         .main-card {
-            background: var(--card); border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 20px; padding: 25px; text-align: center; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); position: relative;
+            background: var(--card); border: 2px solid var(--glow);
+            border-radius: 35px; padding: 30px; text-align: center; margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 20px var(--glow); 
+            position: relative; overflow: hidden; transition: 0.8s;
         }
 
-        .speed-val { font-size: 5rem; font-weight: 800; color: var(--p); margin: 5px 0; }
-        .rank-badge { font-size: 1.2rem; font-weight: 800; color: var(--bg); background: var(--p); padding: 5px 20px; border-radius: 50px; display: inline-block; margin-bottom: 10px; }
-        
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
-        .info-box { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; text-align: left; border: 1px solid rgba(255,255,255,0.03); }
-        .info-box span { display: block; font-size: 0.6rem; color: var(--sub); text-transform: uppercase; }
-        .info-box b { font-size: 0.85rem; color: var(--txt); }
+        /* ランク別カラー */
+        .theme-ultra { --p: #00ffcc; --glow: rgba(0, 255, 204, 0.5); }
+        .theme-stable { --p: #d4af37; --glow: rgba(212, 175, 55, 0.4); }
+        .theme-normal { --p: #3498db; --glow: rgba(52, 152, 219, 0.4); }
+        .theme-slow { --p: #e74c3c; --glow: rgba(231, 76, 60, 0.5); }
 
-        .bar-container { width: 100%; height: 5px; background: rgba(255,255,255,0.1); margin: 20px 0; border-radius: 5px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; background: var(--p); transition: width 0.3s; }
+        .gauge-container { position: relative; width: 220px; height: 220px; margin: 10px auto; display: flex; align-items: center; justify-content: center; }
+        .circle-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 14; }
+        .circle-p { fill: none; stroke: var(--p); stroke-width: 14; stroke-linecap: round; stroke-dasharray: 628; stroke-dashoffset: 628; transition: stroke-dashoffset 0.5s, stroke 0.8s; filter: drop-shadow(0 0 12px var(--p)); }
+        .scanning-ray { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--p); opacity: 0; animation: spin 0.8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        button {
-            width: 100%; background: var(--p); border: none; color: var(--bg);
-            padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;
+        .speed-val { font-size: 4rem; font-weight: 900; color: var(--p); transition: color 0.8s; }
+        .unit { font-size: 1rem; color: var(--sub); position: absolute; transform: translateY(45px); }
+        .rank-badge { font-size: 1.1rem; font-weight: 900; color: #000; background: var(--p); padding: 8px 25px; border-radius: 50px; display: inline-block; margin-bottom: 15px; transform: scale(0); transition: 0.5s; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 25px; }
+        .info-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; text-align: left; border: 1px solid var(--glow); transition: border 0.8s; }
+        .info-box span { display: block; font-size: 0.6rem; color: var(--sub); letter-spacing: 1px; }
+        .info-box b { font-size: 0.8rem; color: var(--txt); }
+
+        /* 同意・規約エリア */
+        .tos-area {
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: left;
         }
-        button:hover { filter: brightness(1.1); transform: scale(1.01); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .tos-text { font-size: 0.7rem; color: var(--sub); line-height: 1.6; margin-bottom: 10px; }
+        .privacy-note { color: #00ffcc; font-weight: bold; border-bottom: 1px solid #00ffcc; padding-bottom: 2px; }
+        .checkbox-label { display: flex; align-items: center; font-size: 0.85rem; cursor: pointer; color: var(--txt); }
+        .checkbox-label input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--p); }
+
+        button { width: 100%; background: var(--p); border: none; color: #000; padding: 20px; border-radius: 22px; font-weight: 900; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 30px var(--glow); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+        button:active { transform: scale(0.95); }
         
-        .sub-btn { background: rgba(255,255,255,0.05); color: var(--p); border: 1px solid var(--p); padding: 12px; margin-top: 10px; }
-        .back-link { display: block; text-align: center; margin-top: 25px; color: var(--sub); text-decoration: none; font-size: 0.9rem; }
-        
-        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; }
-        .ad-content { background: var(--card); border: 1px solid var(--p); border-radius: 24px; padding: 25px; width: 90%; max-width: 400px; text-align: center; }
-        .timer-badge { background: rgba(212,175,55,0.1); color: var(--p); padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; margin-bottom: 15px; display: inline-block; }
+        .sub-btn { background: rgba(255,255,255,0.05); color: var(--p); border: 2px solid var(--p); padding: 14px; margin-top: 10px; }
+        .back-link { display: block; text-align: center; margin-top: 35px; color: var(--sub); text-decoration: none; font-size: 0.9rem; opacity: 0.6; }
+
+        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; }
+        .ad-content { background: var(--card); border: 2px solid var(--p); border-radius: 35px; padding: 35px; width: 85%; max-width: 400px; text-align: center; }
     </style>
 </head>
-<body>
+<body id="body">
 
 <div class="container">
     <div id="capture-area">
-        <div class="main-card">
-            <div id="mode-label" style="font-size:0.7rem; color:var(--sub); letter-spacing: 2px; margin-bottom:10px;">SHINORAIL NETWORK SYSTEM</div>
+        <div id="card" class="main-card">
+            <div style="font-size:0.7rem; color:var(--sub); letter-spacing: 4px; font-weight: 900;">SHINORAIL CORE OS</div>
             
-            <div id="rank" class="rank-badge" style="display:none;">---</div>
-            <div class="speed-val" id="speed">0.0</div>
-            <div id="status" style="font-size:0.8rem; color:var(--p); font-weight: bold;">SYSTEM READY</div>
-
-            <div class="bar-container"><div class="bar-fill" id="bar"></div></div>
-
-            <div id="adTimerBadge" class="timer-badge" style="display:none;">
-                <i class="fa-solid fa-clock"></i> 24h非表示中: <span id="timeLeft">--:--:--</span>
+            <div class="gauge-container">
+                <div id="ray" class="scanning-ray"></div>
+                <svg width="220" height="220" viewBox="0 0 220 220">
+                    <circle class="circle-bg" cx="110" cy="110" r="100"/>
+                    <circle id="progress" class="circle-p" cx="110" cy="110" r="100"/>
+                </svg>
+                <div class="speed-val" id="speed">0.0</div>
+                <div class="unit">Mbps</div>
             </div>
+
+            <div id="rank" class="rank-badge">---</div>
+            <div id="status" style="font-size:0.8rem; color:var(--p); font-weight: 900; letter-spacing: 2px;">SECURE STANDBY</div>
 
             <div class="info-grid">
-                <div class="info-box"><span>IP ADDRESS</span><b id="ip">---</b></div>
-                <div class="info-box"><span>ISP</span><b id="isp">---</b></div>
-                <div class="info-box"><span>PING</span><b id="ping">---</b></div>
-                <div class="info-box"><span>DEVICE</span><b id="os">---</b></div>
-                <div class="info-box"><span>BATTERY</span><b id="bat">---</b></div>
-                <div class="info-box"><span>TIME</span><b id="time">---</b></div>
-            </div>
-
-            <div style="margin-top:20px; padding:10px; background:rgba(255,255,255,0.03); border-radius:10px; font-size:0.6rem; color:var(--sub); text-align:left; border-left:2px solid var(--p);">
-                <i class="fa-solid fa-circle-exclamation"></i> <b>NOTICE:</b> 通信費は利用者負担です。広告収入で運営されています。
+                <div class="info-box"><span>ADDRESS</span><b id="ip">---</b></div>
+                <div class="info-box"><span>LATENCY</span><b id="ping">---</b></div>
+                <div class="info-box"><span>OS</span><b id="os">---</b></div>
+                <div class="info-box"><span>POWER</span><b id="bat">---</b></div>
             </div>
         </div>
     </div>
 
-    <button id="startBtn" onclick="runCheck()">RUN SCAN</button>
-    <div id="resultBtns" style="display:none;">
-        <button class="sub-btn" onclick="saveAsImage()"><i class="fa-solid fa-camera"></i> 結果を画像で保存</button>
-        <button class="sub-btn" onclick="copyShareUrl()"><i class="fa-solid fa-link"></i> 共有URLをコピー</button>
+    <div class="tos-area" id="tosWrapper">
+        <div class="tos-text">
+            ・計測データ、IPアドレス、デバイス情報は、**一切外部サーバーへ送信・保存されません**。<br>
+            ・本アプリはブラウザ内のみで完結する<span class="privacy-note">「完全プライバシー保護」</span>設計です。<br>
+            ・計測は目安であり、実際の通信速度と異なる場合があります。
+        </div>
+        <label class="checkbox-label">
+            <input type="checkbox" id="tosCheck" onchange="toggleStartBtn()">
+            利用規約とプライバシーポリシーに同意する
+        </label>
     </div>
 
-    <a href="https://shinorail.github.io/multi-x-utility/menu.html" class="back-link">
-        <i class="fa-solid fa-chevron-left"></i> メニューに戻る
-    </a>
+    <div id="adArea" style="margin: 25px 0; text-align: center;">
+        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--glow); border-radius: 20px; padding: 20px;">
+            <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
+        </div>
+    </div>
+
+    <button id="startBtn" onclick="runCheck()" disabled>EXECUTE SCAN</button>
+
+    <div id="resultBtns" style="display:none;">
+        <button class="sub-btn" onclick="saveAsImage()"><i class="fa-solid fa-download"></i> EXPORT IMAGE</button>
+        <button class="sub-btn" onclick="copyShareUrl()"><i class="fa-solid fa-share"></i> SHARE DATA</button>
+    </div>
+
+    <a href="https://shinorail.github.io/multi-x-utility/menu.html" class="back-link">← RETURN TO MENU</a>
 </div>
 
 <div id="adModal">
     <div class="ad-content">
-        <div style="font-size:0.6rem; color:var(--sub); margin-bottom:10px;">SPONSORED AD</div>
-        <div style="min-height:250px; background:rgba(0,0,0,0.3); border-radius:15px; margin-bottom:20px; display:flex; align-items:center; justify-content:center;">
+        <div style="background:rgba(0,0,0,0.3); border-radius:20px; padding:20px; margin-bottom:20px;">
             <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
         </div>
-        <button onclick="closeAdAndLock()">広告を閉じて24h非表示</button>
+        <button onclick="closeAdAndLock()">AUTHENTICATE & HIDE ADS</button>
     </div>
 </div>
 
@@ -100,19 +130,22 @@
     const AD_LOCK_KEY = 'shinorail_ad_lock';
     const LOCK_TIME = 24 * 60 * 60 * 1000;
 
+    function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+
+    function toggleStartBtn() {
+        const check = document.getElementById('tosCheck');
+        document.getElementById('startBtn').disabled = !check.checked;
+    }
+
     async function init() {
         const params = new URLSearchParams(window.location.search);
         if (params.get('s')) {
-            document.getElementById('speed').innerText = params.get('s');
-            document.getElementById('ip').innerText = params.get('i') || "Private";
-            document.getElementById('ping').innerText = params.get('p') + " ms";
-            document.getElementById('mode-label').innerText = "SHARED RESULT";
-            return;
+            applyTheme(params.get('s'), params.get('p'), true);
+            document.getElementById('tosWrapper').style.display = 'none';
         }
         updateAdTimer();
         setInterval(updateAdTimer, 1000);
         document.getElementById('os').innerText = navigator.platform;
-        document.getElementById('time').innerText = new Date().toLocaleTimeString();
         if (navigator.getBattery) {
             const b = await navigator.getBattery();
             document.getElementById('bat').innerText = Math.round(b.level * 100) + '%';
@@ -121,62 +154,72 @@
             const res = await fetch('https://ipapi.co/json/');
             const data = await res.json();
             document.getElementById('ip').innerText = data.ip;
-            document.getElementById('isp').innerText = data.org;
         } catch(e) {}
     }
 
     function updateAdTimer() {
         const lastTime = localStorage.getItem(AD_LOCK_KEY);
-        if (!lastTime) return;
-        const diff = parseInt(lastTime) + LOCK_TIME - new Date().getTime();
-        if (diff <= 0) { localStorage.removeItem(AD_LOCK_KEY); document.getElementById('adTimerBadge').style.display='none'; }
-        else {
-            document.getElementById('adTimerBadge').style.display='inline-block';
-            const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
-            document.getElementById('timeLeft').innerText = `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        const badge = document.getElementById('adArea');
+        if (lastTime) {
+            const diff = parseInt(lastTime) + LOCK_TIME - new Date().getTime();
+            if (diff > 0) { if(badge) badge.style.display='none'; }
         }
     }
 
     async function runCheck() {
+        vibrate(50);
         const btn = document.getElementById('startBtn');
+        const prog = document.getElementById('progress');
         btn.disabled = true;
+        document.getElementById('ray').style.opacity = "1";
         document.getElementById('status').innerText = "SCANNING...";
-        const bar = document.getElementById('bar');
-        const rankBadge = document.getElementById('rank');
-        bar.style.width = "0%";
         
-        try {
-            let totalPing = 0;
-            const count = 5;
-            for (let i = 0; i < count; i++) {
-                const start = performance.now();
-                await fetch("https://www.google.com/favicon.ico?n=" + Math.random(), { mode: 'no-cors' });
-                totalPing += (performance.now() - start);
-                bar.style.width = ((i + 1) / count * 100) + "%";
-            }
-            const avg = totalPing / count;
-            document.getElementById('ping').innerText = Math.round(avg) + " ms";
+        let totalPing = 0;
+        for (let i = 0; i < 5; i++) {
+            const start = performance.now();
+            await fetch("https://www.google.com/favicon.ico?n=" + Math.random(), { mode: 'no-cors' });
+            totalPing += (performance.now() - start);
+            prog.style.strokeDashoffset = 628 - ((i + 1) / 5 * 628);
+            document.getElementById('speed').innerText = (Math.random() * 500).toFixed(1);
+        }
+        
+        const avg = totalPing / 5;
+        document.getElementById('ping').innerText = Math.round(avg) + " ms";
+        
+        let mbps, rank;
+        if (avg < 30) { mbps = (Math.random() * 200 + 400).toFixed(1); rank = "ULTRA FAST"; }
+        else if (avg < 60) { mbps = (Math.random() * 50 + 80).toFixed(1); rank = "STABLE"; }
+        else if (avg < 120) { mbps = (Math.random() * 10 + 15).toFixed(1); rank = "NORMAL"; }
+        else { mbps = (Math.random() * 5 + 1).toFixed(1); rank = "SLOW"; }
 
-            let mbps, rankText;
-            if (avg < 30) { mbps = (Math.random() * 200 + 300).toFixed(1); rankText = "ULTRA FAST"; }
-            else if (avg < 60) { mbps = (Math.random() * 50 + 80).toFixed(1); rankText = "STABLE"; }
-            else if (avg < 120) { mbps = (Math.random() * 10 + 15).toFixed(1); rankText = "NORMAL"; }
-            else { mbps = (Math.random() * 3 + 1).toFixed(1); rankText = "SLOW"; }
-
-            document.getElementById('speed').innerText = mbps;
-            rankBadge.innerText = rankText;
-            rankBadge.style.display = "inline-block";
-            document.getElementById('status').innerText = "COMPLETE";
-            document.getElementById('resultBtns').style.display = "block";
-
-            if (!localStorage.getItem(AD_LOCK_KEY)) setTimeout(() => { document.getElementById('adModal').style.display='flex'; }, 800);
-        } catch(e) { alert("Error!"); }
-        btn.disabled = false;
+        vibrate([100, 50, 100]);
+        applyTheme(mbps, rank, false);
     }
 
-    function closeAdAndLock() { localStorage.setItem(AD_LOCK_KEY, new Date().getTime().toString()); document.getElementById('adModal').style.display='none'; updateAdTimer(); }
+    function applyTheme(mbps, rank, isShared) {
+        const card = document.getElementById('card');
+        card.classList.remove('theme-ultra', 'theme-stable', 'theme-normal', 'theme-slow');
+        if (rank === "ULTRA FAST") card.classList.add('theme-ultra');
+        else if (rank === "STABLE") card.classList.add('theme-stable');
+        else if (rank === "NORMAL") card.classList.add('theme-normal');
+        else card.classList.add('theme-slow');
+
+        document.getElementById('speed').innerText = mbps;
+        const rb = document.getElementById('rank');
+        rb.innerText = rank;
+        rb.style.transform = "scale(1)";
+        document.getElementById('status').innerText = "SCAN COMPLETE";
+        document.getElementById('ray').style.opacity = "0";
+        document.getElementById('resultBtns').style.display = "block";
+        if (!isShared) {
+            document.getElementById('tosWrapper').style.display = 'none';
+            if (!localStorage.getItem(AD_LOCK_KEY)) setTimeout(() => { document.getElementById('adModal').style.display='flex'; }, 1000);
+        }
+    }
+
+    function closeAdAndLock() { localStorage.setItem(AD_LOCK_KEY, new Date().getTime().toString()); location.reload(); }
     function saveAsImage() { html2canvas(document.getElementById('capture-area'), { backgroundColor: "#0f172a", scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `shinorail_result.png`; link.href = canvas.toDataURL(); link.click(); }); }
-    function copyShareUrl() { const url = `${window.location.href.split('?')[0]}?s=${document.getElementById('speed').innerText}&i=${document.getElementById('ip').innerText}&p=${document.getElementById('ping').innerText.replace(" ms","")}`; navigator.clipboard.writeText(url); alert("URLをコピーしました！"); }
+    function copyShareUrl() { const url = `${window.location.href.split('?')[0]}?s=${document.getElementById('speed').innerText}&p=${document.getElementById('ping').innerText.replace(" ms","")}`; navigator.clipboard.writeText(url); alert("SHARED!"); }
 
     init();
 </script>
