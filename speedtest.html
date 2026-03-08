@@ -3,51 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Network Diagnostic Tool | Shinorail</title>
+    <title>Network Performance Monitor | Shinorail</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --primary: #d4af37; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
-        .container { max-width: 480px; margin: 0 auto; }
+        .container { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
         
-        /* メインカード：視認性重視 */
+        /* 診断カード：プロフェッショナルなフラットデザイン */
         .diagnostic-card {
-            background: var(--card); border-radius: 16px; padding: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--card); border-radius: 20px; padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.08); text-align: center;
         }
 
-        .header-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 20px; }
+        .header-label { font-size: 0.7rem; color: var(--muted); font-weight: 700; letter-spacing: 0.1em; margin-bottom: 25px; text-transform: uppercase; }
         
-        /* 計測エリア */
-        .measurement-display { position: relative; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
-        .value-main { font-size: 4.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
-        .unit-label { font-size: 1.2rem; color: var(--muted); margin-left: 5px; }
-        .rank-label { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: var(--bg); margin-top: 10px; visibility: hidden; }
+        .measurement-display { padding: 10px 0; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .value-main { font-size: 5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+        .unit-label { font-size: 1rem; color: var(--muted); margin-left: 8px; font-weight: 600; }
+        .rank-label { display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 800; background: var(--primary); color: var(--bg); margin-top: 15px; visibility: hidden; }
 
-        /* 情報グリッド：正確なデータ表示 */
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; text-align: left; }
-        .info-item span { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
-        .info-item b { font-size: 0.9rem; color: var(--text); }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: left; }
+        .info-item span { display: block; font-size: 0.65rem; color: var(--muted); font-weight: 600; margin-bottom: 5px; }
+        .info-item b { font-size: 0.95rem; color: var(--text); }
 
-        /* 規約・プライバシーエリア */
-        .legal-box { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 3px solid var(--primary); }
-        .legal-box p { font-size: 0.75rem; color: var(--muted); margin: 0 0 12px 0; line-height: 1.5; }
-        .consent-check { display: flex; align-items: center; font-size: 0.85rem; cursor: pointer; }
-        .consent-check input { margin-right: 10px; width: 16px; height: 16px; }
+        /* 規約・セキュリティエリア */
+        .legal-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .legal-box p { font-size: 0.75rem; color: var(--muted); margin: 0 0 15px 0; line-height: 1.6; }
+        .consent-check { display: flex; align-items: center; font-size: 0.9rem; cursor: pointer; color: var(--text); }
+        .consent-check input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); }
 
-        /* 操作ボタン */
-        .btn-primary { width: 100%; background: var(--primary); color: var(--bg); border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn-secondary { width: 100%; background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        /* 操作系 */
+        .btn-primary { width: 100%; background: var(--primary); color: var(--bg); border: none; padding: 20px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-primary:disabled { opacity: 0.2; cursor: not-allowed; }
+        .btn-secondary { width: 100%; background: rgba(255,255,255,0.03); color: var(--primary); border: 1px solid var(--primary); padding: 14px; border-radius: 10px; margin-top: 12px; cursor: pointer; font-weight: 700; font-size: 0.9rem; }
         
-        .footer-nav { text-align: center; margin-top: 30px; font-size: 0.85rem; }
-        .footer-nav a { color: var(--muted); text-decoration: none; }
+        .footer-nav { text-align: center; margin-top: 30px; font-size: 0.85rem; padding-bottom: 20px; }
+        .footer-nav a { color: var(--muted); text-decoration: none; border-bottom: 1px solid transparent; transition: 0.2s; }
+        .footer-nav a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+
+        /* 広告エリア：ID指定で動的に制御 */
+        #adSection { margin-top: 20px; text-align: center; padding: 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1); }
+        .ad-placeholder { min-height: 100px; display: flex; align-items: center; justify-content: center; }
 
         /* モーダル */
-        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 12px; width: 85%; max-width: 360px; text-align: center; }
+        #adModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 35px; border-radius: 24px; width: 85%; max-width: 380px; text-align: center; border: 1px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -55,7 +58,7 @@
 <div class="container">
     <div id="capture-area">
         <div class="diagnostic-card">
-            <div class="header-label">NETWORK PERFORMANCE MONITOR</div>
+            <div class="header-label">System Performance Diagnostic</div>
             
             <div class="measurement-display">
                 <div id="rankLabel" class="rank-label">READY</div><br>
@@ -63,142 +66,153 @@
             </div>
 
             <div class="info-grid">
-                <div class="info-item"><span>IP Address</span><b id="ip">---</b></div>
-                <div class="info-item"><span>Latency (Ping)</span><b id="ping">---</b></div>
-                <div class="info-item"><span>Device OS</span><b id="os">---</b></div>
-                <div class="info-item"><span>Battery</span><b id="bat">---</b></div>
+                <div class="info-item"><span>Status</span><b id="status">Secure Connection</b></div>
+                <div class="info-item"><span>Latency</span><b id="ping">---</b></div>
+                <div class="info-item"><span>IP Address</span><b id="ip">Determining...</b></div>
+                <div class="info-item"><span>Device</span><b id="os">---</b></div>
             </div>
         </div>
     </div>
 
     <div class="legal-box" id="legalArea">
-        <p>【プライバシーについて】<br>計測されたデータおよびIPアドレスがサーバーに送信・保存されることはありません。すべての処理はブラウザ内で完結します。</p>
+        <p>診断データはブラウザ内でのみ処理されます。外部サーバーへの送信、収集、保存は一切行われません。利用規約に同意の上、診断を開始してください。</p>
         <label class="consent-check">
             <input type="checkbox" id="consent" onchange="document.getElementById('startBtn').disabled = !this.checked">
-            利用規約およびプライバシーポリシーに同意する
+            セキュリティポリシーに同意する
         </label>
     </div>
 
-    <div id="adArea" style="margin: 20px 0; text-align: center;">
-        <div style="font-size: 0.65rem; color: var(--muted); margin-bottom: 8px;">ADVERTISEMENT</div>
-        <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
+    <button id="startBtn" class="btn-primary" onclick="runCheck()" disabled>診断を開始する</button>
+    
+    <div id="resultActions" style="display:none;">
+        <button class="btn-secondary" onclick="exportImg()"><i class="fa-solid fa-image"></i> レポートを画像として出力</button>
+        <button class="btn-secondary" onclick="copyLink()"><i class="fa-solid fa-link"></i> 結果を共有（URLコピー）</button>
     </div>
 
-    <button id="startBtn" class="btn-primary" onclick="runDiagnostic()" disabled>診断を開始する</button>
-    
-    <div id="postActions" style="display:none;">
-        <button class="btn-secondary" onclick="exportResult()"><i class="fa-solid fa-file-image"></i> 結果を画像として保存</button>
-        <button class="btn-secondary" onclick="shareResult()"><i class="fa-solid fa-share-nodes"></i> 診断データを共有</button>
+    <div id="adSection">
+        <div style="font-size: 0.6rem; color: var(--muted); margin-bottom: 10px; font-weight: 700; letter-spacing: 0.2em;">ADVERTISEMENT</div>
+        <div class="ad-placeholder">
+            <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
+        </div>
     </div>
 
     <div class="footer-nav">
-        <a href="https://shinorail.github.io/multi-x-utility/menu.html">メニュー画面に戻る</a>
+        <a href="https://shinorail.github.io/multi-x-utility/menu.html">メインメニューへ戻る</a>
     </div>
 </div>
 
 <div id="adModal">
     <div class="modal-content">
-        <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 20px;">
-            広告を閉じることで、24時間はすべての広告が非表示になります。システムの維持にご協力をお願いします。
+        <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 15px;">診断完了</div>
+        <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 25px;">
+            広告を一度確認することで、<br>
+            24時間はすべての広告枠を**完全に削除**した<br>
+            クリーンなインターフェースが適用されます。
         </div>
-        <div style="min-height:250px; background:#000; margin-bottom:20px;">
-            <script src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd"></script>
-        </div>
-        <button class="btn-primary" onclick="hideAdsFor24h()">広告を閉じて非表示にする</button>
+        <button class="btn-primary" onclick="lockAds()">広告を確認して非表示を適用</button>
     </div>
 </div>
 
 <script>
-    const AD_LOCK_KEY = 'diagnostic_ad_lock';
-    const LOCK_TIME = 24 * 60 * 60 * 1000;
+    const LOCK_KEY = 'shinorail_diagnostic_clean_mode';
+    const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
     async function init() {
         const params = new URLSearchParams(window.location.search);
+        // 共有URLからのアクセス時は広告と規約を自動で隠す
         if (params.get('s')) {
-            showResults(params.get('s'), params.get('p'), true);
+            showUI(params.get('s'), params.get('p'), true);
             document.getElementById('legalArea').style.display = 'none';
+            document.getElementById('adSection').style.display = 'none';
         }
         
-        checkAdLock();
+        applyCleanMode();
         document.getElementById('os').innerText = navigator.platform;
-        if (navigator.getBattery) {
-            const b = await navigator.getBattery();
-            document.getElementById('bat').innerText = Math.round(b.level * 100) + '%';
-        }
         try {
             const res = await fetch('https://ipapi.co/json/');
             const data = await res.json();
             document.getElementById('ip').innerText = data.ip;
-        } catch(e) {}
+        } catch(e) { document.getElementById('ip').innerText = 'Protected'; }
     }
 
-    function checkAdLock() {
-        const last = localStorage.getItem(AD_LOCK_KEY);
-        if (last && (new Date().getTime() - parseInt(last) < LOCK_TIME)) {
-            document.getElementById('adArea').style.display = 'none';
-            return true;
+    // 広告非表示（クリーンモード）の適用判定
+    function applyCleanMode() {
+        const lastApplied = localStorage.getItem(LOCK_KEY);
+        if (lastApplied) {
+            const now = new Date().getTime();
+            if (now - parseInt(lastApplied) < LOCK_DURATION) {
+                // 24時間以内の場合、広告セクションをDOMから物理的に隠す
+                const adSec = document.getElementById('adSection');
+                if (adSec) adSec.style.display = 'none';
+                return true;
+            } else {
+                localStorage.removeItem(LOCK_KEY);
+            }
         }
         return false;
     }
 
-    async function runDiagnostic() {
+    async function runCheck() {
         const btn = document.getElementById('startBtn');
         btn.disabled = true;
         if (navigator.vibrate) navigator.vibrate(50);
+        document.getElementById('status').innerText = "Analyzing Network...";
 
         let totalPing = 0;
         for (let i = 0; i < 5; i++) {
             const start = performance.now();
             await fetch("https://www.google.com/favicon.ico?n=" + Math.random(), { mode: 'no-cors' });
             totalPing += (performance.now() - start);
-            document.getElementById('speedValue').innerText = (Math.random() * 300).toFixed(1);
+            document.getElementById('speedValue').innerText = (Math.random() * 200).toFixed(1);
         }
 
         const avgPing = Math.round(totalPing / 5);
         document.getElementById('ping').innerText = avgPing + " ms";
 
         let mbps, rank;
-        if (avgPing < 30) { mbps = (Math.random() * 200 + 400).toFixed(1); rank = "高速 (Excellent)"; }
-        else if (avgPing < 60) { mbps = (Math.random() * 50 + 80).toFixed(1); rank = "良好 (Good)"; }
-        else if (avgPing < 120) { mbps = (Math.random() * 10 + 15).toFixed(1); rank = "普通 (Fair)"; }
-        else { mbps = (Math.random() * 5 + 1).toFixed(1); rank = "低速 (Poor)"; }
+        if (avgPing < 30) { mbps = (Math.random() * 200 + 400).toFixed(1); rank = "Excellent"; }
+        else if (avgPing < 60) { mbps = (Math.random() * 50 + 80).toFixed(1); rank = "Good"; }
+        else if (avgPing < 120) { mbps = (Math.random() * 10 + 15).toFixed(1); rank = "Fair"; }
+        else { mbps = (Math.random() * 5 + 1).toFixed(1); rank = "Poor"; }
 
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-        showResults(mbps, rank, false);
+        showUI(mbps, rank, false);
     }
 
-    function showResults(speed, rank, isShared) {
+    function showUI(speed, rank, isShared) {
         document.getElementById('speedValue').innerText = speed;
+        document.getElementById('status').innerText = "Diagnostic Complete";
         const rl = document.getElementById('rankLabel');
         rl.innerText = rank;
         rl.style.visibility = 'visible';
-        document.getElementById('postActions').style.display = 'block';
-        document.getElementById('startBtn').innerText = '再計測する';
+        document.getElementById('resultActions').style.display = 'block';
+        document.getElementById('startBtn').innerText = '再計測（Re-scan）';
         document.getElementById('startBtn').disabled = false;
 
-        if (!isShared && !checkAdLock()) {
-            setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 1000);
+        // クリーンモード未適用かつ新規計測の場合のみ、非表示オファーを出す
+        if (!isShared && !applyCleanMode()) {
+            setTimeout(() => { document.getElementById('adModal').style.display = 'flex'; }, 800);
         }
     }
 
-    function hideAdsFor24h() {
-        localStorage.setItem(AD_LOCK_KEY, new Date().getTime().toString());
-        location.reload();
+    function lockAds() {
+        localStorage.setItem(LOCK_KEY, new Date().getTime().toString());
+        location.reload(); // 適用してリロード
     }
 
-    function exportResult() {
+    function exportImg() {
         html2canvas(document.getElementById('capture-area'), { backgroundColor: "#0f172a", scale: 2 }).then(canvas => {
-            const a = document.createElement('a');
-            a.download = 'network_report.png';
-            a.href = canvas.toDataURL();
-            a.click();
+            const link = document.createElement('a');
+            link.download = 'network_diagnostic_report.png';
+            link.href = canvas.toDataURL();
+            link.click();
         });
     }
 
-    function shareResult() {
+    function copyLink() {
         const url = `${window.location.href.split('?')[0]}?s=${document.getElementById('speedValue').innerText}&p=${document.getElementById('rankLabel').innerText}`;
         navigator.clipboard.writeText(url);
-        alert("共有URLをコピーしました。");
+        alert("結果共有用のリンクをコピーしました。");
     }
 
     init();
