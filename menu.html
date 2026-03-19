@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -18,12 +19,8 @@ header{padding:40px 20px;text-align:center}
 .item-title{font-weight:bold;font-size:1.15rem;margin-bottom:4px}
 .item-desc{font-size:0.8rem;color:#94a3b8}
 .arrow{color:var(--p);font-weight:bold;font-size:1.2rem}
-
-/* NEWマークのスタイル（JSで制御） */
-.new-badge::after{content:"NEW";position:absolute;top:5px;right:5px;background:var(--alert,#ef4444);color:#fff;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:bold;box-shadow:0 0 10px rgba(239,68,68,0.5)}
-
+.new-badge::after{content:"NEW";position:absolute;top:5px;right:5px;background:#ef4444;color:#fff;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:bold;box-shadow:0 0 10px rgba(239,68,68,0.5)}
 .item-special{border:2px solid var(--p);background:rgba(212,175,55,0.08);border-left:8px solid var(--p)}
-
 .news-section{width:92%;max-width:480px;background:rgba(255,255,255,0.05);border-radius:20px;padding:20px;margin-bottom:30px;box-sizing:border-box;border:1px solid #334155}
 .news-title{font-size:0.9rem;color:var(--p);font-weight:bold;margin-bottom:15px}
 .news-item{font-size:0.85rem;color:#cbd5e1;padding:10px 0;display:flex;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
@@ -37,123 +34,186 @@ header{padding:40px 20px;text-align:center}
 <div id="pwa-banner" onclick="installPWA()"> ✨ ホーム画面に追加してアプリとして使用する </div>
 
 <header>
-    <div class="credit-main">制作：篠ノ井乗務区 二周年記念</div>
-    <h1 class="menu-title">機能一覧</h1>
+<div class="credit-main">制作：篠ノ井乗務区 二周年記念</div>
+<h1 class="menu-title">機能一覧</h1>
 </header>
 
 <div class="menu-grid">
-    <a href="qr.html" class="item item-special">
-        <div class="item-text">
-            <span class="item-title" style="color:var(--p)">QRツール & ゲート 🔳</span>
-            <span class="item-desc">作成・読取・認証を一括管理</span>
-        </div>
-        <div class="arrow">＞</div>
-    </a>
+<a href="qr.html" class="item item-special">
+<div class="item-text">
+<span class="item-title" style="color:var(--p)">QRツール & ゲート 🔳</span>
+<span class="item-desc">作成・読取・認証を一括管理</span>
+</div>
+<div class="arrow">＞</div>
+</a>
 
-    <a href="RecMemo.html" class="item" id="rec-memo-link">
-        <div class="item-text">
-            <span class="item-title">RecMemo（録音・メモ）🎤</span>
-            <span class="item-desc">ボイスレコーダーと自動保存メモ</span>
-        </div>
-        <div class="arrow">＞</div>
-    </a>
+<a href="RecMemo.html" class="item" id="rec-memo-link">
+    <div class="item-text">
+        <span class="item-title">RecMemo（録音・メモ）🎤</span>
+        <span class="item-desc">ボイスレコーダーと自動保存メモ</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
 
-    <a href="calc.html" class="item"><div class="item-text"><span class="item-title">関数電卓</span><span class="item-desc">普通 ⇄ 関数 切り替え</span></div><div class="arrow">＞</div></a>
-    <a href="timer.html" class="item"><div class="item-text"><span class="item-title">タイマー</span><span class="item-desc">リロード対策済</span></div><div class="arrow">＞</div></a>
-    <a href="sw.html" class="item"><div class="item-text"><span class="item-title">ストップウォッチ</span><span class="item-desc">正確な運行計測</span></div><div class="arrow">＞</div></a>
-    <a href="alarm.html" class="item"><div class="item-text"><span class="item-title">アラーム</span><span class="item-desc">指定時刻に通知</span></div><div class="arrow">＞</div></a>
-    <a href="convert.html" class="item"><div class="item-text"><span class="item-title">単位変換</span><span class="item-desc">長さや重さの計算</span></div><div class="arrow">＞</div></a>
-    <a href="pass.html" class="item"><div class="item-text"><span class="item-title">パスワード作成</span><span class="item-desc">安全な文字列生成</span></div><div class="arrow">＞</div></a>
-    <a href="level.html" class="item"><div class="item-text"><span class="item-title">水平器</span><span class="item-desc">スマホで角度測定</span></div><div class="arrow">＞</div></a>
-    <a href="speedtest.html" class="item"><div class="item-text"><span class="item-title">多機能通信計測ツール</span><span class="item-desc">多機能通信計測ツール</span></div><div class="arrow">
-     <a href="snr_checker.html" class="item"><div class="item-text"><span class="item-title">SHINOV-Check</span><span class="item-desc">SHINOV-Check</span></div><div class="arrow">＞</div></a>
-    <a href="howtouse.html" class="item" style="border-left:6px solid #64748b">
-        <div class="item-text">
-            <span class="item-title">使い方ガイド</span>
-            <span class="item-desc">操作方法と推奨環境</span>
-        </div>
-        <div class="arrow">＞</div>
-    </a>
+<a href="calc.html" class="item">
+    <div class="item-text">
+        <span class="item-title">関数電卓</span>
+        <span class="item-desc">普通 ⇄ 関数 切り替え</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="timer.html" class="item">
+    <div class="item-text">
+        <span class="item-title">タイマー</span>
+        <span class="item-desc">リロード対策済</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="sw.html" class="item">
+    <div class="item-text">
+        <span class="item-title">ストップウォッチ</span>
+        <span class="item-desc">正確な運行計測</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="alarm.html" class="item">
+    <div class="item-text">
+        <span class="item-title">アラーム</span>
+        <span class="item-desc">指定時刻に通知</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="convert.html" class="item">
+    <div class="item-text">
+        <span class="item-title">単位変換</span>
+        <span class="item-desc">長さや重さの計算</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="pass.html" class="item">
+    <div class="item-text">
+        <span class="item-title">パスワード作成</span>
+        <span class="item-desc">安全な文字列生成</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="level.html" class="item">
+    <div class="item-text">
+        <span class="item-title">水平器</span>
+        <span class="item-desc">スマホで角度測定</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="speedtest.html" class="item">
+    <div class="item-text">
+        <span class="item-title">多機能通信計測ツール</span>
+        <span class="item-desc">ネットワーク速度をチェック</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="snr_checker.html" class="item">
+    <div class="item-text">
+        <span class="item-title">SHINOV-Check</span>
+        <span class="item-desc">信号強度等の詳細確認</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
+
+<a href="howtouse.html" class="item" style="border-left:6px solid #64748b">
+    <div class="item-text">
+        <span class="item-title">使い方ガイド</span>
+        <span class="item-desc">操作方法と推奨環境</span>
+    </div>
+    <div class="arrow">＞</div>
+</a>
 </div>
 
 <div class="news-section">
-    <div class="news-title">📢 お知らせ (News)</div>
-    <div id="news-list">
-        <div class="news-item">読み込み中...</div>
-    </div>
+<div class="news-title">📢 お知らせ (News)</div>
+<div id="news-list">
+<div class="news-item">読み込み中...</div>
+</div>
 </div>
 
 <button class="share-btn" onclick="shareApp()">🔗 アプリを紹介する (Share)</button>
 
 <div class="footer-nav">
-    <a href="terms.html">利用規約</a>
-    <a href="privacy.html">プライバシーポリシー</a>
+<a href="terms.html">利用規約</a>
+<a href="privacy.html">プライバシーポリシー</a>
 </div>
 
 <script>
-// --- NEWマークの自動判定 (1週間) ---
 function setNewBadge() {
-    const releaseDate = new Date('2026-02-14'); // リリース日を設定
-    const today = new Date();
-    const diffTime = Math.abs(today - releaseDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays <= 7) {
-        document.getElementById('rec-memo-link').classList.add('new-badge');
-    }
+const releaseDate = new Date('2026-02-14');
+const today = new Date();
+const diffTime = Math.abs(today - releaseDate);
+const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+if (diffDays <= 7) {
+const badgeElement = document.getElementById('rec-memo-link');
+if(badgeElement) badgeElement.classList.add('new-badge');
+}
 }
 
-// --- お知らせの読み込み修正 ---
 async function loadNews() {
-    const list = document.getElementById('news-list');
-    try {
-        const response = await fetch('news.md');
-        if (!response.ok) throw new Error();
-        const text = await response.text();
-        list.innerHTML = "";
-        
-        const lines = text.trim().split('\n');
-        lines.forEach(line => {
-            const parts = line.split('|');
-            if(parts.length >= 2) {
-                const div = document.createElement('div');
-                div.className = 'news-item';
-                div.innerHTML = `<span style="color:var(--p);font-family:monospace;white-space:nowrap">${parts[0].trim()}</span><span>${parts[1].trim()}</span>`;
-                list.appendChild(div);
-            }
-        });
-    } catch (e) {
-        list.innerHTML = "<div class='news-item'>現在、新しいお知らせはありません。</div>";
-    }
+const list = document.getElementById('news-list');
+try {
+const response = await fetch('news.md');
+if (!response.ok) throw new Error();
+const text = await response.text();
+list.innerHTML = "";
+const lines = text.trim().split('\n');
+lines.forEach(line => {
+const parts = line.split('|');
+if(parts.length >= 2) {
+const div = document.createElement('div');
+div.className = 'news-item';
+div.innerHTML = &lt;span style=&quot;color:var(--p);font-family:monospace;white-space:nowrap&quot;&gt;${parts[0].trim()}&lt;/span&gt;&lt;span&gt;${parts[1].trim()}&lt;/span&gt;;
+list.appendChild(div);
+}
+});
+if(list.innerHTML === "") throw new Error();
+} catch (e) {
+list.innerHTML = "<div class='news-item'>現在、新しいお知らせはありません。</div>";
+}
 }
 
 async function shareApp() {
-    const url = window.location.href.replace('menu.html', 'index.html');
-    if (navigator.share) {
-        try { await navigator.share({title: 'Multi-X Utility', url: url}); } catch(e){}
-    }
+const url = window.location.href.replace('menu.html', 'index.html');
+if (navigator.share) {
+try { await navigator.share({title: 'Multi-X Utility', url: url}); } catch(e){}
+} else {
+alert("お使いのブラウザは共有機能に対応していません。URLをコピーして共有してください。");
+}
 }
 
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('pwa-banner').style.display = 'block';
+e.preventDefault();
+deferredPrompt = e;
+document.getElementById('pwa-banner').style.display = 'block';
 });
 
 function installPWA() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => {
-            document.getElementById('pwa-banner').style.display = 'none';
-            deferredPrompt = null;
-        });
-    }
+if (deferredPrompt) {
+deferredPrompt.prompt();
+deferredPrompt.userChoice.then(() => {
+document.getElementById('pwa-banner').style.display = 'none';
+deferredPrompt = null;
+});
+}
 }
 
-// 実行
 setNewBadge();
 loadNews();
 </script>
+
 </body>
 </html>
