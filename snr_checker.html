@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Smart Checklist Pro | Shinorail</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { 
+            --p: #d4af37; 
+            --bg: #0f172a; 
+            --card: #1e293b; 
+            --txt: #f8fafc; 
+            --sub: #94a3b8; 
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--txt); 
+            margin: 0; 
+            min-height: 100vh; 
+            transition: 0.5s;
+        }
+
+        /* プレミアム状態 */
+        body.premium-active { background: #000 !important; }
+        body.premium-active #adSection { display: none !important; }
+        body.premium-active .main-container { justify-content: center; }
+        body.premium-active .checklist-card { border: 1px solid var(--p); box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); }
+
+        .main-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .checklist-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .header-tag {
+            font-size: 0.65rem;
+            color: var(--sub);
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .progress-val {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--p);
+            line-height: 1;
+            text-align: center;
+            display: block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            background: var(--p);
+            color: #000;
+            margin: 10px auto;
+        }
+
+        /* リストアイテム */
+        .item-row {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .item-row.checked { opacity: 0.5; border-color: var(--p); }
+
+        .check-box {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--sub);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+        }
+        .item-row.checked .check-box {
+            background: var(--p);
+            border-color: var(--p);
+            color: #000;
+        }
+
+        .item-text { font-size: 0.95rem; font-weight: 600; flex-grow: 1; }
+        .item-row.checked .item-text { text-decoration: line-through; }
+
+        /* ボタン */
+        .btn-gold {
+            background: var(--p);
+            color: #000;
+            font-weight: 900;
+            padding: 18px;
+            border-radius: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn-sub {
+            background: rgba(255,255,255,0.05);
+            color: var(--p);
+            border: 1px solid var(--p);
+            font-weight: 800;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* 広告ブロック警告 */
+        #adBlockNotice {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* モーダル */
+        #shieldModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--p);
+            max-width: 360px;
+        }
+
+        input[type="text"] {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 広告ブロック検知用ダミー（広告ブロックは "ads" という単語を嫌う） -->
+<div id="ads-check-element" class="ads ad-banner" style="position:absolute; left:-999px;">&nbsp;</div>
+
+<!-- 広告ブロック警告画面 -->
+<div id="adBlockNotice">
+    <i class="fa-solid fa-shield-halved text-6xl text-red-500 mb-6"></i>
+    <h1 class="text-2xl font-black text-white mb-4">ACCESS DENIED</h1>
+    <p class="text-slate-400 text-sm leading-relaxed mb-8">
+        広告ブロックが有効です。<br>
+        本ツールの全機能を利用するには、<br>
+        広告ブロックをオフにして再読み込みしてください。
+    </p>
+    <button onclick="location.reload()" class="btn-gold" style="width: auto; padding: 15px 40px;">再読み込み</button>
+</div>
+
+<div class="main-container">
+    <div class="header-tag" id="modeLabel">Standard Diagnostic Mode</div>
+    
+    <div class="checklist-card">
+        <div class="header-tag">Operation Progress</div>
+        <div style="text-align: center;">
+            <span id="progressText" class="progress-val">0</span>
+            <span style="color:var(--sub); font-size:1rem; font-weight:900;">%</span>
+        </div>
+        <div style="text-align: center;">
+            <div id="statusBadge" class="status-badge">READY</div>
+        </div>
+
+        <div id="listContainer" style="margin-top: 25px;"></div>
+
+        <div style="margin-top: 20px;">
+            <input type="text" id="newItemInput" placeholder="新しい項目を入力...">
+            <button class="btn-gold" style="padding: 12px;" onclick="addItem()">
+                <i class="fa-solid fa-plus mr-2"></i>ADD ITEM
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <button class="btn-sub" onclick="exportData()"><i class="fa-solid fa-download mr-2"></i>SAVE (.SNR)</button>
+        <button class="btn-sub" onclick="importData()"><i class="fa-solid fa-upload mr-2"></i>LOAD</button>
+    </div>
+    
+    <button class="btn-gold" onclick="resetChecks()">
+        <i class="fa-solid fa-rotate-right mr-2"></i>ALL RESET
+    </button>
+
+    <div id="adSection" class="mt-10">
+        <div style="font-size: 0.5rem; color: var(--sub); margin-bottom: 8px; letter-spacing: 0.1em;">ADVERTISEMENT</div>
+        <iframe id="mainAd" src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd" width="100%" height="60" frameborder="0" scrolling="no" style="border:none;"></iframe>
+    </div>
+
+    <div style="text-align:center; margin-top:20px; padding-bottom: 20px;">
+        <a href="https://shinorail.github.io/multi-x-utility/menu.html" style="color:var(--sub); text-decoration:none; font-size:0.75rem; font-weight:700;">
+            ← Return to Menu
+        </a>
+    </div>
+</div>
+
+<!-- 24hシールドモーダル -->
+<div id="shieldModal">
+    <div class="modal-content">
+        <div style="font-size: 1.2rem; font-weight: 900; color: var(--p); margin-bottom: 15px;">24h SHIELD START</div>
+        <p style="font-size: 0.8rem; color: var(--sub); line-height: 1.6; margin-bottom: 20px;">
+            広告を一度確認してシステムを保護しますか？<br>
+            これ以降24時間はすべての広告を消去し、<br>
+            プレミアムUIを適用します。
+        </p>
+        <div style="background:#000; border-radius:15px; padding:10px; margin-bottom:20px;">
+             <iframe src="https://adm.shinobi.jp/o/2791c03bc086135607731d2a0eb484fd" width="100%" height="60" frameborder="0" scrolling="no" style="border:none;"></iframe>
+        </div>
+        <button class="btn-gold" onclick="activateShield()">了解、シールドを起動</button>
+        <button style="background:transparent; color:var(--sub); font-size:0.7rem; margin-top:15px; border:none;" onclick="closeModal()">今はしない</button>
+    </div>
+</div>
+
+<!-- 隠しファイル入力 -->
+<input type="file" id="fileInput" style="display:none" accept=".snr" onchange="handleFile(event)">
+
+<script>
+    const STORAGE_ITEMS = 'mx_check_items';
+    const STORAGE_SHIELD = 'mx_shield_time';
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+    let items = JSON.parse(localStorage.getItem(STORAGE_ITEMS)) || [
+        { id: 1, text: '重要事項の確認', checked: false },
+        { id: 2, text: '機密情報の保護', checked: false }
+    ];
+
+    function init() {
+        // 広告ブロック検知
+        setTimeout(() => {
+            const adCheck = document.getElementById('ads-check-element');
+            if (adCheck && (adCheck.offsetHeight === 0 || window.getComputedStyle(adCheck).display === 'none')) {
+                document.getElementById('adBlockNotice').style.display = 'flex';
+            }
+        }, 1000);
+
+        // 24時間シールド確認
+        const lastShield = localStorage.getItem(STORAGE_SHIELD);
+        if (lastShield && (new Date().getTime() - parseInt(lastShield) < TWENTY_FOUR_HOURS)) {
+            document.body.classList.add('premium-active');
+            document.getElementById('modeLabel').innerText = 'Premium Interface (Shield Active)';
+        }
+
+        render();
+    }
+
+    function render() {
+        const container = document.getElementById('listContainer');
+        container.innerHTML = '';
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = `item-row ${item.checked ? 'checked' : ''}`;
+            div.onclick = () => toggleCheck(item.id);
+            div.innerHTML = `
+                <div class="check-box"><i class="fa-solid fa-check"></i></div>
+                <div class="item-text">${item.text}</div>
+                <button onclick="event.stopPropagation(); deleteItem(${item.id})" style="border:none; background:none; color:var(--sub);"><i class="fa-solid fa-trash-can"></i></button>
+            `;
+            container.appendChild(div);
+        });
+        updateProgress();
+    }
+
+    // 特殊拡張子 .snr でエクスポート（Base64難読化）
+    function exportData() {
+        const dataStr = JSON.stringify(items);
+        const encoded = btoa(unescape(encodeURIComponent(dataStr))); // 日本語対応のBase64エンコード
+        const blob = new Blob([encoded], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `check_data_${new Date().getTime()}.snr`;
+        a.click();
+    }
+
+    // インポートのトリガー
+    function importData() {
+        document.getElementById('fileInput').click();
+    }
+
+    // ファイル読み込みと復号
+    function handleFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const decoded = decodeURIComponent(escape(atob(event.target.result)));
+                const parsed = JSON.parse(decoded);
+                if (Array.isArray(parsed)) {
+                    items = parsed;
+                    save();
+                    render();
+                }
+            } catch (err) {
+                alert("ファイルの形式が正しくありません (.snr ファイルのみ有効)");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function toggleCheck(id) {
+        const item = items.find(i => i.id === id);
+        if (item) {
+            item.checked = !item.checked;
+            save();
+            render();
+            if (items.every(i => i.checked) && items.length > 0 && !document.body.classList.contains('premium-active')) {
+                setTimeout(() => document.getElementById('shieldModal').style.display = 'flex', 500);
+            }
+        }
+    }
+
+    function updateProgress() {
+        const checked = items.filter(i => i.checked).length;
+        const percent = items.length === 0 ? 0 : Math.round((checked / items.length) * 100);
+        document.getElementById('progressText').innerText = percent;
+        const badge = document.getElementById('statusBadge');
+        badge.innerText = percent === 100 ? 'EXCELLENT' : (percent === 0 ? 'READY' : 'STABLE');
+    }
+
+    function addItem() {
+        const input = document.getElementById('newItemInput');
+        if (!input.value.trim()) return;
+        items.push({ id: Date.now(), text: input.value, checked: false });
+        input.value = '';
+        save();
+        render();
+    }
+
+    function deleteItem(id) {
+        items = items.filter(i => i.id !== id);
+        save();
+        render();
+    }
+
+    function resetChecks() {
+        items.forEach(i => i.checked = false);
+        save();
+        render();
+    }
+
+    function save() { localStorage.setItem(STORAGE_ITEMS, JSON.stringify(items)); }
+    function activateShield() {
+        localStorage.setItem(STORAGE_SHIELD, new Date().getTime().toString());
+        location.reload();
+    }
+    function closeModal() { document.getElementById('shieldModal').style.display = 'none'; }
+
+    init();
+</script>
+
+</body>
+</html>
